@@ -81,30 +81,37 @@ class handler(BaseHTTPRequestHandler):
             "Prefer": "wait",
         }
 
-        # Use SDXL via Replicate
+        # Use Flux Schnell via Replicate (fast, high quality)
         payload = {
             "input": {
                 "prompt": prompt,
-                "negative_prompt": NEGATIVE,
-                "width": 768,
-                "height": 512,
-                "num_inference_steps": 30,
-                "guidance_scale": 7.5,
                 "num_outputs": 1,
+                "aspect_ratio": "3:2",
+                "output_format": "webp",
+                "output_quality": 85,
+                "num_inference_steps": 4,
             }
         }
 
+        # Prefer: wait makes Replicate return synchronously (up to 60s)
         try:
             resp = _req.post(
-                "https://api.replicate.com/v1/models/stability-ai/sdxl/predictions",
+                "https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions",
                 headers=headers,
                 json=payload,
-                timeout=10,
+                timeout=55,
             )
             resp.raise_for_status()
             pred = resp.json()
         except Exception as e:
             return _json(self, {"error": f"Replicate API error: {str(e)}"}, 502)
+
+        # With Prefer:wait the result may already be in the response
+        state = pred.get("status")
+        if state == "succeeded":
+            output = pred.get("output", [])
+            if output:
+                return _json(self, {"url": output[0]})
 
         pred_id = pred.get("id")
         if not pred_id:
