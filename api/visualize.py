@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-import os, json, time
+import os, json, base64
 
 try:
     import requests as _req
@@ -7,44 +7,43 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-REPLICATE_API_KEY = os.environ.get("REPLICATE_API_KEY", "")
+HF_API_KEY = os.environ.get("HF_API_KEY", "")
 
 PROMPTS = {
     "bathroom": (
         "professional interior design photo of a {style} bathroom remodel, {colors} color palette, "
-        "Seattle luxury home, custom tile work, modern fixtures, natural lighting, architectural photography, "
-        "4K ultra-detailed, no people"
+        "Seattle luxury home, custom tile work, walk-in shower, modern fixtures, natural lighting, "
+        "architectural photography, ultra detailed, no people"
     ),
     "kitchen": (
         "professional interior design photo of a {style} kitchen renovation, {colors} color palette, "
-        "Seattle luxury home, custom cabinetry, quartz countertops, pendant lighting, architectural photography, "
-        "4K ultra-detailed, no people"
+        "Seattle luxury home, custom cabinetry, quartz countertops, pendant lighting, "
+        "architectural photography, ultra detailed, no people"
     ),
     "fence": (
         "professional landscape photo of a beautiful {style} cedar privacy fence and backyard, "
-        "{colors} color tones, Seattle residential neighborhood, lush Pacific Northwest garden, "
-        "golden hour lighting, architectural photography, 4K ultra-detailed, no people"
+        "{colors} color tones, Seattle residential neighborhood, Pacific Northwest garden, "
+        "golden hour lighting, architectural photography, ultra detailed, no people"
     ),
 }
 
-NEGATIVE = (
-    "blurry, low quality, watermark, text, ugly, distorted, cartoon, "
-    "painting, sketch, 3d render, oversaturated, people, persons"
-)
+NEGATIVE = "blurry, low quality, watermark, text, cartoon, painting, sketch, distorted, people"
+
+HF_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
 
 
-def _cors(handler, status=200):
-    handler.send_response(status)
-    handler.send_header("Content-Type", "application/json")
-    handler.send_header("Access-Control-Allow-Origin", "*")
-    handler.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
-    handler.send_header("Access-Control-Allow-Headers", "Content-Type")
-    handler.end_headers()
+def _cors(h, status=200):
+    h.send_response(status)
+    h.send_header("Content-Type", "application/json")
+    h.send_header("Access-Control-Allow-Origin", "*")
+    h.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+    h.send_header("Access-Control-Allow-Headers", "Content-Type")
+    h.end_headers()
 
 
-def _json(handler, data, status=200):
-    _cors(handler, status)
-    handler.wfile.write(json.dumps(data).encode())
+def _json(h, data, status=200):
+    _cors(h, status)
+    h.wfile.write(json.dumps(data).encode())
 
 
 class handler(BaseHTTPRequestHandler):
@@ -55,9 +54,9 @@ class handler(BaseHTTPRequestHandler):
         if not HAS_REQUESTS:
             return _json(self, {"error": "requests library not available"}, 500)
 
-        if not REPLICATE_API_KEY:
+        if not HF_API_KEY:
             return _json(self, {
-                "error": "REPLICATE_API_KEY not configured. Sign up at replicate.com (free) and add the key to Vercel environment variables."
+                "error": "HF_API_KEY not configured. Get a free token at huggingface.co → Settings → Access Tokens"
             }, 503)
 
         length = int(self.headers.get("Content-Length", 0))
@@ -67,82 +66,51 @@ class handler(BaseHTTPRequestHandler):
             return _json(self, {"error": "Invalid JSON"}, 400)
 
         service = body.get("service", "bathroom").strip()
-        style = body.get("style", "modern minimalist").strip()
-        colors = body.get("colors", "white and gray tones").strip()
+        style   = body.get("style", "modern minimalist").strip()
+        colors  = body.get("colors", "white and gray tones").strip()
 
         if service not in PROMPTS:
             service = "bathroom"
 
         prompt = PROMPTS[service].format(style=style, colors=colors)
 
-        headers = {
-            "Authorization": f"Bearer {REPLICATE_API_KEY}",
-            "Content-Type": "application/json",
-            "Prefer": "wait",
-        }
-
-        # Use Flux Schnell via Replicate (fast, high quality)
-        payload = {
-            "input": {
-                "prompt": prompt,
-                "num_outputs": 1,
-                "aspect_ratio": "3:2",
-                "output_format": "webp",
-                "output_quality": 85,
-                "num_inference_steps": 4,
-            }
-        }
-
-        # Prefer: wait makes Replicate return synchronously (up to 60s)
         try:
             resp = _req.post(
-                "https://api.replicate.com/v1/models/black-forest-labs/flux-schnell/predictions",
-                headers=headers,
-                json=payload,
+                f"https://api-inference.huggingface.co/models/{HF_MODEL}",
+                headers={
+                    "Authorization": f"Bearer {HF_API_KEY}",
+                    "Content-Type": "application/json",
+                },
+                json={
+                    "inputs": prompt,
+                    "parameters": {
+                        "negative_prompt": NEGATIVE,
+                        "width": 768,
+                        "height": 512,
+                        "num_inference_steps": 30,
+                        "guidance_scale": 7.5,
+                    }
+                },
                 timeout=55,
             )
-            resp.raise_for_status()
-            pred = resp.json()
         except Exception as e:
-            return _json(self, {"error": f"Replicate API error: {str(e)}"}, 502)
+            return _json(self, {"error": f"Request failed: {str(e)}"}, 502)
 
-        # With Prefer:wait the result may already be in the response
-        state = pred.get("status")
-        if state == "succeeded":
-            output = pred.get("output", [])
-            if output:
-                return _json(self, {"url": output[0]})
+        if resp.status_code == 503:
+            return _json(self, {"error": "Model loading, please try again in 20 seconds"}, 503)
 
-        pred_id = pred.get("id")
-        if not pred_id:
-            return _json(self, {"error": "No prediction ID returned"}, 502)
+        if resp.status_code == 429:
+            return _json(self, {"error": "Rate limit reached. Please wait a minute and try again."}, 429)
 
-        # Poll until done (max 55 seconds)
-        for _ in range(27):
-            time.sleep(2)
-            try:
-                status_resp = _req.get(
-                    f"https://api.replicate.com/v1/predictions/{pred_id}",
-                    headers={"Authorization": f"Bearer {REPLICATE_API_KEY}"},
-                    timeout=10,
-                )
-                status_data = status_resp.json()
-            except Exception as e:
-                return _json(self, {"error": f"Polling error: {str(e)}"}, 502)
+        if resp.status_code != 200:
+            return _json(self, {"error": f"HuggingFace error {resp.status_code}: {resp.text[:200]}"}, 502)
 
-            state = status_data.get("status")
-            if state == "succeeded":
-                output = status_data.get("output", [])
-                if output:
-                    return _json(self, {"url": output[0]})
-                return _json(self, {"error": "No output in response"}, 502)
-            if state == "failed":
-                err = status_data.get("error", "Unknown error")
-                return _json(self, {"error": f"Generation failed: {err}"}, 502)
-            if state == "canceled":
-                return _json(self, {"error": "Generation was canceled"}, 502)
+        # Response is raw image bytes — convert to base64 data URL
+        img_b64 = base64.b64encode(resp.content).decode()
+        content_type = resp.headers.get("Content-Type", "image/jpeg")
+        data_url = f"data:{content_type};base64,{img_b64}"
 
-        return _json(self, {"error": "Generation timed out. Please try again."}, 504)
+        return _json(self, {"url": data_url})
 
-    def log_message(self, *args):
+    def log_message(self, *_):
         pass

@@ -1320,13 +1320,7 @@ document.querySelectorAll('.color-swatch').forEach(sw=>{
   });
 });
 
-const VIZ_PROMPTS={
-  bathroom:'professional interior design photo of a {style} bathroom remodel, {colors} color palette, Seattle luxury home, custom tile, walk-in shower, modern fixtures, natural light, architectural photography, 4K, no people',
-  kitchen: 'professional interior design photo of a {style} kitchen renovation, {colors} color palette, Seattle luxury home, custom cabinets, quartz countertops, pendant lighting, architectural photography, 4K, no people',
-  fence:   'professional landscape photo of a beautiful {style} cedar privacy fence and backyard, {colors} color tones, Seattle residential neighborhood, lush Pacific Northwest garden, golden hour, 4K, no people'
-};
-
-document.getElementById('viz-btn').addEventListener('click',()=>{
+document.getElementById('viz-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('viz-btn');
   const loading=document.getElementById('viz-loading');
   const placeholder=document.getElementById('viz-placeholder');
@@ -1334,7 +1328,7 @@ document.getElementById('viz-btn').addEventListener('click',()=>{
   const overlay=document.getElementById('viz-overlay');
   const errEl=document.getElementById('viz-error');
 
-  btn.disabled=true; btn.innerHTML='&#9203;&nbsp; Generating…';
+  btn.disabled=true; btn.innerHTML='⏳&nbsp; Generating…';
   placeholder.style.display='none';
   img.classList.remove('loaded');
   overlay.classList.remove('visible');
@@ -1345,27 +1339,32 @@ document.getElementById('viz-btn').addEventListener('click',()=>{
   const styleWord=vizStyle.split(' ')[0];
   const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+serviceLabel[vizService];
 
-  const prompt=(VIZ_PROMPTS[vizService]||VIZ_PROMPTS.bathroom)
-    .replace('{style}',vizStyle).replace('{colors}',vizColor);
-  const seed=Math.floor(Math.random()*999999);
-  const url='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)
-    +'?width=768&height=512&model=flux&nologo=true&seed='+seed;
-
-  img.onload=()=>{
+  try{
+    const r=await fetch('/api/visualize',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({service:vizService,style:vizStyle,colors:vizColor})
+    });
+    const data=await r.json();
     loading.classList.remove('visible');
-    img.classList.add('loaded');
-    document.getElementById('viz-overlay-title').textContent=titleStr;
-    overlay.classList.add('visible');
-    btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
-  };
-  img.onerror=()=>{
+    if(data.url){
+      img.src=data.url;
+      img.onload=()=>{
+        img.classList.add('loaded');
+        document.getElementById('viz-overlay-title').textContent=titleStr;
+        overlay.classList.add('visible');
+      };
+    } else {
+      errEl.textContent=data.error||'Generation failed — please try again.';
+      errEl.classList.add('visible');
+      placeholder.style.display='';
+    }
+  }catch{
     loading.classList.remove('visible');
-    errEl.textContent='Generation failed — please try again.';
+    errEl.textContent='Connection error. Please try again.';
     errEl.classList.add('visible');
     placeholder.style.display='';
-    btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
-  };
-  img.src=url;
+  }
+  btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
 });
 
 
