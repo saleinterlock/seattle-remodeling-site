@@ -1339,30 +1339,53 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
   const styleWord=vizStyle.split(' ')[0];
   const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+serviceLabel[vizService];
 
+  const VIZ_PROMPTS={
+    bathroom:'professional interior design photo of a {style} bathroom remodel, {colors} color palette, Seattle luxury home, custom tile work, walk-in shower, modern fixtures, natural lighting, architectural photography, ultra detailed, no people',
+    kitchen:'professional interior design photo of a {style} kitchen renovation, {colors} color palette, Seattle luxury home, custom cabinetry, quartz countertops, pendant lighting, architectural photography, ultra detailed, no people',
+    fence:'professional landscape photo of a beautiful {style} cedar privacy fence and backyard, {colors} color tones, Seattle residential neighborhood, Pacific Northwest garden, golden hour lighting, architectural photography, ultra detailed, no people'
+  };
+  const vizPrompt=VIZ_PROMPTS[vizService].replace('{style}',vizStyle).replace('{colors}',vizColor);
+  const vizNeg='blurry, low quality, watermark, text, cartoon, painting, sketch, distorted, people';
+
   try{
-    const r=await fetch('/api/visualize',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({service:vizService,style:vizStyle,colors:vizColor})
+    const tokResp=await fetch('/api/hf_token');
+    const tokData=await tokResp.json();
+    if(!tokData.token){
+      loading.classList.remove('visible');
+      errEl.textContent='AI Visualizer is not configured yet.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+      btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
+      return;
+    }
+    const r=await fetch('https://api-inference.huggingface.co/models/stabilityai/stable-diffusion-xl-base-1.0',{
+      method:'POST',
+      headers:{'Authorization':'Bearer '+tokData.token,'Content-Type':'application/json'},
+      body:JSON.stringify({inputs:vizPrompt,parameters:{negative_prompt:vizNeg,width:768,height:512,num_inference_steps:30,guidance_scale:7.5}})
     });
-    const data=await r.json();
     loading.classList.remove('visible');
-    if(data.url){
-      img.src=data.url;
+    if(r.status===503){
+      errEl.textContent='Model is warming up — please try again in 20 seconds.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+    } else if(r.status===429){
+      errEl.textContent='Rate limit reached. Please wait a minute and try again.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+    } else if(!r.ok){
+      errEl.textContent='Generation failed ('+r.status+'). Please try again.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+    } else {
+      const blob=await r.blob();
+      const url=URL.createObjectURL(blob);
+      img.src=url;
       img.onload=()=>{
         img.classList.add('loaded');
         document.getElementById('viz-overlay-title').textContent=titleStr;
         overlay.classList.add('visible');
       };
-    } else {
-      errEl.textContent=data.error||'Generation failed — please try again.';
-      errEl.classList.add('visible');
-      placeholder.style.display='';
     }
-  }catch{
+  }catch(e){
     loading.classList.remove('visible');
     errEl.textContent='Connection error. Please try again.';
-    errEl.classList.add('visible');
-    placeholder.style.display='';
+    errEl.classList.add('visible'); placeholder.style.display='';
   }
   btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
 });
