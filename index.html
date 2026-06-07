@@ -298,64 +298,78 @@ body{font-family:'Inter',sans-serif;color:var(--dark);background:var(--light);ov
 .stat-label{font-size:13px;color:rgba(255,255,255,.6);margin-top:8px;letter-spacing:.5px}
 .stat-line{width:30px;height:2px;background:var(--sage);margin:12px auto 0}
 
-/* ── GALLERY ──────────────────────────────────────────────── */
-.gallery-filter{
-  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px;
-}
-.filter-btn{
-  padding:9px 22px;border-radius:50px;border:1.5px solid var(--dark);
-  background:transparent;font-size:13px;font-weight:600;cursor:pointer;
-  transition:all .25s;letter-spacing:.3px;
-}
-.filter-btn.active,.filter-btn:hover{
-  background:var(--navy);color:#fff;border-color:var(--navy);
-}
-.gallery-masonry{
-  columns:3 340px;gap:16px;
-}
-.gallery-item{
-  position:relative;overflow:hidden;border-radius:8px;
-  margin-bottom:16px;break-inside:avoid;cursor:pointer;
-  transform:scale(1);transition:transform .3s var(--ease);
-}
-.gallery-item:hover{transform:scale(1.02)}
-.gallery-item img{
-  width:100%;display:block;
-  transition:transform .6s var(--ease);
-}
-.gallery-item:hover img{transform:scale(1.06)}
-.gallery-caption{
-  position:absolute;inset:0;
-  background:linear-gradient(to top,rgba(26,58,74,.85) 0%,transparent 50%);
-  display:flex;align-items:flex-end;padding:20px;
-  opacity:0;transition:opacity .3s;
-}
-.gallery-item:hover .gallery-caption{opacity:1}
-.gallery-caption-text{color:#fff}
-.gallery-caption-text span{display:block;font-size:11px;color:var(--wood);font-weight:600;
-  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
-.gallery-caption-text strong{font-family:'Playfair Display',serif;font-size:17px}
+/* ── CALCULATOR ───────────────────────────────────────────── */
+.calc-tabs{display:flex;gap:0;margin-bottom:40px;border-radius:12px;overflow:hidden;border:2px solid var(--navy);width:fit-content}
+.calc-tab{padding:14px 36px;font-size:14px;font-weight:700;letter-spacing:.5px;background:transparent;border:none;cursor:pointer;color:var(--navy);transition:all .25s}
+.calc-tab.active{background:var(--navy);color:#fff}
+.calc-body{display:grid;grid-template-columns:1fr 300px;gap:60px;align-items:start}
+@media(max-width:900px){.calc-body{grid-template-columns:1fr}}
+.calc-label{font-size:12px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--gray);margin-bottom:10px;margin-top:24px}
+.calc-label:first-child{margin-top:0}
+.calc-slider{width:100%;-webkit-appearance:none;appearance:none;height:4px;background:linear-gradient(90deg,var(--sage) var(--pct,40%),#e2e8f0 var(--pct,40%));border-radius:4px;outline:none;cursor:pointer;margin:10px 0 4px}
+.calc-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--navy);border:3px solid #fff;box-shadow:0 2px 8px rgba(26,58,74,.3);cursor:pointer;transition:transform .15s}
+.calc-slider::-webkit-slider-thumb:hover{transform:scale(1.15)}
+.calc-slider::-moz-range-thumb{width:22px;height:22px;border-radius:50%;background:var(--navy);border:3px solid #fff;box-shadow:0 2px 8px rgba(26,58,74,.3);cursor:pointer}
+.calc-slider-val{font-size:13px;color:var(--gray);text-align:right;margin-bottom:4px}
+.quality-btns{display:flex;gap:8px;margin-bottom:8px}
+.quality-btn{flex:1;padding:10px 0;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--gray);transition:all .2s;text-align:center}
+.quality-btn.active{border-color:var(--navy);color:var(--navy);background:rgba(26,58,74,.05)}
+.quality-btn[data-q="premium"].active{border-color:var(--wood);color:var(--wood);background:rgba(154,125,92,.06)}
+.extras-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:4px}
+@media(max-width:600px){.extras-grid{grid-template-columns:1fr}}
+.extra-check{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1.5px solid #e2e8f0;border-radius:8px;cursor:pointer;transition:all .2s;user-select:none}
+.extra-check:hover{border-color:var(--sage)}
+.extra-check.checked{border-color:var(--sage);background:rgba(100,125,104,.06)}
+.extra-check input{display:none}
+.extra-cb{width:18px;height:18px;border:2px solid #cbd5e1;border-radius:4px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:11px;color:#fff}
+.extra-check.checked .extra-cb{background:var(--sage);border-color:var(--sage)}
+.extra-name{font-size:13px;font-weight:500;line-height:1.3}
+.calc-result{background:var(--navy);border-radius:16px;padding:36px;color:#fff;text-align:center;position:sticky;top:90px}
+.calc-result-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:12px}
+.calc-price{font-family:'Playfair Display',serif;font-size:34px;font-weight:700;color:#fff;line-height:1.15;margin-bottom:6px;transition:color .3s}
+.calc-price-sub{font-size:12px;color:rgba(255,255,255,.45);margin-bottom:24px;letter-spacing:.3px}
+.calc-cta{display:block;width:100%;padding:14px;border-radius:50px;background:var(--sage);color:#fff;font-weight:700;font-size:14px;border:none;cursor:pointer;transition:all .2s;text-decoration:none;text-align:center}
+.calc-cta:hover{background:#4f6352;transform:translateY(-2px)}
+.calc-disclaimer{font-size:11px;color:rgba(255,255,255,.3);margin-top:14px;line-height:1.6}
+.fence-row{display:flex;gap:8px;margin-bottom:8px}
+.material-btn{flex:1;padding:11px 0;border:2px solid #e2e8f0;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;background:#fff;color:var(--gray);transition:all .2s;text-align:center}
+.material-btn.active{border-color:var(--wood);color:var(--wood);background:rgba(154,125,92,.06)}
 
-/* ── LIGHTBOX ─────────────────────────────────────────────── */
-#lightbox{
-  position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;
-  display:none;align-items:center;justify-content:center;
-  opacity:0;transition:opacity .3s;
-}
-#lightbox.open{display:flex;opacity:1}
-#lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:4px}
-#lightbox-close{
-  position:absolute;top:24px;right:32px;color:#fff;font-size:32px;
-  cursor:pointer;opacity:.7;transition:opacity .2s;line-height:1;background:none;border:none;
-}
-#lightbox-close:hover{opacity:1}
-#lightbox-prev,#lightbox-next{
-  position:absolute;top:50%;transform:translateY(-50%);
-  color:#fff;font-size:36px;cursor:pointer;opacity:.6;
-  transition:opacity .2s;background:none;border:none;padding:20px;
-}
-#lightbox-prev{left:16px} #lightbox-next{right:16px}
-#lightbox-prev:hover,#lightbox-next:hover{opacity:1}
+/* ── VISUALIZER ───────────────────────────────────────────── */
+.viz-panels{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
+@media(max-width:900px){.viz-panels{grid-template-columns:1fr}}
+.viz-group{margin-bottom:28px}
+.viz-group-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--sage);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.viz-group-label::before{content:'';width:20px;height:1px;background:var(--sage)}
+.viz-options{display:flex;flex-wrap:wrap;gap:8px}
+.viz-opt{padding:10px 20px;border:2px solid #e2e8f0;border-radius:50px;font-size:13px;font-weight:600;cursor:pointer;background:#fff;color:var(--dark);transition:all .2s}
+.viz-opt:hover{border-color:var(--sage);color:var(--sage)}
+.viz-opt.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+.viz-colors{display:flex;gap:12px;flex-wrap:wrap}
+.color-swatch{width:46px;height:46px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .2s;box-shadow:0 2px 8px rgba(0,0,0,.12);position:relative}
+.color-swatch:hover{transform:scale(1.1)}
+.color-swatch.active{border-color:var(--dark);transform:scale(1.12)}
+.color-swatch.active::after{content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.5)}
+.viz-generate{width:100%;padding:18px;border-radius:14px;font-size:15px;font-weight:800;letter-spacing:.5px;border:none;cursor:pointer;margin-top:8px;transition:all .3s;background:linear-gradient(135deg,var(--navy),var(--sage));color:#fff;box-shadow:0 8px 28px rgba(26,58,74,.25)}
+.viz-generate:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 12px 40px rgba(26,58,74,.35)}
+.viz-generate:disabled{opacity:.7;cursor:wait}
+.viz-result{border-radius:16px;overflow:hidden;background:#f1f5f9;min-height:360px;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative}
+.viz-result-img{width:100%;height:100%;object-fit:cover;display:none;border-radius:16px}
+.viz-result-img.loaded{display:block}
+.viz-placeholder{text-align:center;padding:60px 40px;color:var(--gray)}
+.viz-placeholder-icon{font-size:54px;margin-bottom:16px;opacity:.35}
+.viz-result-overlay{position:absolute;bottom:0;left:0;right:0;padding:24px;background:linear-gradient(to top,rgba(26,58,74,.92),transparent);display:none}
+.viz-result-overlay.visible{display:block}
+.viz-result-title{color:#fff;font-family:'Playfair Display',serif;font-size:19px;margin-bottom:4px}
+.viz-result-sub{color:rgba(255,255,255,.65);font-size:13px;margin-bottom:14px}
+.viz-quote-btn{display:inline-block;padding:10px 24px;background:var(--wood);color:#fff;border-radius:50px;font-weight:700;font-size:13px;text-decoration:none;transition:all .2s;border:none;cursor:pointer}
+.viz-quote-btn:hover{background:#7d6449;transform:translateY(-2px)}
+.viz-spinner{width:44px;height:44px;border:3px solid rgba(100,125,104,.15);border-top-color:var(--sage);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.viz-loading{text-align:center;padding:60px 40px;display:none}
+.viz-loading.visible{display:block}
+.viz-error{color:#ef4444;font-size:13px;text-align:center;padding:16px;display:none;background:rgba(239,68,68,.06);border-radius:8px;margin:16px}
+.viz-error.visible{display:block}
 
 /* ── TESTIMONIALS ─────────────────────────────────────────── */
 .testimonials-track{
@@ -597,19 +611,13 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 </div>
 
 <!-- LIGHTBOX -->
-<div id="lightbox">
-  <button id="lightbox-close">✕</button>
-  <button id="lightbox-prev">‹</button>
-  <img id="lightbox-img" src="" alt="">
-  <button id="lightbox-next">›</button>
-</div>
-
 <!-- NAVBAR -->
 <nav class="navbar" id="navbar">
   <div class="nav-logo">Seattle<em>Pro</em></div>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
-    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#calculator">Calculator</a></li>
+    <li><a href="#visualizer">Visualizer</a></li>
     <li><a href="#reviews">Reviews</a></li>
     <li><a href="#faq">FAQ</a></li>
   </ul>
@@ -736,78 +744,147 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   </div>
 </section>
 
-<!-- GALLERY -->
-<section class="section section-alt" id="gallery">
+<!-- PRICE CALCULATOR -->
+<section class="section section-alt" id="calculator">
   <div class="container">
     <div class="reveal">
-      <div class="eyebrow">Our Work</div>
-      <h2 class="section-title">Recent Seattle Projects</h2>
-      <p class="section-body" style="margin-bottom:36px">Every photo is a real project completed by our team. Tap any image to view full size.</p>
+      <div class="eyebrow">Instant Estimate</div>
+      <h2 class="section-title">How Much Will<br>Your Project Cost?</h2>
+      <p class="section-body" style="margin-bottom:40px">Adjust the sliders to match your project. Prices reflect real Seattle 2026 contractor rates — free on-site estimate always included.</p>
     </div>
-    <div class="gallery-filter reveal">
-      <button class="filter-btn active" data-filter="all">All Projects</button>
-      <button class="filter-btn" data-filter="bathroom">Bathrooms</button>
-      <button class="filter-btn" data-filter="kitchen">Kitchens</button>
-      <button class="filter-btn" data-filter="fence">Fences</button>
+    <div class="calc-tabs reveal">
+      <button class="calc-tab active" data-service="bathroom">Bathroom</button>
+      <button class="calc-tab" data-service="kitchen">Kitchen</button>
+      <button class="calc-tab" data-service="fence">Fence</button>
     </div>
-    <div class="gallery-masonry" id="galleryGrid">
-
-      <div class="gallery-item reveal" data-cat="bathroom">
-        <img src="images/gallery-bathroom-1.jpg" alt="Bathroom remodel Ballard"
-          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Bathroom · Ballard</span><strong>Sage Green & White Oak</strong></div>
+    <div class="calc-body">
+      <div>
+        <!-- Bathroom -->
+        <div id="calc-bathroom">
+          <div class="calc-label">Room Size</div>
+          <input type="range" class="calc-slider" id="bath-size" min="30" max="200" value="80">
+          <div class="calc-slider-val"><span id="bath-size-val">80</span> sq ft</div>
+          <div class="calc-label">Material Quality</div>
+          <div class="quality-btns">
+            <button class="quality-btn" data-q="basic">Basic</button>
+            <button class="quality-btn active" data-q="standard">Standard</button>
+            <button class="quality-btn" data-q="premium">Premium ✦</button>
+          </div>
+          <div class="calc-label">Add-Ons</div>
+          <div class="extras-grid" id="bath-extras">
+            <label class="extra-check"><input type="checkbox" value="heated_floor"><div class="extra-cb">✓</div><span class="extra-name">Heated Floor</span></label>
+            <label class="extra-check"><input type="checkbox" value="custom_tile"><div class="extra-cb">✓</div><span class="extra-name">Custom Tile Work</span></label>
+            <label class="extra-check"><input type="checkbox" value="tub"><div class="extra-cb">✓</div><span class="extra-name">Freestanding Tub</span></label>
+          </div>
+        </div>
+        <!-- Kitchen -->
+        <div id="calc-kitchen" style="display:none">
+          <div class="calc-label">Kitchen Size</div>
+          <input type="range" class="calc-slider" id="kitch-size" min="80" max="400" value="150">
+          <div class="calc-slider-val"><span id="kitch-size-val">150</span> sq ft</div>
+          <div class="calc-label">Material Quality</div>
+          <div class="quality-btns">
+            <button class="quality-btn" data-q="basic">Basic</button>
+            <button class="quality-btn active" data-q="standard">Standard</button>
+            <button class="quality-btn" data-q="premium">Premium ✦</button>
+          </div>
+          <div class="calc-label">Add-Ons</div>
+          <div class="extras-grid" id="kitch-extras">
+            <label class="extra-check"><input type="checkbox" value="island"><div class="extra-cb">✓</div><span class="extra-name">Kitchen Island</span></label>
+            <label class="extra-check"><input type="checkbox" value="backsplash"><div class="extra-cb">✓</div><span class="extra-name">Custom Backsplash</span></label>
+            <label class="extra-check"><input type="checkbox" value="appliances"><div class="extra-cb">✓</div><span class="extra-name">New Appliances</span></label>
+          </div>
+        </div>
+        <!-- Fence -->
+        <div id="calc-fence" style="display:none">
+          <div class="calc-label">Fence Length</div>
+          <input type="range" class="calc-slider" id="fence-len" min="50" max="500" value="120">
+          <div class="calc-slider-val"><span id="fence-len-val">120</span> linear ft</div>
+          <div class="calc-label">Material</div>
+          <div class="fence-row">
+            <button class="material-btn active" data-mat="cedar">Cedar Wood</button>
+            <button class="material-btn" data-mat="composite">Composite</button>
+          </div>
+          <div class="calc-label">Add-Ons</div>
+          <div class="extras-grid" id="fence-extras">
+            <label class="extra-check"><input type="checkbox" value="gate"><div class="extra-cb">✓</div><span class="extra-name">Gate Installation</span></label>
+            <label class="extra-check"><input type="checkbox" value="stain"><div class="extra-cb">✓</div><span class="extra-name">Stain & Seal</span></label>
+          </div>
         </div>
       </div>
-
-      <div class="gallery-item reveal" data-cat="kitchen">
-        <img src="images/gallery-kitchen-1.jpg" alt="Kitchen remodel Capitol Hill"
-          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Kitchen · Capitol Hill</span><strong>Modern Farmhouse</strong></div>
+      <!-- Result panel -->
+      <div>
+        <div class="calc-result reveal right">
+          <div class="calc-result-label">Estimated Project Cost</div>
+          <div class="calc-price" id="calc-price-display">$9,800 – $15,200</div>
+          <div class="calc-price-sub">Based on Seattle 2026 rates</div>
+          <button class="calc-cta" id="calc-cta-btn">Get Exact Free Quote →</button>
+          <p class="calc-disclaimer">Ballpark estimate only. Actual cost depends on site conditions, permits, and final selections. On-site estimate is always 100% free.</p>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
-      <div class="gallery-item reveal" data-cat="bathroom">
-        <img src="images/gallery-bathroom-2.jpg" alt="Master bathroom Seattle"
-          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80&fit=crop&crop=bottom'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Bathroom · Queen Anne</span><strong>Master Suite Spa</strong></div>
+<!-- VISUAL AI GENERATOR -->
+<section class="section" id="visualizer">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">AI Design Studio</div>
+      <h2 class="section-title">See Your Space<br><em>Transformed</em></h2>
+      <p class="section-body" style="margin-bottom:48px">Pick your project, style, and colors — AI generates a realistic concept of your finished space in seconds.</p>
+    </div>
+    <div class="viz-panels">
+      <div class="reveal left">
+        <div class="viz-group">
+          <div class="viz-group-label">Project Type</div>
+          <div class="viz-options" id="viz-service">
+            <button class="viz-opt active" data-val="bathroom">Bathroom</button>
+            <button class="viz-opt" data-val="kitchen">Kitchen</button>
+            <button class="viz-opt" data-val="fence">Yard & Fence</button>
+          </div>
+        </div>
+        <div class="viz-group">
+          <div class="viz-group-label">Design Style</div>
+          <div class="viz-options" id="viz-style">
+            <button class="viz-opt active" data-val="modern minimalist">Modern</button>
+            <button class="viz-opt" data-val="rustic farmhouse">Farmhouse</button>
+            <button class="viz-opt" data-val="Scandinavian">Scandinavian</button>
+            <button class="viz-opt" data-val="luxury high-end">Luxury</button>
+          </div>
+        </div>
+        <div class="viz-group">
+          <div class="viz-group-label">Color Palette</div>
+          <div class="viz-colors" id="viz-colors">
+            <div class="color-swatch active" data-val="white and gray tones" style="background:linear-gradient(135deg,#f8f7f4 50%,#9ca3af 50%)" title="White & Gray"></div>
+            <div class="color-swatch" data-val="navy blue and warm wood" style="background:linear-gradient(135deg,#1a3a4a 50%,#9a7d5c 50%)" title="Navy & Wood"></div>
+            <div class="color-swatch" data-val="sage green and white oak" style="background:linear-gradient(135deg,#647d68 50%,#e9dcc7 50%)" title="Sage Green"></div>
+            <div class="color-swatch" data-val="dark charcoal and brass accents" style="background:linear-gradient(135deg,#1c1c1e 50%,#d4a843 50%)" title="Dark & Brass"></div>
+          </div>
+        </div>
+        <button class="viz-generate" id="viz-btn">✨ &nbsp;Generate My Vision</button>
+      </div>
+      <div class="reveal right">
+        <div class="viz-result" id="viz-result">
+          <div class="viz-placeholder" id="viz-placeholder">
+            <div class="viz-placeholder-icon">🎨</div>
+            <p style="font-weight:600;font-size:16px;margin-bottom:8px;color:var(--dark)">Your Vision Awaits</p>
+            <p style="font-size:14px">Choose your preferences and click Generate</p>
+          </div>
+          <div class="viz-loading" id="viz-loading">
+            <div class="viz-spinner"></div>
+            <p style="font-weight:600;font-size:15px;color:var(--dark)">Creating your visualization…</p>
+            <p style="font-size:13px;color:var(--gray);margin-top:6px">Usually 10–20 seconds</p>
+          </div>
+          <img id="viz-img" class="viz-result-img" src="" alt="AI generated room visualization">
+          <div class="viz-result-overlay" id="viz-overlay">
+            <div class="viz-result-title" id="viz-overlay-title">Modern Bathroom</div>
+            <div class="viz-result-sub">AI-generated concept · Seattle Pro Remodeling</div>
+            <button class="viz-quote-btn" id="viz-quote-btn">I Love This — Get a Quote →</button>
+          </div>
+          <div class="viz-error" id="viz-error"></div>
         </div>
       </div>
-
-      <div class="gallery-item reveal" data-cat="fence">
-        <img src="images/gallery-fence-1.jpg" alt="Cedar fence installation"
-          onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Fence · Bellevue</span><strong>Cedar Horizontal Privacy</strong></div>
-        </div>
-      </div>
-
-      <div class="gallery-item reveal" data-cat="kitchen">
-        <img src="images/gallery-kitchen-2.jpg" alt="Kitchen renovation Fremont"
-          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80&fit=crop&crop=right'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Kitchen · Fremont</span><strong>Walnut & White Quartz</strong></div>
-        </div>
-      </div>
-
-      <div class="gallery-item reveal" data-cat="bathroom">
-        <img src="images/gallery-bathroom-3.jpg" alt="Bathroom remodel Redmond"
-          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80&fit=crop&crop=top'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Bathroom · Redmond</span><strong>Double Vanity Suite</strong></div>
-        </div>
-      </div>
-
-      <div class="gallery-item reveal" data-cat="kitchen">
-        <img src="images/gallery-kitchen-3.jpg" alt="Contemporary kitchen Seattle"
-          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80&fit=crop&crop=left'">
-        <div class="gallery-caption">
-          <div class="gallery-caption-text"><span>Kitchen · Kirkland</span><strong>Forest Green Contemporary</strong></div>
-        </div>
-      </div>
-
     </div>
   </div>
 </section>
@@ -999,7 +1076,8 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="footer-col">
       <h4>Company</h4>
       <ul>
-        <li><a href="#gallery">Our Portfolio</a></li>
+        <li><a href="#calculator">Price Calculator</a></li>
+        <li><a href="#visualizer">AI Visualizer</a></li>
         <li><a href="#reviews">Client Reviews</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#estimate">Free Estimate</a></li>
@@ -1119,47 +1197,179 @@ const counterObs=new IntersectionObserver(entries=>{
 },{threshold:.5});
 document.querySelectorAll('.stat-num[data-target]').forEach(el=>counterObs.observe(el));
 
-// ─── GALLERY FILTER ───────────────────────────────────────
-document.querySelectorAll('.filter-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    const f=btn.dataset.filter;
-    document.querySelectorAll('#galleryGrid .gallery-item').forEach(item=>{
-      const show=f==='all'||item.dataset.cat===f;
-      item.style.transition='opacity .4s, transform .4s';
-      item.style.opacity=show?'1':'0';
-      item.style.transform=show?'scale(1)':'scale(.95)';
-      item.style.pointerEvents=show?'auto':'none';
-      setTimeout(()=>{ item.style.display=show?'block':'none' },show?0:350);
+// ─── PRICE CALCULATOR ─────────────────────────────────────
+const CALC_DATA={
+  bathroom:{
+    baseMin:4000,baseMax:8000,perMin:70,perMax:130,defaultSqft:80,
+    quality:{basic:1.0,standard:1.4,premium:2.0},
+    extras:{heated_floor:[800,1500],custom_tile:[1500,3500],tub:[2500,5000]}
+  },
+  kitchen:{
+    baseMin:8000,baseMax:15000,perMin:55,perMax:110,defaultSqft:150,
+    quality:{basic:1.0,standard:1.5,premium:2.2},
+    extras:{island:[2500,5000],backsplash:[1200,2500],appliances:[4000,8000]}
+  },
+  fence:{
+    material:{cedar:{min:25,max:45},composite:{min:35,max:60}},
+    extras:{gate:[600,1200],stain:[300,700]}
+  }
+};
+let calcService='bathroom',calcQuality='standard',calcMaterial='cedar';
+
+function calcUpdate(){
+  const d=CALC_DATA[calcService];
+  let lo=0,hi=0;
+  if(calcService==='fence'){
+    const len=+document.getElementById('fence-len').value||120;
+    const m=d.material[calcMaterial];
+    lo=len*m.min; hi=len*m.max;
+    document.querySelectorAll('#fence-extras .extra-check.checked input').forEach(inp=>{
+      const e=d.extras[inp.value]; if(e){lo+=e[0];hi+=e[1];}
     });
+  } else {
+    const sId=calcService==='bathroom'?'bath-size':'kitch-size';
+    const sqft=+document.getElementById(sId).value||d.defaultSqft;
+    const mul=d.quality[calcQuality];
+    lo=(d.baseMin+sqft*d.perMin)*mul;
+    hi=(d.baseMax+sqft*d.perMax)*mul;
+    const eId=calcService==='bathroom'?'bath-extras':'kitch-extras';
+    document.querySelectorAll('#'+eId+' .extra-check.checked input').forEach(inp=>{
+      const e=d.extras[inp.value]; if(e){lo+=e[0];hi+=e[1];}
+    });
+  }
+  const fmt=n=>'$'+(Math.round(n/100)*100).toLocaleString();
+  document.getElementById('calc-price-display').textContent=fmt(lo)+' – '+fmt(hi);
+}
+
+document.querySelectorAll('.calc-tab').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.calc-tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    calcService=btn.dataset.service;
+    ['bathroom','kitchen','fence'].forEach(s=>{
+      document.getElementById('calc-'+s).style.display=s===calcService?'':'none';
+    });
+    calcQuality='standard';calcMaterial='cedar';
+    document.querySelectorAll('.quality-btn').forEach(b=>b.classList.toggle('active',b.dataset.q==='standard'));
+    document.querySelectorAll('.material-btn').forEach(b=>b.classList.toggle('active',b.dataset.mat==='cedar'));
+    calcUpdate();
   });
 });
 
-// ─── LIGHTBOX ─────────────────────────────────────────────
-const lb=document.getElementById('lightbox');
-const lbImg=document.getElementById('lightbox-img');
-let lbImages=[],lbIdx=0;
-
-document.querySelectorAll('.gallery-item img').forEach((img,i)=>{
-  lbImages.push(img.src);
-  img.parentElement.addEventListener('click',()=>openLightbox(i));
+['bath-size','kitch-size','fence-len'].forEach(id=>{
+  const el=document.getElementById(id); if(!el) return;
+  const valEl=document.getElementById(id+'-val');
+  const initPct=((el.value-el.min)/(el.max-el.min))*100;
+  el.style.setProperty('--pct',initPct+'%');
+  el.addEventListener('input',()=>{
+    valEl.textContent=el.value;
+    const pct=((el.value-el.min)/(el.max-el.min))*100;
+    el.style.setProperty('--pct',pct+'%');
+    calcUpdate();
+  });
 });
 
-function openLightbox(i){
-  lbIdx=i; lbImg.src=lbImages[i];
-  lb.classList.add('open');
-  document.body.style.overflow='hidden';
-}
-document.getElementById('lightbox-close').onclick=()=>{lb.classList.remove('open');document.body.style.overflow=''};
-document.getElementById('lightbox-prev').onclick=()=>{lbIdx=(lbIdx-1+lbImages.length)%lbImages.length;lbImg.src=lbImages[lbIdx]};
-document.getElementById('lightbox-next').onclick=()=>{lbIdx=(lbIdx+1)%lbImages.length;lbImg.src=lbImages[lbIdx]};
-lb.addEventListener('click',e=>{if(e.target===lb){lb.classList.remove('open');document.body.style.overflow=''}});
-document.addEventListener('keydown',e=>{
-  if(!lb.classList.contains('open')) return;
-  if(e.key==='Escape'){lb.classList.remove('open');document.body.style.overflow=''}
-  if(e.key==='ArrowLeft') document.getElementById('lightbox-prev').click();
-  if(e.key==='ArrowRight') document.getElementById('lightbox-next').click();
+document.querySelectorAll('.quality-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    btn.closest('.quality-btns').querySelectorAll('.quality-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); calcQuality=btn.dataset.q; calcUpdate();
+  });
+});
+
+document.querySelectorAll('.material-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.material-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); calcMaterial=btn.dataset.mat; calcUpdate();
+  });
+});
+
+document.querySelectorAll('.extra-check').forEach(label=>{
+  label.addEventListener('click',()=>{
+    label.classList.toggle('checked');
+    label.querySelector('input').checked=label.classList.contains('checked');
+    calcUpdate();
+  });
+});
+
+document.getElementById('calc-cta-btn').addEventListener('click',()=>{
+  document.getElementById('f-service').value=calcService;
+  document.getElementById('estimate').scrollIntoView({behavior:'smooth'});
+});
+
+calcUpdate();
+
+// ─── VISUALIZER ───────────────────────────────────────────
+let vizService='bathroom',vizStyle='modern minimalist',vizColor='white and gray tones';
+
+document.querySelectorAll('#viz-service .viz-opt').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#viz-service .viz-opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); vizService=btn.dataset.val;
+  });
+});
+document.querySelectorAll('#viz-style .viz-opt').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('#viz-style .viz-opt').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active'); vizStyle=btn.dataset.val;
+  });
+});
+document.querySelectorAll('.color-swatch').forEach(sw=>{
+  sw.addEventListener('click',()=>{
+    document.querySelectorAll('.color-swatch').forEach(s=>s.classList.remove('active'));
+    sw.classList.add('active'); vizColor=sw.dataset.val;
+  });
+});
+
+document.getElementById('viz-btn').addEventListener('click',async()=>{
+  const btn=document.getElementById('viz-btn');
+  const loading=document.getElementById('viz-loading');
+  const placeholder=document.getElementById('viz-placeholder');
+  const img=document.getElementById('viz-img');
+  const overlay=document.getElementById('viz-overlay');
+  const errEl=document.getElementById('viz-error');
+
+  btn.disabled=true; btn.textContent='⏳  Generating…';
+  placeholder.style.display='none';
+  img.classList.remove('loaded');
+  overlay.classList.remove('visible');
+  errEl.classList.remove('visible');
+  loading.classList.add('visible');
+
+  const serviceLabel={bathroom:'Bathroom',kitchen:'Kitchen',fence:'Yard & Fence'};
+  const styleWord=vizStyle.split(' ')[0];
+  const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+serviceLabel[vizService];
+
+  try{
+    const r=await fetch('/api/visualize',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({service:vizService,style:vizStyle,colors:vizColor})
+    });
+    const data=await r.json();
+    loading.classList.remove('visible');
+    if(data.url){
+      img.src=data.url;
+      img.onload=()=>{
+        img.classList.add('loaded');
+        document.getElementById('viz-overlay-title').textContent=titleStr;
+        overlay.classList.add('visible');
+      };
+    } else {
+      errEl.textContent=data.error||'Generation failed — please try again.';
+      errEl.classList.add('visible');
+      placeholder.style.display='';
+    }
+  }catch{
+    loading.classList.remove('visible');
+    errEl.textContent='Connection error. Please try again.';
+    errEl.classList.add('visible');
+    placeholder.style.display='';
+  }
+  btn.disabled=false; btn.textContent='✨  Generate My Vision';
+});
+
+document.getElementById('viz-quote-btn').addEventListener('click',()=>{
+  document.getElementById('f-service').value=vizService;
+  document.getElementById('estimate').scrollIntoView({behavior:'smooth'});
 });
 
 // ─── FAQ ──────────────────────────────────────────────────

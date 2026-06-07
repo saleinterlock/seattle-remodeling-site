@@ -6,6 +6,7 @@
   "functions": {
     "api/chat.py":     { "maxDuration": 30 },
     "api/lead.py":     { "maxDuration": 10 },
-    "api/proposal.py": { "maxDuration": 60 }
+    "api/proposal.py":   { "maxDuration": 60 },
+    "api/visualize.py":  { "maxDuration": 60 }
   }
 }
