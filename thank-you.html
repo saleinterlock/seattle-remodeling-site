@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Thank You — Seattle Pro Remodeling</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+
+  <!-- Facebook Pixel — replace PIXEL_ID_HERE -->
+  <script>
+    !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
+    n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
+    document,'script','https://connect.facebook.net/en_US/fbevents.js');
+    fbq('init', 'PIXEL_ID_HERE');
+    fbq('track', 'PageView');
+    fbq('track', 'CompleteRegistration');  // Fires on thank-you = Facebook knows this was a real lead
+  </script>
+  <noscript><img height="1" width="1" style="display:none"
+    src="https://www.facebook.com/tr?id=PIXEL_ID_HERE&ev=CompleteRegistration&noscript=1"/></noscript>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --teal: #2C5570; --green: #2D6A3E; --offwhite: #F5F4F0;
+      --charcoal: #2B2D31; --gray: #6b7280;
+    }
+    body {
+      font-family: 'Roboto', sans-serif; color: var(--charcoal);
+      background: var(--offwhite); min-height: 100vh;
+      display: flex; flex-direction: column;
+    }
+    .navbar {
+      background: var(--teal); padding: 0 24px; height: 64px;
+      display: flex; align-items: center;
+    }
+    .nav-logo {
+      font-family: 'Montserrat', sans-serif; font-weight: 800;
+      font-size: 18px; color: #fff;
+    }
+    .nav-logo span { color: #7dd3fc; }
+
+    main {
+      flex: 1; display: flex; align-items: center; justify-content: center;
+      padding: 40px 24px;
+    }
+    .card {
+      background: #fff; border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,.1);
+      padding: 60px 48px; max-width: 560px; width: 100%;
+      text-align: center;
+    }
+    @media(max-width:480px){ .card { padding: 40px 24px; } }
+
+    .check-icon {
+      width: 80px; height: 80px; background: var(--green);
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; margin: 0 auto 28px; font-size: 36px;
+    }
+    h1 {
+      font-family: 'Montserrat', sans-serif; font-size: 30px; font-weight: 800;
+      color: var(--charcoal); margin-bottom: 16px;
+    }
+    p { color: var(--gray); font-size: 16px; line-height: 1.7; margin-bottom: 16px; }
+    .highlight {
+      background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 10px;
+      padding: 20px; margin: 24px 0; text-align: left;
+    }
+    .highlight strong { color: var(--green); font-size: 15px; }
+    .steps { list-style: none; margin-top: 10px; }
+    .steps li {
+      padding: 6px 0; color: var(--charcoal); font-size: 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+    }
+    .steps li span { flex-shrink: 0; }
+    .btn-home {
+      display: inline-block; background: var(--teal); color: #fff;
+      padding: 14px 32px; border-radius: 8px; text-decoration: none;
+      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 15px;
+      transition: background .2s;
+    }
+    .btn-home:hover { background: #1e3d52; }
+    .social-proof {
+      margin-top: 28px; padding-top: 24px;
+      border-top: 1px solid #e5e7eb; font-size: 13px; color: var(--gray);
+    }
+    .stars { color: #f59e0b; font-size: 18px; }
+
+    footer {
+      text-align: center; padding: 20px; font-size: 13px; color: var(--gray);
+      border-top: 1px solid #e5e7eb;
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="nav-logo">Seattle<span>Pro</span> Remodeling</div>
+  </nav>
+
+  <main>
+    <div class="card">
+      <div class="check-icon">✓</div>
+      <h1>We Got Your Request!</h1>
+      <p>Thank you for reaching out. A member of our team will contact you within the next 2 hours to schedule your free on-site estimate.</p>
+
+      <div class="highlight">
+        <strong>📋 What happens next:</strong>
+        <ul class="steps">
+          <li><span>📞</span> We call you within 2 hours to confirm your project details</li>
+          <li><span>🏠</span> We schedule a free on-site visit at your convenience</li>
+          <li><span>📄</span> You receive a detailed written estimate within 24 hours</li>
+          <li><span>🔨</span> We can typically start your project within 2 weeks</li>
+        </ul>
+      </div>
+
+      <p>In the meantime, feel free to browse our gallery or give us a call if you have any questions.</p>
+
+      <a href="/index.html" class="btn-home">← Back to Homepage</a>
+
+      <div class="social-proof">
+        <div class="stars">★★★★★</div>
+        <p style="margin:8px 0 0">Trusted by 100+ Seattle homeowners</p>
+      </div>
+    </div>
+  </main>
+
+  <footer>
+    © 2026 Seattle Pro Remodeling · (206) 555-0000 · info@seattleproremodeling.com
+  </footer>
+</body>
+</html>

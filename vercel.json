@@ -1,0 +1,30 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "api/*.py",
+      "use": "@vercel/python"
+    },
+    {
+      "src": "*.html",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    { "src": "/api/chat",     "dest": "/api/chat.py" },
+    { "src": "/api/lead",     "dest": "/api/lead.py" },
+    { "src": "/api/proposal", "dest": "/api/proposal.py" },
+    { "src": "/owner",        "dest": "/owner.html" },
+    { "src": "/thank-you",    "dest": "/thank-you.html" },
+    { "src": "/",             "dest": "/index.html" }
+  ],
+  "env": {
+    "ANTHROPIC_API_KEY": "@anthropic_api_key",
+    "TELEGRAM_BOT_TOKEN": "@telegram_bot_token",
+    "TELEGRAM_OWNER_ID": "@telegram_owner_id",
+    "OWNER_PASSWORD": "@owner_password",
+    "COMPANY_NAME": "Seattle Pro Remodeling",
+    "COMPANY_PHONE": "+12065550000",
+    "SERVICE_AREA_ZIPS": "98101,98102,98103,98104,98105,98106,98107,98108,98109,98112,98115,98116,98117,98118,98119,98121,98122,98125,98126,98133,98136,98144,98146"
+  }
+}
