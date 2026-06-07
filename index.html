@@ -1,486 +1,737 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Seattle Pro Remodeling — Bathroom, Kitchen & Fence Experts</title>
-  <meta name="description" content="Seattle's trusted remodeling contractor. Bathroom remodels, kitchen renovations, and fence installation. Licensed, insured, 5-star rated. Free estimates.">
-
-  <!-- Google Fonts -->
+  <meta name="description" content="Seattle's premium remodeling contractor. Bathroom remodels, kitchen renovations, and fence installation. Licensed, insured, 5-star rated.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Facebook Pixel — replace PIXEL_ID_HERE with your Pixel ID from Meta Business Suite -->
+  <!-- Facebook Pixel — replace PIXEL_ID_HERE -->
   <script>
     !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?
     n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;
     n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;
     t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,
     document,'script','https://connect.facebook.net/en_US/fbevents.js');
-    fbq('init', 'PIXEL_ID_HERE');
-    fbq('track', 'PageView');
+    fbq('init','PIXEL_ID_HERE'); fbq('track','PageView');
   </script>
-  <noscript><img height="1" width="1" style="display:none"
-    src="https://www.facebook.com/tr?id=PIXEL_ID_HERE&ev=PageView&noscript=1"/></noscript>
 
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<style>
+/* ── RESET & VARS ─────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:  #1a3a4a;
+  --sage:  #647d68;
+  --wood:  #9a7d5c;
+  --light: #f8f7f4;
+  --dark:  #1c1c1e;
+  --gray:  #6b7280;
+  --line:  rgba(255,255,255,.12);
+  --ease:  cubic-bezier(.4,0,.2,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;color:var(--dark);background:var(--light);overflow-x:hidden}
 
-    :root {
-      --teal:       #2C5570;
-      --teal-dark:  #1e3d52;
-      --green:      #2D6A3E;
-      --green-dark: #1f4d2c;
-      --offwhite:   #F5F4F0;
-      --charcoal:   #2B2D31;
-      --gray:       #6b7280;
-      --lightgray:  #e5e7eb;
-      --white:      #ffffff;
-    }
+/* ── SCROLL PROGRESS ──────────────────────────────────────── */
+#progress-bar{
+  position:fixed;top:0;left:0;height:3px;width:0%;
+  background:linear-gradient(90deg,var(--sage),var(--wood));
+  z-index:9999;transition:width .1s linear;
+}
 
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Roboto', sans-serif; color: var(--charcoal); background: var(--white); }
+/* ── LOADER ───────────────────────────────────────────────── */
+#loader{
+  position:fixed;inset:0;background:var(--dark);z-index:9998;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;
+  transition:opacity .6s var(--ease),visibility .6s;
+}
+#loader.done{opacity:0;visibility:hidden}
+.loader-logo{font-family:'Playfair Display',serif;font-size:36px;font-weight:700;color:#fff;
+  letter-spacing:2px;opacity:0;transform:translateY(20px);transition:all .8s var(--ease) .2s}
+#loader.active .loader-logo{opacity:1;transform:translateY(0)}
+.loader-bar{width:180px;height:2px;background:rgba(255,255,255,.15);border-radius:2px;overflow:hidden}
+.loader-fill{height:100%;background:linear-gradient(90deg,var(--sage),var(--wood));
+  width:0%;transition:width 1.8s var(--ease)}
+#loader.active .loader-fill{width:100%}
 
-    h1, h2, h3, h4 { font-family: 'Montserrat', sans-serif; }
+/* ── NAVBAR ───────────────────────────────────────────────── */
+.navbar{
+  position:fixed;top:0;left:0;right:0;z-index:1000;
+  padding:0 40px;height:72px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:background .4s var(--ease),backdrop-filter .4s,box-shadow .4s;
+}
+.navbar.scrolled{
+  background:rgba(26,58,74,.92);backdrop-filter:blur(20px);
+  box-shadow:0 1px 0 var(--line);
+}
+.nav-logo{
+  font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;
+  letter-spacing:.5px;
+}
+.nav-logo em{color:var(--wood);font-style:normal}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;
+  transition:color .2s;letter-spacing:.3px}
+.nav-links a:hover{color:#fff}
+.nav-cta{
+  background:var(--sage);color:#fff;padding:10px 24px;border-radius:50px;
+  font-size:14px;font-weight:600;transition:background .2s,transform .15s;
+  display:none;
+}
+.nav-cta:hover{background:#4f6352;transform:scale(1.04)}
+@media(min-width:768px){.nav-cta{display:block}}
+@media(max-width:767px){.nav-links{display:none}}
 
-    a { text-decoration: none; color: inherit; }
+/* ── HERO ─────────────────────────────────────────────────── */
+.hero{position:relative;height:100vh;overflow:hidden}
+.hero-slides{position:absolute;inset:0}
+.hero-slide{
+  position:absolute;inset:0;opacity:0;
+  transition:opacity 1.5s var(--ease);
+}
+.hero-slide.active{opacity:1}
+.hero-slide img{
+  width:100%;height:100%;object-fit:cover;
+  animation:kenburns 8s var(--ease) forwards;
+}
+@keyframes kenburns{
+  from{transform:scale(1.08) translate(-1%,.5%)}
+  to{transform:scale(1) translate(0,0)}
+}
+.hero-slide:nth-child(odd) img{
+  animation-name:kenburns-r;
+}
+@keyframes kenburns-r{
+  from{transform:scale(1.08) translate(1%,-.5%)}
+  to{transform:scale(1) translate(0,0)}
+}
+.hero-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    rgba(26,58,74,.3) 0%,
+    rgba(26,58,74,.55) 50%,
+    rgba(26,58,74,.75) 100%
+  );
+}
+.hero-content{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:100px 24px 80px;
+}
+.hero-label{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(255,255,255,.1);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.2);border-radius:50px;
+  color:rgba(255,255,255,.9);font-size:12px;font-weight:600;
+  letter-spacing:2px;text-transform:uppercase;
+  padding:8px 20px;margin-bottom:28px;
+  opacity:0;transform:translateY(16px);
+  transition:all 1s var(--ease) .3s;
+}
+.hero-label.show{opacity:1;transform:translateY(0)}
+.hero h1{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(38px,7vw,82px);
+  font-weight:700;color:#fff;line-height:1.05;
+  margin-bottom:24px;max-width:900px;
+  opacity:0;transform:translateY(24px);
+  transition:all 1s var(--ease) .5s;
+}
+.hero h1.show{opacity:1;transform:translateY(0)}
+.hero h1 em{color:var(--wood);font-style:normal;position:relative}
+.hero h1 em::after{
+  content:'';position:absolute;bottom:-4px;left:0;right:0;height:3px;
+  background:var(--wood);transform:scaleX(0);transform-origin:left;
+  transition:transform .8s var(--ease) 1.6s;
+}
+.hero h1.show em::after{transform:scaleX(1)}
+.hero-sub{
+  font-size:clamp(16px,2vw,20px);color:rgba(255,255,255,.8);
+  max-width:600px;line-height:1.7;margin-bottom:44px;
+  opacity:0;transform:translateY(16px);
+  transition:all 1s var(--ease) .7s;
+}
+.hero-sub.show{opacity:1;transform:translateY(0)}
+.hero-btns{
+  display:flex;flex-wrap:wrap;gap:16px;justify-content:center;
+  opacity:0;transform:translateY(16px);
+  transition:all 1s var(--ease) .9s;
+}
+.hero-btns.show{opacity:1;transform:translateY(0)}
+.btn-primary{
+  background:var(--sage);color:#fff;padding:16px 40px;border-radius:50px;
+  font-weight:700;font-size:15px;letter-spacing:.5px;
+  transition:all .25s var(--ease);border:none;cursor:pointer;
+  box-shadow:0 4px 24px rgba(100,125,104,.4);
+}
+.btn-primary:hover{background:#4f6352;transform:translateY(-3px);box-shadow:0 8px 32px rgba(100,125,104,.5)}
+.btn-ghost{
+  background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);
+  padding:14px 36px;border-radius:50px;font-weight:600;font-size:15px;
+  transition:all .25s var(--ease);cursor:pointer;
+}
+.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:#fff}
+.hero-dots{
+  position:absolute;bottom:36px;left:50%;transform:translateX(-50%);
+  display:flex;gap:10px;
+}
+.dot{
+  width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.35);
+  transition:all .3s;cursor:pointer;
+}
+.dot.active{background:#fff;width:24px;border-radius:3px}
+.hero-scroll{
+  position:absolute;bottom:36px;right:40px;
+  display:flex;align-items:center;gap:10px;
+  color:rgba(255,255,255,.6);font-size:12px;letter-spacing:2px;text-transform:uppercase;
+  animation:bounce 2s ease-in-out infinite;
+}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.scroll-line{width:40px;height:1px;background:rgba(255,255,255,.4)}
 
-    /* ── NAVBAR ── */
-    .navbar {
-      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-      background: var(--teal); padding: 0 24px;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 64px; box-shadow: 0 2px 12px rgba(0,0,0,.25);
-    }
-    .nav-logo { font-family: 'Montserrat', sans-serif; font-weight: 800; font-size: 18px; color: var(--white); }
-    .nav-logo span { color: #7dd3fc; }
-    .nav-phone { color: var(--white); font-weight: 600; font-size: 15px; }
-    .nav-phone a { color: var(--white); }
-    .nav-cta {
-      background: var(--green); color: var(--white);
-      padding: 10px 20px; border-radius: 6px;
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 14px;
-      display: none;
-    }
-    @media(min-width:640px){ .nav-cta { display: block; } }
+/* ── TRUST BAR ────────────────────────────────────────────── */
+.trust-bar{
+  background:var(--navy);padding:22px 40px;
+  display:flex;flex-wrap:wrap;justify-content:center;gap:20px 48px;
+}
+.trust-item{
+  display:flex;align-items:center;gap:10px;color:rgba(255,255,255,.85);
+  font-size:13px;font-weight:500;letter-spacing:.3px;
+}
+.trust-dot{width:6px;height:6px;border-radius:50%;background:var(--sage)}
 
-    /* ── HERO ── */
-    .hero {
-      min-height: 100vh;
-      background:
-        linear-gradient(to bottom, rgba(28,52,72,.72) 0%, rgba(28,52,72,.55) 100%),
-        url('https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1600&q=80') center/cover no-repeat;
-      display: flex; align-items: center; justify-content: center;
-      text-align: center; padding: 100px 24px 60px;
-    }
-    .hero-inner { max-width: 780px; }
-    .hero-badge {
-      display: inline-block; background: rgba(255,255,255,.15); backdrop-filter: blur(4px);
-      border: 1px solid rgba(255,255,255,.3); border-radius: 50px;
-      color: #fff; font-size: 13px; font-weight: 600; padding: 6px 18px; margin-bottom: 24px;
-      letter-spacing: .5px;
-    }
-    .hero h1 {
-      font-size: clamp(32px, 6vw, 60px); font-weight: 800; color: #fff;
-      line-height: 1.1; margin-bottom: 20px;
-    }
-    .hero h1 em { color: #7dd3fc; font-style: normal; }
-    .hero p {
-      font-size: clamp(16px, 2.5vw, 20px); color: rgba(255,255,255,.9);
-      margin-bottom: 36px; line-height: 1.6;
-    }
-    .hero-btns { display: flex; flex-wrap: wrap; gap: 14px; justify-content: center; }
-    .btn-primary {
-      background: var(--green); color: #fff;
-      padding: 16px 36px; border-radius: 6px;
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px;
-      transition: background .2s, transform .15s;
-      border: none; cursor: pointer;
-    }
-    .btn-primary:hover { background: var(--green-dark); transform: translateY(-2px); }
-    .btn-outline {
-      background: transparent; color: #fff;
-      border: 2px solid rgba(255,255,255,.6);
-      padding: 14px 32px; border-radius: 6px;
-      font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 16px;
-      transition: background .2s, border-color .2s;
-      cursor: pointer;
-    }
-    .btn-outline:hover { background: rgba(255,255,255,.1); border-color: #fff; }
+/* ── SECTION UTILS ────────────────────────────────────────── */
+.section{padding:100px 40px}
+@media(max-width:767px){.section{padding:70px 20px}}
+.section-alt{background:#fff}
+.container{max-width:1160px;margin:0 auto}
+.eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;
+  color:var(--sage);margin-bottom:14px;display:flex;align-items:center;gap:10px;
+}
+.eyebrow::before{content:'';display:block;width:30px;height:1px;background:var(--sage)}
+.section-title{
+  font-family:'Playfair Display',serif;
+  font-size:clamp(28px,4vw,52px);font-weight:700;color:var(--dark);
+  line-height:1.15;margin-bottom:20px;
+}
+.section-body{font-size:17px;color:var(--gray);line-height:1.75;max-width:560px}
 
-    /* ── TRUST BAR ── */
-    .trust-bar {
-      background: var(--teal); padding: 20px 24px;
-      display: flex; flex-wrap: wrap; justify-content: center; gap: 24px 40px;
-    }
-    .trust-item {
-      display: flex; align-items: center; gap: 8px;
-      color: #fff; font-size: 14px; font-weight: 600;
-    }
-    .trust-icon { font-size: 18px; }
+/* ── REVEAL ANIMATIONS ────────────────────────────────────── */
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.up{transform:translateY(40px)}
+.reveal.left{transform:translateX(-40px)}
+.reveal.right{transform:translateX(40px)}
+.reveal.scale{transform:scale(.94)}
+.reveal.shown{opacity:1;transform:none}
+.stagger .reveal:nth-child(1){transition-delay:.1s}
+.stagger .reveal:nth-child(2){transition-delay:.2s}
+.stagger .reveal:nth-child(3){transition-delay:.3s}
+.stagger .reveal:nth-child(4){transition-delay:.4s}
+.stagger .reveal:nth-child(5){transition-delay:.5s}
+.stagger .reveal:nth-child(6){transition-delay:.6s}
 
-    /* ── SECTION BASE ── */
-    .section { padding: 80px 24px; }
-    .section-alt { background: var(--offwhite); }
-    .container { max-width: 1100px; margin: 0 auto; }
-    .section-label {
-      font-size: 12px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      color: var(--green); margin-bottom: 12px;
-    }
-    .section-title {
-      font-size: clamp(26px, 4vw, 40px); font-weight: 800; color: var(--charcoal);
-      margin-bottom: 16px; line-height: 1.2;
-    }
-    .section-sub { font-size: 17px; color: var(--gray); max-width: 560px; line-height: 1.6; }
+/* ── SERVICES ─────────────────────────────────────────────── */
+.services-intro{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;margin-bottom:80px}
+@media(max-width:900px){.services-intro{grid-template-columns:1fr;gap:40px}}
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+@media(max-width:900px){.services-grid{grid-template-columns:1fr}}
+.service-tile{
+  position:relative;overflow:hidden;aspect-ratio:3/4;cursor:pointer;
+}
+@media(max-width:900px){.service-tile{aspect-ratio:16/9}}
+.service-tile img{
+  width:100%;height:100%;object-fit:cover;
+  transition:transform .8s var(--ease);
+}
+.service-tile:hover img{transform:scale(1.06)}
+.service-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(26,58,74,.9) 0%,rgba(26,58,74,.1) 60%,transparent 100%);
+}
+.service-content{
+  position:absolute;bottom:0;left:0;right:0;padding:36px;
+  transform:translateY(8px);transition:transform .4s var(--ease);
+}
+.service-tile:hover .service-content{transform:translateY(0)}
+.service-tag{
+  display:inline-block;background:var(--sage);color:#fff;
+  font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  padding:5px 14px;border-radius:50px;margin-bottom:12px;
+}
+.service-content h3{
+  font-family:'Playfair Display',serif;font-size:28px;font-weight:700;
+  color:#fff;margin-bottom:10px;
+}
+.service-content p{
+  color:rgba(255,255,255,.75);font-size:14px;line-height:1.6;
+  max-height:0;overflow:hidden;transition:max-height .4s var(--ease);
+}
+.service-tile:hover .service-content p{max-height:100px}
+.service-price{
+  margin-top:14px;font-size:13px;color:var(--wood);font-weight:600;
+  display:flex;align-items:center;gap:6px;
+}
+.service-price::before{content:'';display:block;width:20px;height:1px;background:var(--wood)}
 
-    /* ── SERVICES ── */
-    .services-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 28px; margin-top: 48px;
-    }
-    .service-card {
-      background: var(--white); border-radius: 12px;
-      overflow: hidden; box-shadow: 0 4px 20px rgba(0,0,0,.08);
-      transition: transform .2s, box-shadow .2s;
-    }
-    .service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 32px rgba(0,0,0,.14); }
-    .service-img {
-      width: 100%; height: 220px; object-fit: cover;
-    }
-    .service-body { padding: 28px; }
-    .service-icon { font-size: 32px; margin-bottom: 12px; }
-    .service-body h3 { font-size: 22px; font-weight: 700; margin-bottom: 10px; }
-    .service-body p { color: var(--gray); line-height: 1.6; margin-bottom: 16px; }
-    .service-features { list-style: none; }
-    .service-features li { padding: 4px 0; color: var(--gray); font-size: 14px; }
-    .service-features li::before { content: "✓ "; color: var(--green); font-weight: 700; }
-    .service-price {
-      margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--lightgray);
-      font-size: 13px; color: var(--gray);
-    }
-    .service-price strong { color: var(--teal); }
+/* ── STATS ────────────────────────────────────────────────── */
+.stats-section{
+  background:var(--navy);padding:80px 40px;
+}
+.stats-grid{
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:40px;
+  text-align:center;
+}
+@media(max-width:767px){.stats-grid{grid-template-columns:repeat(2,1fr);gap:36px}}
+.stat-num{
+  font-family:'Playfair Display',serif;font-size:64px;font-weight:700;
+  color:#fff;line-height:1;
+  background:linear-gradient(135deg,#fff 0%,var(--wood) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.stat-label{font-size:13px;color:rgba(255,255,255,.6);margin-top:8px;letter-spacing:.5px}
+.stat-line{width:30px;height:2px;background:var(--sage);margin:12px auto 0}
 
-    /* ── GALLERY ── */
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 16px; margin-top: 48px;
-    }
-    .gallery-item {
-      position: relative; border-radius: 10px; overflow: hidden;
-      height: 240px; background: var(--lightgray);
-    }
-    .gallery-item img { width: 100%; height: 100%; object-fit: cover; transition: transform .3s; }
-    .gallery-item:hover img { transform: scale(1.04); }
-    .gallery-label {
-      position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(transparent, rgba(0,0,0,.65));
-      color: #fff; padding: 24px 16px 12px;
-      font-size: 13px; font-weight: 600;
-    }
-    .gallery-placeholder {
-      width: 100%; height: 100%;
-      display: flex; flex-direction: column; align-items: center; justify-content: center;
-      color: var(--gray); font-size: 14px; gap: 8px;
-    }
-    .gallery-placeholder span { font-size: 32px; }
+/* ── GALLERY ──────────────────────────────────────────────── */
+.gallery-filter{
+  display:flex;gap:8px;flex-wrap:wrap;margin-bottom:40px;
+}
+.filter-btn{
+  padding:9px 22px;border-radius:50px;border:1.5px solid var(--dark);
+  background:transparent;font-size:13px;font-weight:600;cursor:pointer;
+  transition:all .25s;letter-spacing:.3px;
+}
+.filter-btn.active,.filter-btn:hover{
+  background:var(--navy);color:#fff;border-color:var(--navy);
+}
+.gallery-masonry{
+  columns:3 340px;gap:16px;
+}
+.gallery-item{
+  position:relative;overflow:hidden;border-radius:8px;
+  margin-bottom:16px;break-inside:avoid;cursor:pointer;
+  transform:scale(1);transition:transform .3s var(--ease);
+}
+.gallery-item:hover{transform:scale(1.02)}
+.gallery-item img{
+  width:100%;display:block;
+  transition:transform .6s var(--ease);
+}
+.gallery-item:hover img{transform:scale(1.06)}
+.gallery-caption{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(26,58,74,.85) 0%,transparent 50%);
+  display:flex;align-items:flex-end;padding:20px;
+  opacity:0;transition:opacity .3s;
+}
+.gallery-item:hover .gallery-caption{opacity:1}
+.gallery-caption-text{color:#fff}
+.gallery-caption-text span{display:block;font-size:11px;color:var(--wood);font-weight:600;
+  letter-spacing:1.5px;text-transform:uppercase;margin-bottom:4px}
+.gallery-caption-text strong{font-family:'Playfair Display',serif;font-size:17px}
 
-    /* ── TESTIMONIALS ── */
-    .testimonials-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px; margin-top: 48px;
-    }
-    .testimonial-card {
-      background: var(--white); border-radius: 12px; padding: 28px;
-      box-shadow: 0 4px 20px rgba(0,0,0,.07);
-      border-left: 4px solid var(--green);
-    }
-    .stars { color: #f59e0b; font-size: 18px; margin-bottom: 12px; }
-    .testimonial-card blockquote {
-      font-size: 15px; line-height: 1.7; color: var(--charcoal);
-      margin-bottom: 16px; font-style: italic;
-    }
-    .reviewer { display: flex; align-items: center; gap: 12px; }
-    .reviewer-avatar {
-      width: 44px; height: 44px; border-radius: 50%;
-      background: var(--teal); color: #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px;
-    }
-    .reviewer-info strong { display: block; font-size: 14px; font-weight: 700; }
-    .reviewer-info span { font-size: 12px; color: var(--gray); }
+/* ── LIGHTBOX ─────────────────────────────────────────────── */
+#lightbox{
+  position:fixed;inset:0;background:rgba(0,0,0,.95);z-index:9000;
+  display:none;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .3s;
+}
+#lightbox.open{display:flex;opacity:1}
+#lightbox img{max-width:90vw;max-height:90vh;object-fit:contain;border-radius:4px}
+#lightbox-close{
+  position:absolute;top:24px;right:32px;color:#fff;font-size:32px;
+  cursor:pointer;opacity:.7;transition:opacity .2s;line-height:1;background:none;border:none;
+}
+#lightbox-close:hover{opacity:1}
+#lightbox-prev,#lightbox-next{
+  position:absolute;top:50%;transform:translateY(-50%);
+  color:#fff;font-size:36px;cursor:pointer;opacity:.6;
+  transition:opacity .2s;background:none;border:none;padding:20px;
+}
+#lightbox-prev{left:16px} #lightbox-next{right:16px}
+#lightbox-prev:hover,#lightbox-next:hover{opacity:1}
 
-    /* ── CTA FORM ── */
-    .cta-section {
-      background: var(--teal); padding: 80px 24px;
-    }
-    .cta-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
-    }
-    @media(max-width:768px){ .cta-inner { grid-template-columns: 1fr; gap: 40px; } }
-    .cta-text h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; color: #fff; margin-bottom: 16px; }
-    .cta-text p { color: rgba(255,255,255,.8); font-size: 16px; line-height: 1.6; }
-    .cta-bullets { margin-top: 24px; list-style: none; }
-    .cta-bullets li { color: rgba(255,255,255,.9); padding: 6px 0; font-size: 15px; }
-    .cta-bullets li::before { content: "✓ "; color: #7dd3fc; font-weight: 700; }
-    .estimate-form {
-      background: var(--white); border-radius: 14px; padding: 36px;
-      box-shadow: 0 8px 40px rgba(0,0,0,.2);
-    }
-    .estimate-form h3 {
-      font-size: 22px; font-weight: 700; color: var(--charcoal); margin-bottom: 24px;
-    }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    @media(max-width:500px){ .form-row { grid-template-columns: 1fr; } }
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--charcoal); }
-    .form-group input, .form-group select, .form-group textarea {
-      width: 100%; padding: 12px 14px; border: 1.5px solid var(--lightgray);
-      border-radius: 8px; font-size: 15px; font-family: 'Roboto', sans-serif;
-      transition: border-color .2s;
-      background: #fff;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      outline: none; border-color: var(--teal);
-    }
-    .form-group textarea { resize: vertical; min-height: 90px; }
-    .form-submit {
-      width: 100%; background: var(--green); color: #fff;
-      border: none; border-radius: 8px; padding: 15px;
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px;
-      cursor: pointer; transition: background .2s;
-      margin-top: 4px;
-    }
-    .form-submit:hover { background: var(--green-dark); }
-    .form-note { font-size: 12px; color: var(--gray); text-align: center; margin-top: 10px; }
+/* ── TESTIMONIALS ─────────────────────────────────────────── */
+.testimonials-track{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+}
+@media(max-width:900px){.testimonials-track{grid-template-columns:1fr}}
+.testimonial{
+  background:var(--light);border-radius:12px;padding:36px;
+  position:relative;overflow:hidden;
+}
+.testimonial::before{
+  content:'';position:absolute;top:0;left:0;width:4px;height:100%;background:var(--sage);
+}
+.t-quote{
+  font-family:'Playfair Display',serif;font-size:60px;color:var(--sage);
+  opacity:.2;line-height:.7;margin-bottom:16px;
+}
+.t-text{font-size:15px;line-height:1.8;color:var(--dark);margin-bottom:24px;font-style:italic}
+.t-stars{color:#f59e0b;font-size:16px;margin-bottom:14px}
+.t-author{display:flex;align-items:center;gap:12px}
+.t-avatar{
+  width:44px;height:44px;border-radius:50%;background:var(--navy);color:#fff;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:700;font-size:15px;font-family:'Playfair Display',serif;flex-shrink:0;
+}
+.t-name{font-weight:600;font-size:14px}
+.t-location{font-size:12px;color:var(--gray);margin-top:2px}
 
-    /* ── FAQ ── */
-    .faq-list { margin-top: 48px; max-width: 760px; }
-    .faq-item {
-      border-bottom: 1px solid var(--lightgray); padding: 20px 0;
-    }
-    .faq-q {
-      font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px;
-      cursor: pointer; display: flex; justify-content: space-between; align-items: center;
-      gap: 16px;
-    }
-    .faq-arrow { font-size: 20px; transition: transform .2s; flex-shrink: 0; }
-    .faq-a {
-      font-size: 15px; color: var(--gray); line-height: 1.7;
-      max-height: 0; overflow: hidden; transition: max-height .3s ease, padding .2s;
-    }
-    .faq-item.open .faq-arrow { transform: rotate(180deg); }
-    .faq-item.open .faq-a { max-height: 300px; padding-top: 12px; }
+/* ── PROCESS ──────────────────────────────────────────────── */
+.process-section{background:var(--navy);padding:100px 40px}
+.process-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px;margin-top:60px;
+}
+@media(max-width:900px){.process-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.process-grid{grid-template-columns:1fr}}
+.process-step{position:relative;padding-top:24px}
+.process-step::before{
+  content:'';position:absolute;top:12px;left:50px;right:0;height:1px;
+  background:rgba(255,255,255,.12);
+}
+.process-step:last-child::before{display:none}
+.step-num{
+  width:44px;height:44px;border:1.5px solid var(--sage);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--sage);
+  margin-bottom:20px;position:relative;z-index:1;background:var(--navy);
+}
+.step-icon{font-size:22px;margin-bottom:12px}
+.process-step h4{
+  font-family:'Playfair Display',serif;font-size:18px;font-weight:600;
+  color:#fff;margin-bottom:8px;
+}
+.process-step p{font-size:14px;color:rgba(255,255,255,.6);line-height:1.6}
 
-    /* ── FOOTER ── */
-    footer {
-      background: var(--charcoal); color: rgba(255,255,255,.7);
-      padding: 48px 24px 24px;
-    }
-    .footer-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 36px;
-    }
-    .footer-brand h3 { font-size: 20px; font-weight: 800; color: #fff; margin-bottom: 10px; }
-    .footer-brand p { font-size: 14px; line-height: 1.6; }
-    .footer-col h4 { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 12px; letter-spacing: .5px; }
-    .footer-col ul { list-style: none; }
-    .footer-col ul li { padding: 4px 0; font-size: 14px; }
-    .footer-col ul li a:hover { color: #fff; }
-    .footer-bottom {
-      max-width: 1100px; margin: 36px auto 0;
-      padding-top: 20px; border-top: 1px solid rgba(255,255,255,.1);
-      display: flex; flex-wrap: wrap; justify-content: space-between;
-      font-size: 13px; gap: 8px;
-    }
-    .footer-license { font-size: 12px; color: rgba(255,255,255,.4); }
+/* ── CTA FORM ─────────────────────────────────────────────── */
+.cta-wrap{
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center;
+}
+@media(max-width:900px){.cta-wrap{grid-template-columns:1fr;gap:48px}}
+.cta-img{
+  position:relative;border-radius:12px;overflow:hidden;
+  aspect-ratio:4/5;
+}
+@media(max-width:900px){.cta-img{aspect-ratio:16/9}}
+.cta-img img{width:100%;height:100%;object-fit:cover}
+.cta-img-badge{
+  position:absolute;bottom:24px;left:24px;
+  background:rgba(26,58,74,.85);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.15);border-radius:10px;
+  padding:16px 20px;color:#fff;
+}
+.badge-big{font-family:'Playfair Display',serif;font-size:32px;font-weight:700;color:var(--wood)}
+.badge-small{font-size:12px;color:rgba(255,255,255,.7);margin-top:2px}
+.estimate-form{
+  background:#fff;border-radius:16px;padding:44px;
+  box-shadow:0 20px 60px rgba(0,0,0,.08);
+}
+.estimate-form h3{
+  font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  margin-bottom:8px;
+}
+.estimate-form p{font-size:14px;color:var(--gray);margin-bottom:28px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:520px){.form-row{grid-template-columns:1fr}}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:12px;font-weight:600;letter-spacing:.5px;
+  text-transform:uppercase;color:var(--dark);margin-bottom:7px}
+.form-group input,.form-group select,.form-group textarea{
+  width:100%;padding:13px 16px;
+  border:1.5px solid #e5e7eb;border-radius:10px;
+  font-size:15px;font-family:'Inter',sans-serif;
+  transition:border-color .2s,box-shadow .2s;background:#fff;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{
+  outline:none;border-color:var(--sage);box-shadow:0 0 0 4px rgba(100,125,104,.12);
+}
+.form-group textarea{min-height:90px;resize:vertical}
+.form-submit{
+  width:100%;background:var(--navy);color:#fff;border:none;
+  border-radius:10px;padding:16px;cursor:pointer;
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;
+  transition:all .25s var(--ease);letter-spacing:.5px;
+}
+.form-submit:hover{background:var(--sage);transform:translateY(-2px);box-shadow:0 8px 24px rgba(100,125,104,.35)}
+.form-note{font-size:12px;color:var(--gray);text-align:center;margin-top:10px}
+#form-success{display:none;text-align:center;padding:30px 0}
+#form-success .s-icon{font-size:52px;margin-bottom:14px}
+#form-success h4{font-family:'Playfair Display',serif;font-size:22px;margin-bottom:8px;color:var(--sage)}
+#form-success p{color:var(--gray);font-size:14px;line-height:1.7}
 
-    /* ── AI CHAT WIDGET ── */
-    #chat-btn {
-      position: fixed; bottom: 28px; right: 28px; z-index: 1000;
-      width: 60px; height: 60px; border-radius: 50%;
-      background: var(--teal); color: #fff; border: none; cursor: pointer;
-      box-shadow: 0 4px 20px rgba(44,85,112,.5);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px; transition: transform .2s, background .2s;
-    }
-    #chat-btn:hover { background: var(--teal-dark); transform: scale(1.08); }
-    #chat-btn .chat-badge {
-      position: absolute; top: -4px; right: -4px;
-      width: 20px; height: 20px; background: #ef4444; border-radius: 50%;
-      font-size: 11px; font-weight: 700; line-height: 20px; text-align: center;
-    }
-    #chat-window {
-      position: fixed; bottom: 104px; right: 28px; z-index: 999;
-      width: min(370px, calc(100vw - 40px));
-      height: 520px;
-      background: #fff; border-radius: 16px;
-      box-shadow: 0 12px 60px rgba(0,0,0,.2);
-      display: none; flex-direction: column; overflow: hidden;
-    }
-    #chat-window.open { display: flex; }
-    .chat-header {
-      background: var(--teal); color: #fff;
-      padding: 16px 20px; display: flex; align-items: center; gap: 12px;
-    }
-    .chat-avatar {
-      width: 38px; height: 38px; border-radius: 50%;
-      background: rgba(255,255,255,.2);
-      display: flex; align-items: center; justify-content: center; font-size: 18px;
-    }
-    .chat-agent-info strong { display: block; font-size: 15px; }
-    .chat-agent-info span { font-size: 12px; opacity: .8; }
-    .chat-online { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; margin-left: auto; }
-    #chat-messages {
-      flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px;
-    }
-    .msg {
-      max-width: 82%; padding: 10px 14px; border-radius: 12px; font-size: 14px; line-height: 1.5;
-    }
-    .msg.agent {
-      background: var(--offwhite); color: var(--charcoal);
-      border-bottom-left-radius: 4px; align-self: flex-start;
-    }
-    .msg.user {
-      background: var(--teal); color: #fff;
-      border-bottom-right-radius: 4px; align-self: flex-end;
-    }
-    .msg.typing { opacity: .6; font-style: italic; }
-    .chat-input-row {
-      padding: 12px 16px; border-top: 1px solid var(--lightgray);
-      display: flex; gap: 8px;
-    }
-    #chat-input {
-      flex: 1; border: 1.5px solid var(--lightgray); border-radius: 8px;
-      padding: 10px 12px; font-size: 14px; font-family: 'Roboto', sans-serif;
-      outline: none; transition: border-color .2s;
-    }
-    #chat-input:focus { border-color: var(--teal); }
-    #chat-send {
-      background: var(--teal); color: #fff; border: none; border-radius: 8px;
-      width: 40px; height: 40px; cursor: pointer; font-size: 18px;
-      display: flex; align-items: center; justify-content: center;
-      transition: background .2s;
-    }
-    #chat-send:hover { background: var(--teal-dark); }
-    .chat-powered { text-align: center; font-size: 11px; color: var(--gray); padding: 6px; }
+/* ── FAQ ──────────────────────────────────────────────────── */
+.faq-list{margin-top:50px;max-width:720px}
+.faq-item{border-bottom:1px solid #e5e7eb;padding:22px 0}
+.faq-q{
+  display:flex;justify-content:space-between;align-items:center;gap:20px;
+  cursor:pointer;font-weight:600;font-size:16px;color:var(--dark);
+  transition:color .2s;
+}
+.faq-q:hover{color:var(--sage)}
+.faq-icon{
+  width:28px;height:28px;border:1.5px solid var(--dark);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:16px;transition:all .25s;
+}
+.faq-item.open .faq-icon{background:var(--navy);border-color:var(--navy);color:#fff;transform:rotate(45deg)}
+.faq-a{
+  font-size:15px;color:var(--gray);line-height:1.75;
+  max-height:0;overflow:hidden;transition:max-height .35s var(--ease),padding .2s;
+}
+.faq-item.open .faq-a{max-height:240px;padding-top:14px}
 
-    /* ── MOBILE STICKY CTA ── */
-    .mobile-cta {
-      position: fixed; bottom: 0; left: 0; right: 0; z-index: 90;
-      display: none;
-      background: var(--green); color: #fff; text-align: center;
-      padding: 14px; font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 16px;
-    }
-    @media(max-width:639px){ .mobile-cta { display: block; } }
+/* ── FOOTER ───────────────────────────────────────────────── */
+footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)}
+.footer-grid{
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;
+  margin-bottom:60px;
+}
+@media(max-width:900px){.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.footer-grid{grid-template-columns:1fr}}
+.footer-brand h3{
+  font-family:'Playfair Display',serif;font-size:22px;font-weight:700;
+  color:#fff;margin-bottom:14px;
+}
+.footer-brand p{font-size:14px;line-height:1.7;max-width:300px}
+.footer-contact{margin-top:20px}
+.footer-contact a{display:block;color:rgba(255,255,255,.65);font-size:14px;padding:3px 0;transition:color .2s}
+.footer-contact a:hover{color:#fff}
+.footer-col h4{font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:#fff;margin-bottom:18px}
+.footer-col ul{list-style:none}
+.footer-col li{padding:5px 0}
+.footer-col a{font-size:14px;color:rgba(255,255,255,.55);transition:color .2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{
+  max-width:1160px;margin:0 auto;
+  padding-top:24px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  font-size:12px;
+}
+.footer-lic{color:rgba(255,255,255,.3)}
 
-    /* ── FORM SUCCESS ── */
-    #form-success {
-      display: none; text-align: center; padding: 20px 0;
-    }
-    #form-success .success-icon { font-size: 48px; margin-bottom: 12px; }
-    #form-success h4 { font-size: 20px; font-weight: 700; margin-bottom: 8px; color: var(--green); }
-    #form-success p { color: var(--gray); font-size: 14px; }
-  </style>
+/* ── CHAT WIDGET ──────────────────────────────────────────── */
+#chat-btn{
+  position:fixed;bottom:28px;right:28px;z-index:1000;
+  width:62px;height:62px;border-radius:50%;border:none;cursor:pointer;
+  background:var(--navy);color:#fff;font-size:26px;
+  box-shadow:0 8px 32px rgba(26,58,74,.45);
+  display:flex;align-items:center;justify-content:center;
+  transition:all .25s var(--ease);
+}
+#chat-btn:hover{background:var(--sage);transform:scale(1.08)}
+#chat-btn .badge{
+  position:absolute;top:-3px;right:-3px;
+  width:20px;height:20px;background:#ef4444;border-radius:50%;
+  font-size:11px;font-weight:700;line-height:20px;text-align:center;color:#fff;
+}
+#chat-window{
+  position:fixed;bottom:108px;right:28px;z-index:999;
+  width:min(375px,calc(100vw - 40px));height:520px;
+  background:#fff;border-radius:18px;
+  box-shadow:0 20px 80px rgba(0,0,0,.2);
+  display:none;flex-direction:column;overflow:hidden;
+}
+#chat-window.open{display:flex}
+.chat-header{
+  background:var(--navy);color:#fff;padding:18px 20px;
+  display:flex;align-items:center;gap:12px;
+}
+.chat-av{
+  width:38px;height:38px;border-radius:50%;background:var(--sage);
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+}
+.chat-agent strong{display:block;font-size:14px;font-weight:600}
+.chat-agent span{font-size:11px;opacity:.7}
+.chat-online-dot{
+  width:9px;height:9px;background:#4ade80;border-radius:50%;margin-left:auto;
+  box-shadow:0 0 6px #4ade80;
+}
+#chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
+.msg{
+  max-width:80%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;
+}
+.msg.agent{background:var(--light);color:var(--dark);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.user{background:var(--navy);color:#fff;border-bottom-right-radius:4px;align-self:flex-end}
+.chat-input-row{
+  padding:12px 14px;border-top:1px solid #f0f0f0;display:flex;gap:8px;
+}
+#chat-input{
+  flex:1;border:1.5px solid #e5e7eb;border-radius:10px;padding:10px 12px;
+  font-size:14px;outline:none;transition:border-color .2s;
+}
+#chat-input:focus{border-color:var(--navy)}
+#chat-send{
+  width:40px;height:40px;background:var(--navy);color:#fff;border:none;
+  border-radius:10px;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;
+  transition:background .2s;
+}
+#chat-send:hover{background:var(--sage)}
+
+/* ── MOBILE STICKY ────────────────────────────────────────── */
+.mobile-cta{
+  position:fixed;bottom:0;left:0;right:0;z-index:90;display:none;
+  background:var(--sage);color:#fff;text-align:center;padding:15px;
+  font-family:'Montserrat',sans-serif;font-weight:700;font-size:15px;
+}
+@media(max-width:639px){.mobile-cta{display:block}}
+</style>
 </head>
 <body>
 
+<!-- SCROLL PROGRESS -->
+<div id="progress-bar"></div>
+
+<!-- LOADER -->
+<div id="loader">
+  <div class="loader-logo">Seattle Pro Remodeling</div>
+  <div class="loader-bar"><div class="loader-fill"></div></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lightbox">
+  <button id="lightbox-close">✕</button>
+  <button id="lightbox-prev">‹</button>
+  <img id="lightbox-img" src="" alt="">
+  <button id="lightbox-next">›</button>
+</div>
+
 <!-- NAVBAR -->
-<nav class="navbar">
-  <div class="nav-logo">Seattle<span>Pro</span> Remodeling</div>
-  <div class="nav-phone"><a href="tel:+12065550000">(206) 555-0000</a></div>
+<nav class="navbar" id="navbar">
+  <div class="nav-logo">Seattle<em>Pro</em></div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#gallery">Gallery</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#faq">FAQ</a></li>
+  </ul>
   <a href="#estimate" class="nav-cta">Free Estimate</a>
 </nav>
 
 <!-- HERO -->
 <section class="hero" id="home">
-  <div class="hero-inner">
-    <div class="hero-badge">⭐ Serving Seattle Since 2015</div>
-    <h1>Transform Your Home With <em>Seattle's Trusted</em> Remodeling Team</h1>
-    <p>Expert bathroom remodels, kitchen renovations & fence installation. Licensed, insured, and backed by hundreds of 5-star reviews across the Seattle metro area.</p>
-    <div class="hero-btns">
-      <a href="#estimate" class="btn-primary">Get My Free Estimate →</a>
-      <a href="tel:+12065550000" class="btn-outline">📞 Call (206) 555-0000</a>
+  <div class="hero-slides" id="heroSlides">
+    <div class="hero-slide active">
+      <img src="images/hero-1.jpg" alt="Bathroom remodel Seattle"
+        onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=85'">
+    </div>
+    <div class="hero-slide">
+      <img src="images/hero-2.jpg" alt="Kitchen remodel Seattle"
+        onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=85'">
+    </div>
+    <div class="hero-slide">
+      <img src="images/hero-3.jpg" alt="Bathroom renovation"
+        onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=85&fit=crop&crop=right'">
+    </div>
+    <div class="hero-slide">
+      <img src="images/hero-4.jpg" alt="Modern kitchen"
+        onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=85&fit=crop&crop=left'">
     </div>
   </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-label" id="hl">⭐ Seattle's #1 Remodeling Team</div>
+    <h1 id="hh">Craft Your<br><em>Dream Space</em></h1>
+    <p class="hero-sub" id="hs">Premium bathroom remodels, kitchen renovations & fence installations. Trusted by 500+ Seattle homeowners since 2015.</p>
+    <div class="hero-btns" id="hb">
+      <a href="#estimate" class="btn-primary">Get Free Estimate →</a>
+      <a href="tel:+12065550000" class="btn-ghost">📞 (206) 555-0000</a>
+    </div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+  <div class="hero-scroll"><div class="scroll-line"></div> SCROLL</div>
 </section>
 
 <!-- TRUST BAR -->
 <div class="trust-bar">
-  <div class="trust-item"><span class="trust-icon">✅</span> WA State Licensed</div>
-  <div class="trust-item"><span class="trust-icon">🛡️</span> Fully Insured</div>
-  <div class="trust-item"><span class="trust-icon">⭐</span> 5-Star Rated (100+ Reviews)</div>
-  <div class="trust-item"><span class="trust-icon">📍</span> Seattle-Based Team</div>
-  <div class="trust-item"><span class="trust-icon">🔒</span> Background Checked</div>
+  <div class="trust-item"><div class="trust-dot"></div> WA State Licensed</div>
+  <div class="trust-item"><div class="trust-dot"></div> Fully Insured</div>
+  <div class="trust-item"><div class="trust-dot"></div> 500+ Projects Completed</div>
+  <div class="trust-item"><div class="trust-dot"></div> 5-Star Google Rated</div>
+  <div class="trust-item"><div class="trust-dot"></div> 10-Year Workmanship Warranty</div>
 </div>
 
 <!-- SERVICES -->
 <section class="section" id="services">
   <div class="container">
-    <div class="section-label">What We Do</div>
-    <h2 class="section-title">Three Services. Exceptional Results.</h2>
-    <p class="section-sub">Every project is handled by our in-house team — no subcontractors. You get the same crew from day one to sign-off.</p>
-    <div class="services-grid">
-
-      <div class="service-card">
-        <img class="service-img"
-          src="https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80"
-          alt="Bathroom remodel Seattle" loading="lazy">
-        <div class="service-body">
-          <div class="service-icon">🚿</div>
+    <div class="services-intro">
+      <div class="reveal">
+        <div class="eyebrow">What We Do</div>
+        <h2 class="section-title">Three Services.<br>One Standard of Excellence.</h2>
+      </div>
+      <div class="reveal right">
+        <p class="section-body">Every project is handled by our in-house team — no subcontractors. The same crew from demolition to final walkthrough, ensuring quality at every step.</p>
+        <a href="#estimate" class="btn-primary" style="display:inline-block;margin-top:28px;text-decoration:none">View Our Work →</a>
+      </div>
+    </div>
+    <div class="services-grid stagger">
+      <div class="service-tile reveal scale">
+        <img src="images/service-bathroom.jpg" alt="Bathroom Remodel Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80'">
+        <div class="service-overlay"></div>
+        <div class="service-content">
+          <div class="service-tag">Bathroom</div>
           <h3>Bathroom Remodel</h3>
-          <p>From quick refresh to full gut renovation — we handle tile, plumbing, vanities, and everything in between.</p>
-          <ul class="service-features">
-            <li>Walk-in showers & soaking tubs</li>
-            <li>Custom tile work & waterproofing</li>
-            <li>Vanity & fixture replacement</li>
-            <li>Accessible / ADA upgrades</li>
-          </ul>
-          <div class="service-price">Starting from <strong>$4,000</strong> · Most projects 7–12 days</div>
+          <p>From walk-in showers to full gut renovations. Custom tile, premium fixtures, and flawless finishes that transform your daily routine.</p>
+          <div class="service-price">Starting from $4,000 · 7–14 days</div>
         </div>
       </div>
-
-      <div class="service-card">
-        <img class="service-img"
-          src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80"
-          alt="Kitchen remodel Seattle" loading="lazy">
-        <div class="service-body">
-          <div class="service-icon">🍳</div>
+      <div class="service-tile reveal scale">
+        <img src="images/service-kitchen.jpg" alt="Kitchen Remodel Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80'">
+        <div class="service-overlay"></div>
+        <div class="service-content">
+          <div class="service-tag">Kitchen</div>
           <h3>Kitchen Remodel</h3>
-          <p>Redesign the heart of your home. New cabinets, countertops, appliances, and flooring — all done right.</p>
-          <ul class="service-features">
-            <li>Custom & semi-custom cabinets</li>
-            <li>Quartz, granite & butcher block countertops</li>
-            <li>Backsplash tile & flooring</li>
-            <li>Layout reconfiguration</li>
-          </ul>
-          <div class="service-price">Starting from <strong>$5,000</strong> · Most projects 10–18 days</div>
+          <p>Redesign the heart of your home. Custom cabinets, quartz countertops, and thoughtful layouts that blend beauty with function.</p>
+          <div class="service-price">Starting from $5,000 · 10–18 days</div>
         </div>
       </div>
-
-      <div class="service-card">
-        <img class="service-img"
-          src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"
-          alt="Fence installation Seattle" loading="lazy">
-        <div class="service-body">
-          <div class="service-icon">🏡</div>
+      <div class="service-tile reveal scale">
+        <img src="images/service-fence.jpg" alt="Fence Installation Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80'">
+        <div class="service-overlay"></div>
+        <div class="service-content">
+          <div class="service-tag">Fence</div>
           <h3>Fence Installation</h3>
-          <p>Cedar, vinyl, or composite — we build fences that handle Seattle weather and add real curb appeal.</p>
-          <ul class="service-features">
-            <li>Wood, vinyl & composite options</li>
-            <li>Privacy, picket & ranch styles</li>
-            <li>Gates & automated openers</li>
-            <li>Property line expertise</li>
-          </ul>
-          <div class="service-price">Starting from <strong>$15/lin ft</strong> · Most projects 3–6 days</div>
+          <p>Cedar, composite, and vinyl fences built to withstand Seattle's weather. Clean lines, solid construction, lasting curb appeal.</p>
+          <div class="service-price">Starting from $15/lin ft · 3–6 days</div>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
+<!-- STATS -->
+<section class="stats-section">
+  <div class="stats-grid stagger">
+    <div class="reveal">
+      <div class="stat-num" data-target="500">0</div>
+      <div class="stat-line"></div>
+      <div class="stat-label">Projects Completed</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-num" data-target="10">0</div>
+      <div class="stat-line"></div>
+      <div class="stat-label">Years in Seattle</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-num" data-target="98">0</div>
+      <div class="stat-line"></div>
+      <div class="stat-label">% Client Satisfaction</div>
+    </div>
+    <div class="reveal">
+      <div class="stat-num" data-target="4">0</div>
+      <div class="stat-line"></div>
+      <div class="stat-label">Day Avg Response Time</div>
     </div>
   </div>
 </section>
@@ -488,34 +739,110 @@
 <!-- GALLERY -->
 <section class="section section-alt" id="gallery">
   <div class="container">
-    <div class="section-label">Our Work</div>
-    <h2 class="section-title">Recent Projects in Seattle</h2>
-    <p class="section-sub">Every project you see below was completed by our crew, right here in the Seattle metro area.</p>
-    <div class="gallery-grid">
-      <!-- Replace src with your actual before/after photos -->
-      <div class="gallery-item">
-        <div class="gallery-placeholder"><span>📷</span>Add your photo here<small>Ballard Bathroom Remodel</small></div>
-        <div class="gallery-label">Ballard · Bathroom · Full Renovation</div>
+    <div class="reveal">
+      <div class="eyebrow">Our Work</div>
+      <h2 class="section-title">Recent Seattle Projects</h2>
+      <p class="section-body" style="margin-bottom:36px">Every photo is a real project completed by our team. Tap any image to view full size.</p>
+    </div>
+    <div class="gallery-filter reveal">
+      <button class="filter-btn active" data-filter="all">All Projects</button>
+      <button class="filter-btn" data-filter="bathroom">Bathrooms</button>
+      <button class="filter-btn" data-filter="kitchen">Kitchens</button>
+      <button class="filter-btn" data-filter="fence">Fences</button>
+    </div>
+    <div class="gallery-masonry" id="galleryGrid">
+
+      <div class="gallery-item reveal" data-cat="bathroom">
+        <img src="images/gallery-bathroom-1.jpg" alt="Bathroom remodel Ballard"
+          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Bathroom · Ballard</span><strong>Sage Green & White Oak</strong></div>
+        </div>
       </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder"><span>📷</span>Add your photo here<small>Capitol Hill Kitchen</small></div>
-        <div class="gallery-label">Capitol Hill · Kitchen · $28k Project</div>
+
+      <div class="gallery-item reveal" data-cat="kitchen">
+        <img src="images/gallery-kitchen-1.jpg" alt="Kitchen remodel Capitol Hill"
+          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Kitchen · Capitol Hill</span><strong>Modern Farmhouse</strong></div>
+        </div>
       </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder"><span>📷</span>Add your photo here<small>Bellevue Fence</small></div>
-        <div class="gallery-label">Bellevue · Cedar Fence · 180 Lin Ft</div>
+
+      <div class="gallery-item reveal" data-cat="bathroom">
+        <img src="images/gallery-bathroom-2.jpg" alt="Master bathroom Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80&fit=crop&crop=bottom'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Bathroom · Queen Anne</span><strong>Master Suite Spa</strong></div>
+        </div>
       </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder"><span>📷</span>Add your photo here<small>Fremont Bathroom</small></div>
-        <div class="gallery-label">Fremont · Master Bath · Walk-in Shower</div>
+
+      <div class="gallery-item reveal" data-cat="fence">
+        <img src="images/gallery-fence-1.jpg" alt="Cedar fence installation"
+          onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&q=80'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Fence · Bellevue</span><strong>Cedar Horizontal Privacy</strong></div>
+        </div>
       </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder"><span>📷</span>Add your photo here<small>Queen Anne Kitchen</small></div>
-        <div class="gallery-label">Queen Anne · Kitchen · Cabinet Refacing</div>
+
+      <div class="gallery-item reveal" data-cat="kitchen">
+        <img src="images/gallery-kitchen-2.jpg" alt="Kitchen renovation Fremont"
+          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80&fit=crop&crop=right'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Kitchen · Fremont</span><strong>Walnut & White Quartz</strong></div>
+        </div>
       </div>
-      <div class="gallery-item">
-        <div class="gallery-placeholder"><span>📷</span>Add your photo here<small>Redmond Fence</small></div>
-        <div class="gallery-label">Redmond · Composite Fence + Gate</div>
+
+      <div class="gallery-item reveal" data-cat="bathroom">
+        <img src="images/gallery-bathroom-3.jpg" alt="Bathroom remodel Redmond"
+          onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=700&q=80&fit=crop&crop=top'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Bathroom · Redmond</span><strong>Double Vanity Suite</strong></div>
+        </div>
+      </div>
+
+      <div class="gallery-item reveal" data-cat="kitchen">
+        <img src="images/gallery-kitchen-3.jpg" alt="Contemporary kitchen Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80&fit=crop&crop=left'">
+        <div class="gallery-caption">
+          <div class="gallery-caption-text"><span>Kitchen · Kirkland</span><strong>Forest Green Contemporary</strong></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process-section">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow" style="color:var(--sage)">How It Works</div>
+      <h2 class="section-title" style="color:#fff">From First Call to<br>Final Walkthrough</h2>
+    </div>
+    <div class="process-grid stagger">
+      <div class="process-step reveal">
+        <div class="step-num">01</div>
+        <div class="step-icon">📞</div>
+        <h4>Free Consultation</h4>
+        <p>Tell us about your project. We'll ask the right questions and schedule an on-site visit within 48 hours.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">02</div>
+        <div class="step-icon">📐</div>
+        <h4>On-Site Estimate</h4>
+        <p>We visit your home, take precise measurements, and deliver a detailed written estimate within 24 hours.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">03</div>
+        <div class="step-icon">🔨</div>
+        <h4>We Build It</h4>
+        <p>Our own crew handles everything. Daily updates, zero mess left overnight, and zero surprises on the final bill.</p>
+      </div>
+      <div class="process-step reveal">
+        <div class="step-num">04</div>
+        <div class="step-icon">✅</div>
+        <h4>Your Approval</h4>
+        <p>We walk through every detail together. We don't close out until you're completely satisfied — guaranteed.</p>
       </div>
     </div>
   </div>
@@ -524,152 +851,142 @@
 <!-- TESTIMONIALS -->
 <section class="section" id="reviews">
   <div class="container">
-    <div class="section-label">Reviews</div>
-    <h2 class="section-title">What Seattle Homeowners Say</h2>
-    <p class="section-sub">Replace these with your real Google Reviews — ask happy customers to leave one!</p>
-    <div class="testimonials-grid">
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <blockquote>"They transformed our dated bathroom into something we see in magazines. On time, on budget, and incredibly professional. Alex kept us updated every single day."</blockquote>
-        <div class="reviewer">
-          <div class="reviewer-avatar">SM</div>
-          <div class="reviewer-info">
-            <strong>Sarah M.</strong>
-            <span>Ballard · Bathroom Remodel</span>
-          </div>
+    <div class="reveal">
+      <div class="eyebrow">Client Reviews</div>
+      <h2 class="section-title">What Seattle Homeowners Say</h2>
+    </div>
+    <div class="testimonials-track stagger" style="margin-top:52px">
+      <div class="testimonial reveal">
+        <div class="t-quote">"</div>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">They transformed our dated bathroom into something out of a design magazine. On time, on budget, and incredibly professional. Our contractor Alex kept us updated every single day.</p>
+        <div class="t-author">
+          <div class="t-avatar">SM</div>
+          <div><div class="t-name">Sarah M.</div><div class="t-location">Ballard · Bathroom Remodel</div></div>
         </div>
       </div>
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Best contractor experience I've ever had. They finished our kitchen 2 days early and cleaned up every evening. The quartz countertops are absolutely stunning."</blockquote>
-        <div class="reviewer">
-          <div class="reviewer-avatar">JR</div>
-          <div class="reviewer-info">
-            <strong>James R.</strong>
-            <span>Capitol Hill · Kitchen Remodel</span>
-          </div>
+      <div class="testimonial reveal">
+        <div class="t-quote">"</div>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">Best contractor experience I've ever had. They finished our kitchen two days early and cleaned up every evening. The quartz countertops and walnut cabinets are absolutely stunning.</p>
+        <div class="t-author">
+          <div class="t-avatar">JR</div>
+          <div><div class="t-name">James R.</div><div class="t-location">Capitol Hill · Kitchen Remodel</div></div>
         </div>
       </div>
-
-      <div class="testimonial-card">
-        <div class="stars">★★★★★</div>
-        <blockquote>"Got 4 quotes for our fence. Seattle Pro was not the cheapest but they were the most professional. Two years later it looks brand new through all the Seattle rain."</blockquote>
-        <div class="reviewer">
-          <div class="reviewer-avatar">LP</div>
-          <div class="reviewer-info">
-            <strong>Linda P.</strong>
-            <span>Bellevue · Cedar Fence</span>
-          </div>
+      <div class="testimonial reveal">
+        <div class="t-quote">"</div>
+        <div class="t-stars">★★★★★</div>
+        <p class="t-text">Got four quotes for our cedar fence. Seattle Pro wasn't the cheapest, but two years later it looks brand new through all the Seattle rain. Clearly worth every penny.</p>
+        <div class="t-author">
+          <div class="t-avatar">LP</div>
+          <div><div class="t-name">Linda P.</div><div class="t-location">Bellevue · Cedar Fence</div></div>
         </div>
       </div>
-
     </div>
   </div>
 </section>
 
-<!-- CTA + ESTIMATE FORM -->
-<section class="cta-section" id="estimate">
-  <div class="cta-inner">
-    <div class="cta-text">
-      <div class="section-label" style="color:#7dd3fc">Get Started Today</div>
-      <h2>Ready for a Free On-Site Estimate?</h2>
-      <p>We'll come to you, take measurements, understand your vision, and give you an honest price — no pressure, no obligation.</p>
-      <ul class="cta-bullets">
-        <li>Free on-site consultation</li>
-        <li>Written estimate within 24 hours</li>
-        <li>Financing options available</li>
-        <li>We start within 2 weeks</li>
-      </ul>
-    </div>
-
-    <div class="estimate-form">
-      <h3>Get Your Free Estimate</h3>
-      <form id="lead-form">
-        <div class="form-row">
-          <div class="form-group">
-            <label for="f-name">Your Name *</label>
-            <input type="text" id="f-name" name="name" placeholder="John Smith" required>
-          </div>
-          <div class="form-group">
-            <label for="f-phone">Phone Number *</label>
-            <input type="tel" id="f-phone" name="phone" placeholder="(206) 555-0000" required>
+<!-- CTA + FORM -->
+<section class="section section-alt" id="estimate">
+  <div class="container">
+    <div class="cta-wrap">
+      <div class="reveal left">
+        <div class="cta-img">
+          <img src="images/cta-photo.jpg" alt="Seattle remodeling"
+            onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80'">
+          <div class="cta-img-badge">
+            <div class="badge-big">Free</div>
+            <div class="badge-small">On-Site Estimate</div>
           </div>
         </div>
-        <div class="form-group">
-          <label for="f-service">What Do You Need? *</label>
-          <select id="f-service" name="service" required>
-            <option value="">— Select a service —</option>
-            <option value="bathroom">Bathroom Remodel</option>
-            <option value="kitchen">Kitchen Remodel</option>
-            <option value="fence">Fence Installation</option>
-            <option value="other">Other / Multiple</option>
-          </select>
+      </div>
+      <div class="reveal right">
+        <div class="estimate-form">
+          <h3>Start Your Project Today</h3>
+          <p>Fill this out and we'll call you within 2 hours to schedule your free on-site visit.</p>
+          <form id="lead-form">
+            <div class="form-row">
+              <div class="form-group">
+                <label>Your Name</label>
+                <input type="text" id="f-name" placeholder="John Smith" required>
+              </div>
+              <div class="form-group">
+                <label>Phone Number</label>
+                <input type="tel" id="f-phone" placeholder="(206) 555-0000" required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>What Do You Need?</label>
+              <select id="f-service" required>
+                <option value="">— Select a service —</option>
+                <option value="bathroom">Bathroom Remodel</option>
+                <option value="kitchen">Kitchen Remodel</option>
+                <option value="fence">Fence Installation</option>
+                <option value="other">Multiple / Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Tell Us About Your Project</label>
+              <textarea id="f-message" placeholder="e.g. Full gut renovation of an 80 sq ft bathroom, want walk-in shower and heated floors..."></textarea>
+            </div>
+            <button type="submit" class="form-submit">Get My Free Estimate →</button>
+            <p class="form-note">🔒 We never share your info. Response within 2 hours.</p>
+          </form>
+          <div id="form-success">
+            <div class="s-icon">🎉</div>
+            <h4>We'll Call You Soon!</h4>
+            <p>Expect a call within 2 hours to schedule your free on-site estimate. We look forward to working with you.</p>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="f-message">Tell Us About Your Project</label>
-          <textarea id="f-message" name="message" placeholder="e.g. Full gut renovation of a 75 sq ft bathroom, need walk-in shower..."></textarea>
-        </div>
-        <button type="submit" class="form-submit">Get My Free Estimate →</button>
-        <p class="form-note">🔒 We respect your privacy. No spam, ever.</p>
-      </form>
-
-      <div id="form-success">
-        <div class="success-icon">🎉</div>
-        <h4>We Got Your Request!</h4>
-        <p>Our team will call you within 2 hours to schedule your free on-site estimate.</p>
       </div>
     </div>
   </div>
 </section>
 
 <!-- FAQ -->
-<section class="section section-alt" id="faq">
+<section class="section" id="faq">
   <div class="container">
-    <div class="section-label">FAQ</div>
-    <h2 class="section-title">Common Questions</h2>
-    <div class="faq-list">
-
+    <div class="reveal">
+      <div class="eyebrow">FAQ</div>
+      <h2 class="section-title">Common Questions</h2>
+    </div>
+    <div class="faq-list reveal">
       <div class="faq-item">
-        <div class="faq-q">How long does a bathroom remodel take? <span class="faq-arrow">▼</span></div>
-        <div class="faq-a">Most bathroom remodels take 7–12 days. A simple cosmetic update (vanity, toilet, paint) can be done in 3–4 days. A full gut renovation with new tile, plumbing, and electrical typically takes 10–14 days.</div>
+        <div class="faq-q">How long does a bathroom remodel take? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Most bathroom remodels take 7–12 days. A simple cosmetic update (vanity, toilet, paint) can be done in 3–4 days. A full gut renovation with new tile, plumbing, and electrical typically takes 10–14 days. We'll give you an accurate timeline before work begins.</div>
       </div>
-
       <div class="faq-item">
-        <div class="faq-q">Do you offer financing? <span class="faq-arrow">▼</span></div>
-        <div class="faq-a">Yes! We work with financing partners that offer 0% APR for qualified buyers on projects over $5,000. Ask about this during your free estimate and we'll walk you through options.</div>
+        <div class="faq-q">Do you offer financing? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Yes. We work with financing partners offering 0% APR for qualified buyers on projects over $5,000. Ask about financing options during your free estimate — many of our clients use it to get the full remodel they want rather than cutting corners.</div>
       </div>
-
       <div class="faq-item">
-        <div class="faq-q">Are you licensed and insured in Washington State? <span class="faq-arrow">▼</span></div>
-        <div class="faq-a">Yes. We are fully licensed with the Washington State Department of Labor & Industries (L&I) and carry full general liability insurance. We can provide proof of insurance before any project begins.</div>
+        <div class="faq-q">Are you licensed and insured in Washington State? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Absolutely. We are fully licensed with the Washington State Department of Labor & Industries (L&I) and carry comprehensive general liability insurance. We can provide proof of insurance and our license number before any project begins.</div>
       </div>
-
       <div class="faq-item">
-        <div class="faq-q">Do you use subcontractors? <span class="faq-arrow">▼</span></div>
-        <div class="faq-a">No. Every project is completed by our own trained, background-checked employees. This gives us full control over quality and timeline — and means you deal with us, not a random third party.</div>
+        <div class="faq-q">Do you use subcontractors? <span class="faq-icon">+</span></div>
+        <div class="faq-a">No. Every project is completed by our own trained, background-checked employees. This gives us full control over quality and timeline — and means you deal with us directly, not a random third party who doesn't know your project's history.</div>
       </div>
-
       <div class="faq-item">
-        <div class="faq-q">What areas of Seattle do you serve? <span class="faq-arrow">▼</span></div>
-        <div class="faq-a">We serve all of Seattle and surrounding areas including Bellevue, Kirkland, Redmond, Renton, Shoreline, Burien, and more. Give us a call or fill out the form and we'll confirm your area.</div>
+        <div class="faq-q">What areas of Seattle do you serve? <span class="faq-icon">+</span></div>
+        <div class="faq-a">We serve all of Seattle and the greater metro area, including Bellevue, Kirkland, Redmond, Renton, Shoreline, Burien, Mercer Island, and more. Fill out the form or call us to confirm your address is in our service area.</div>
       </div>
-
     </div>
   </div>
 </section>
 
 <!-- FOOTER -->
 <footer>
-  <div class="footer-inner">
+  <div class="footer-grid">
     <div class="footer-brand">
       <h3>Seattle Pro Remodeling</h3>
-      <p>Transforming Seattle homes since 2015. Licensed, insured, and committed to quality craftsmanship.</p>
-      <p style="margin-top:12px; font-size:13px">
-        📞 <a href="tel:+12065550000" style="color:rgba(255,255,255,.7)">(206) 555-0000</a><br>
-        ✉️ info@seattleproremodeling.com
-      </p>
+      <p>Transforming Seattle homes since 2015. Licensed, insured, and committed to craftsmanship that lasts for decades.</p>
+      <div class="footer-contact">
+        <a href="tel:+12065550000">📞 (206) 555-0000</a>
+        <a href="mailto:info@seattleproremodeling.com">✉️ info@seattleproremodeling.com</a>
+        <a href="#">📍 Seattle, WA</a>
+      </div>
     </div>
     <div class="footer-col">
       <h4>Services</h4>
@@ -680,10 +997,10 @@
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Quick Links</h4>
+      <h4>Company</h4>
       <ul>
-        <li><a href="#gallery">Our Work</a></li>
-        <li><a href="#reviews">Reviews</a></li>
+        <li><a href="#gallery">Our Portfolio</a></li>
+        <li><a href="#reviews">Client Reviews</a></li>
         <li><a href="#faq">FAQ</a></li>
         <li><a href="#estimate">Free Estimate</a></li>
       </ul>
@@ -691,161 +1008,233 @@
     <div class="footer-col">
       <h4>Service Areas</h4>
       <ul>
-        <li>Seattle (all neighborhoods)</li>
-        <li>Bellevue · Kirkland</li>
-        <li>Redmond · Renton</li>
-        <li>Shoreline · Burien</li>
-        <li>And more — just ask!</li>
+        <li><a href="#">Seattle</a></li>
+        <li><a href="#">Bellevue · Kirkland</a></li>
+        <li><a href="#">Redmond · Renton</a></li>
+        <li><a href="#">Shoreline · Burien</a></li>
       </ul>
     </div>
   </div>
   <div class="footer-bottom">
     <span>© 2026 Seattle Pro Remodeling. All rights reserved.</span>
-    <span class="footer-license">WA State License #XXXXXXXXX · Fully Insured</span>
+    <span class="footer-lic">WA License #XXXXXXXXX · Fully Insured</span>
   </div>
 </footer>
 
-<!-- MOBILE STICKY CTA -->
+<!-- MOBILE CTA -->
 <a href="#estimate" class="mobile-cta">Get My Free Estimate →</a>
 
-<!-- AI CHAT WIDGET -->
-<button id="chat-btn" aria-label="Chat with us">
-  💬
-  <span class="chat-badge">1</span>
-</button>
-
-<div id="chat-window" role="dialog" aria-label="Chat with Alex">
+<!-- CHAT -->
+<button id="chat-btn"><span>💬</span><span class="badge">1</span></button>
+<div id="chat-window">
   <div class="chat-header">
-    <div class="chat-avatar">👷</div>
-    <div class="chat-agent-info">
-      <strong>Alex</strong>
-      <span>Project Coordinator</span>
-    </div>
-    <div class="chat-online"></div>
+    <div class="chat-av">👷</div>
+    <div class="chat-agent"><strong>Alex</strong><span>Project Coordinator</span></div>
+    <div class="chat-online-dot"></div>
   </div>
-  <div id="chat-messages">
-    <div class="msg agent">
-      Hi there! 👋 I'm Alex, a project coordinator at Seattle Pro Remodeling.<br><br>
-      What type of project are you thinking about — bathroom remodel, kitchen, fence, or something else?
-    </div>
+  <div id="chat-msgs">
+    <div class="msg agent">Hi! 👋 I'm Alex from Seattle Pro Remodeling.<br><br>What type of project are you thinking about — bathroom, kitchen, fence, or something else?</div>
   </div>
   <div class="chat-input-row">
-    <input type="text" id="chat-input" placeholder="Type your message..." autocomplete="off">
-    <button id="chat-send" aria-label="Send">➤</button>
+    <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
+    <button id="chat-send">➤</button>
   </div>
-  <div class="chat-powered">Powered by AI · Real humans follow up</div>
 </div>
 
 <script>
-// ── FAQ ACCORDION ──────────────────────────────────────────
-document.querySelectorAll('.faq-item').forEach(item => {
-  item.querySelector('.faq-q').addEventListener('click', () => {
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
+// ─── LOADER ───────────────────────────────────────────────
+window.addEventListener('load',()=>{
+  const l=document.getElementById('loader');
+  l.classList.add('active');
+  setTimeout(()=>{
+    l.classList.add('done');
+    // trigger hero animations
+    ['hl','hh','hs','hb'].forEach(id=>document.getElementById(id)?.classList.add('show'));
+  },2000);
+});
+
+// ─── SCROLL PROGRESS ──────────────────────────────────────
+const prog=document.getElementById('progress-bar');
+window.addEventListener('scroll',()=>{
+  const pct=(window.scrollY/(document.documentElement.scrollHeight-window.innerHeight))*100;
+  prog.style.width=pct+'%';
+});
+
+// ─── NAVBAR SCROLL ────────────────────────────────────────
+const nav=document.getElementById('navbar');
+window.addEventListener('scroll',()=>{
+  nav.classList.toggle('scrolled',window.scrollY>80);
+});
+
+// ─── HERO SLIDESHOW ───────────────────────────────────────
+const slides=[...document.querySelectorAll('.hero-slide')];
+const dotsEl=document.getElementById('heroDots');
+let cur=0,timer;
+
+slides.forEach((_,i)=>{
+  const d=document.createElement('div');
+  d.className='dot'+(i===0?' active':'');
+  d.addEventListener('click',()=>goTo(i));
+  dotsEl.appendChild(d);
+});
+
+function goTo(n){
+  slides[cur].classList.remove('active');
+  dotsEl.children[cur].classList.remove('active');
+  cur=(n+slides.length)%slides.length;
+  slides[cur].classList.add('active');
+  // re-trigger ken burns
+  const img=slides[cur].querySelector('img');
+  img.style.animation='none';
+  img.offsetHeight; // reflow
+  img.style.animation='';
+  dotsEl.children[cur].classList.add('active');
+  clearInterval(timer);
+  timer=setInterval(()=>goTo(cur+1),5500);
+}
+timer=setInterval(()=>goTo(cur+1),5500);
+
+// ─── SCROLL REVEAL ────────────────────────────────────────
+const observer=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){e.target.classList.add('shown');observer.unobserve(e.target)}
+  });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+
+// ─── COUNTER ANIMATION ────────────────────────────────────
+const counterObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const el=e.target, target=+el.dataset.target;
+    const suffix=target===98?'%':target===4?'hr':'+'
+    let n=0; const step=target/60;
+    const iv=setInterval(()=>{
+      n=Math.min(n+step,target);
+      el.textContent=Math.floor(n)+suffix;
+      if(n>=target) clearInterval(iv);
+    },16);
+    counterObs.unobserve(el);
+  });
+},{threshold:.5});
+document.querySelectorAll('.stat-num[data-target]').forEach(el=>counterObs.observe(el));
+
+// ─── GALLERY FILTER ───────────────────────────────────────
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    const f=btn.dataset.filter;
+    document.querySelectorAll('#galleryGrid .gallery-item').forEach(item=>{
+      const show=f==='all'||item.dataset.cat===f;
+      item.style.transition='opacity .4s, transform .4s';
+      item.style.opacity=show?'1':'0';
+      item.style.transform=show?'scale(1)':'scale(.95)';
+      item.style.pointerEvents=show?'auto':'none';
+      setTimeout(()=>{ item.style.display=show?'block':'none' },show?0:350);
+    });
   });
 });
 
-// ── LEAD FORM SUBMIT ───────────────────────────────────────
-document.getElementById('lead-form').addEventListener('submit', async function(e) {
+// ─── LIGHTBOX ─────────────────────────────────────────────
+const lb=document.getElementById('lightbox');
+const lbImg=document.getElementById('lightbox-img');
+let lbImages=[],lbIdx=0;
+
+document.querySelectorAll('.gallery-item img').forEach((img,i)=>{
+  lbImages.push(img.src);
+  img.parentElement.addEventListener('click',()=>openLightbox(i));
+});
+
+function openLightbox(i){
+  lbIdx=i; lbImg.src=lbImages[i];
+  lb.classList.add('open');
+  document.body.style.overflow='hidden';
+}
+document.getElementById('lightbox-close').onclick=()=>{lb.classList.remove('open');document.body.style.overflow=''};
+document.getElementById('lightbox-prev').onclick=()=>{lbIdx=(lbIdx-1+lbImages.length)%lbImages.length;lbImg.src=lbImages[lbIdx]};
+document.getElementById('lightbox-next').onclick=()=>{lbIdx=(lbIdx+1)%lbImages.length;lbImg.src=lbImages[lbIdx]};
+lb.addEventListener('click',e=>{if(e.target===lb){lb.classList.remove('open');document.body.style.overflow=''}});
+document.addEventListener('keydown',e=>{
+  if(!lb.classList.contains('open')) return;
+  if(e.key==='Escape'){lb.classList.remove('open');document.body.style.overflow=''}
+  if(e.key==='ArrowLeft') document.getElementById('lightbox-prev').click();
+  if(e.key==='ArrowRight') document.getElementById('lightbox-next').click();
+});
+
+// ─── FAQ ──────────────────────────────────────────────────
+document.querySelectorAll('.faq-item').forEach(item=>{
+  item.querySelector('.faq-q').addEventListener('click',()=>{
+    const open=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!open) item.classList.add('open');
+  });
+});
+
+// ─── LEAD FORM ────────────────────────────────────────────
+document.getElementById('lead-form').addEventListener('submit',async function(e){
   e.preventDefault();
-  const btn = this.querySelector('.form-submit');
-  btn.textContent = 'Sending...';
-  btn.disabled = true;
-
-  const name    = document.getElementById('f-name').value;
-  const phone   = document.getElementById('f-phone').value;
-  const service = document.getElementById('f-service').value;
-  const message = document.getElementById('f-message').value;
-
-  // Facebook Pixel: track Lead event
-  if (typeof fbq !== 'undefined') {
-    fbq('track', 'Lead', { content_category: service });
-  }
-
-  try {
-    const resp = await fetch('/api/lead', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name, phone, service, message, source: 'website_form' })
-    });
-    // Show success whether or not API is connected yet
-    document.getElementById('lead-form').style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
-  } catch (err) {
-    // Fallback: show success anyway (lead captured if API is down)
-    document.getElementById('lead-form').style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
-  }
+  const btn=this.querySelector('.form-submit');
+  btn.textContent='Sending...'; btn.disabled=true;
+  const name=document.getElementById('f-name').value;
+  const phone=document.getElementById('f-phone').value;
+  const service=document.getElementById('f-service').value;
+  const message=document.getElementById('f-message').value;
+  if(typeof fbq!=='undefined') fbq('track','Lead',{content_category:service});
+  try{
+    await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name,phone,service,message,source:'website_form'})});
+  }catch{}
+  document.getElementById('lead-form').style.display='none';
+  document.getElementById('form-success').style.display='block';
 });
 
-// ── AI CHAT WIDGET ─────────────────────────────────────────
-const chatBtn    = document.getElementById('chat-btn');
-const chatWindow = document.getElementById('chat-window');
-const chatInput  = document.getElementById('chat-input');
-const chatSend   = document.getElementById('chat-send');
-const chatMsgs   = document.getElementById('chat-messages');
+// ─── CHAT ─────────────────────────────────────────────────
+const chatBtn=document.getElementById('chat-btn');
+const chatWin=document.getElementById('chat-window');
+const chatInput=document.getElementById('chat-input');
+const chatMsgs=document.getElementById('chat-msgs');
+let chatHistory=[],leadDone=false;
 
-let chatHistory = [];  // {role, content}
-let leadCaptured = false;
-
-chatBtn.addEventListener('click', () => {
-  const isOpen = chatWindow.classList.toggle('open');
-  chatBtn.querySelector('.chat-badge').style.display = 'none';
-  if (isOpen) chatInput.focus();
+chatBtn.addEventListener('click',()=>{
+  const o=chatWin.classList.toggle('open');
+  chatBtn.querySelector('.badge').style.display='none';
+  if(o) chatInput.focus();
 });
 
-async function sendMessage() {
-  const text = chatInput.value.trim();
-  if (!text) return;
-
-  addMsg('user', text);
-  chatInput.value = '';
-  chatHistory.push({ role: 'user', content: text });
-
-  const typingEl = addMsg('agent', '...', true);
-
-  try {
-    const resp = await fetch('/api/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ messages: chatHistory })
-    });
-    const data = await resp.json();
-    typingEl.remove();
-
-    const reply = data.reply || "Sorry, I'm having trouble right now. Please call us at (206) 555-0000.";
-    addMsg('agent', reply);
-    chatHistory.push({ role: 'assistant', content: reply });
-
-    // If backend extracted a lead, fire Pixel
-    if (data.lead_captured && !leadCaptured) {
-      leadCaptured = true;
-      if (typeof fbq !== 'undefined') {
-        fbq('track', 'Lead', { content_category: data.service_type || 'chat' });
-      }
+async function sendMsg(){
+  const t=chatInput.value.trim(); if(!t) return;
+  addMsg('user',t); chatInput.value='';
+  chatHistory.push({role:'user',content:t});
+  const typing=addMsg('agent','...');
+  try{
+    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({messages:chatHistory})});
+    const d=await r.json();
+    typing.remove();
+    const reply=d.reply||"Sorry, I'm having trouble. Call us at (206) 555-0000!";
+    addMsg('agent',reply);
+    chatHistory.push({role:'assistant',content:reply});
+    if(d.lead_captured&&!leadDone){
+      leadDone=true;
+      if(typeof fbq!=='undefined') fbq('track','Lead',{content_category:d.service_type||'chat'});
     }
-
-  } catch (err) {
-    typingEl.remove();
-    addMsg('agent', "I'm having connectivity issues. Please call us at (206) 555-0000 — we'd love to help!");
+  }catch{
+    typing.remove();
+    addMsg('agent','I\'m having connectivity issues. Please call us at (206) 555-0000!');
   }
-
-  chatMsgs.scrollTop = chatMsgs.scrollHeight;
+  chatMsgs.scrollTop=chatMsgs.scrollHeight;
 }
-
-function addMsg(role, text, isTyping = false) {
-  const div = document.createElement('div');
-  div.className = 'msg ' + role + (isTyping ? ' typing' : '');
-  div.innerHTML = text.replace(/\n/g, '<br>');
-  chatMsgs.appendChild(div);
-  chatMsgs.scrollTop = chatMsgs.scrollHeight;
-  return div;
+function addMsg(role,text){
+  const d=document.createElement('div');
+  d.className='msg '+role;
+  d.innerHTML=text.replace(/\n/g,'<br>');
+  chatMsgs.appendChild(d);
+  chatMsgs.scrollTop=chatMsgs.scrollHeight;
+  return d;
 }
-
-chatSend.addEventListener('click', sendMessage);
-chatInput.addEventListener('keypress', e => { if (e.key === 'Enter') sendMessage(); });
+document.getElementById('chat-send').addEventListener('click',sendMsg);
+chatInput.addEventListener('keypress',e=>{ if(e.key==='Enter') sendMsg(); });
 </script>
-
 </body>
 </html>
