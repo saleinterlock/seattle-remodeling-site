@@ -1,21 +1,11 @@
 {
-  "version": 2,
-  "builds": [
-    {
-      "src": "api/*.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "*.html",
-      "use": "@vercel/static"
-    }
+  "rewrites": [
+    { "source": "/owner",      "destination": "/owner.html" },
+    { "source": "/thank-you",  "destination": "/thank-you.html" }
   ],
-  "routes": [
-    { "src": "/api/chat",     "dest": "/api/chat.py" },
-    { "src": "/api/lead",     "dest": "/api/lead.py" },
-    { "src": "/api/proposal", "dest": "/api/proposal.py" },
-    { "src": "/owner",        "dest": "/owner.html" },
-    { "src": "/thank-you",    "dest": "/thank-you.html" },
-    { "src": "/",             "dest": "/index.html" }
-  ],
+  "functions": {
+    "api/chat.py":     { "maxDuration": 30 },
+    "api/lead.py":     { "maxDuration": 10 },
+    "api/proposal.py": { "maxDuration": 60 }
+  }
 }
