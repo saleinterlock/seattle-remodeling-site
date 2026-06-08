@@ -62,7 +62,7 @@ class handler(BaseHTTPRequestHandler):
         ]
         if message:
             lines.append(f"💬 *Сообщение:*\n_{message[:300]}_")
-        lines += ["", "👉 Позвони в течение 2 часов!"]
+        lines += ["", "👉 Позвони в течение 1 часа!"]
 
         sent = _send_telegram("\n".join(lines))
         _cors_headers(self)
