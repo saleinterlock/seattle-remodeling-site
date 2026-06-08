@@ -370,6 +370,16 @@ body{font-family:'Inter',sans-serif;color:var(--dark);background:var(--light);ov
 .viz-loading.visible{display:block}
 .viz-error{color:#ef4444;font-size:13px;text-align:center;padding:16px;display:none;background:rgba(239,68,68,.06);border-radius:8px;margin:16px}
 .viz-error.visible{display:block}
+.viz-badge{font-size:10px;font-weight:600;background:#e2f5ec;color:var(--sage);padding:2px 8px;border-radius:20px;text-transform:none;letter-spacing:0}
+.viz-upload-zone{display:block;border:2px dashed #cbd5e1;border-radius:14px;cursor:pointer;transition:all .25s;background:#f8fafc;overflow:hidden}
+.viz-upload-zone:hover{border-color:var(--sage);background:#f0fdf7}
+.viz-upload-zone.has-file{border-style:solid;border-color:var(--sage);background:#fff}
+#viz-upload-prompt{text-align:center;padding:24px 16px;color:var(--gray)}
+#viz-upload-preview{position:relative}
+#viz-upload-preview img{width:100%;max-height:180px;object-fit:cover;display:block;border-radius:12px}
+#viz-remove-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s}
+#viz-remove-btn:hover{background:rgba(239,68,68,.85)}
+.viz-hint{font-size:12px;color:var(--gray);margin-top:7px;font-style:italic}
 
 /* ── TESTIMONIALS ─────────────────────────────────────────── */
 .testimonials-track{
@@ -845,6 +855,22 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
           </div>
         </div>
         <div class="viz-group">
+          <div class="viz-group-label">Your Photo <span class="viz-badge">optional</span></div>
+          <label class="viz-upload-zone" id="viz-upload-zone">
+            <input type="file" id="viz-file" accept="image/*" style="display:none">
+            <div id="viz-upload-prompt">
+              <div style="font-size:30px">📷</div>
+              <div style="font-weight:600;font-size:14px;margin-top:6px;color:var(--dark)">Click or drag your photo</div>
+              <div style="font-size:12px;margin-top:4px">JPG, PNG — any phone photo works</div>
+            </div>
+            <div id="viz-upload-preview" style="display:none">
+              <img id="viz-preview-img" alt="Your photo">
+              <button id="viz-remove-btn" type="button">✕ Remove</button>
+            </div>
+          </label>
+          <p class="viz-hint">No photo? AI generates a concept from scratch.</p>
+        </div>
+        <div class="viz-group">
           <div class="viz-group-label">Design Style</div>
           <div class="viz-options" id="viz-style">
             <button class="viz-opt active" data-val="modern minimalist">Modern</button>
@@ -1299,7 +1325,48 @@ document.getElementById('calc-cta-btn').addEventListener('click',()=>{
 calcUpdate();
 
 // ─── VISUALIZER ───────────────────────────────────────────
-let vizService='bathroom',vizStyle='modern minimalist',vizColor='white and gray tones';
+let vizService='bathroom',vizStyle='modern minimalist',vizColor='white and gray tones',vizFile=null;
+
+function resizeImage(file){
+  return new Promise(resolve=>{
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    const src=new Image();
+    src.onload=()=>{
+      const r=Math.min(768/src.width,512/src.height,1);
+      canvas.width=Math.round(src.width*r);
+      canvas.height=Math.round(src.height*r);
+      ctx.drawImage(src,0,0,canvas.width,canvas.height);
+      resolve(canvas.toDataURL('image/jpeg',0.85));
+    };
+    src.src=URL.createObjectURL(file);
+  });
+}
+
+document.getElementById('viz-file').addEventListener('change',function(){
+  const file=this.files[0];
+  if(!file) return;
+  vizFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('viz-preview-img').src=e.target.result;
+    document.getElementById('viz-upload-prompt').style.display='none';
+    document.getElementById('viz-upload-preview').style.display='block';
+    document.getElementById('viz-upload-zone').classList.add('has-file');
+    document.getElementById('viz-btn').innerHTML='🏠&nbsp; Transform My Space &rarr;';
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('viz-remove-btn').addEventListener('click',function(e){
+  e.preventDefault(); e.stopPropagation();
+  vizFile=null;
+  document.getElementById('viz-file').value='';
+  document.getElementById('viz-upload-prompt').style.display='';
+  document.getElementById('viz-upload-preview').style.display='none';
+  document.getElementById('viz-upload-zone').classList.remove('has-file');
+  document.getElementById('viz-btn').innerHTML='✨&nbsp; Generate My Vision';
+});
 
 document.querySelectorAll('#viz-service .viz-opt').forEach(btn=>{
   btn.addEventListener('click',()=>{
@@ -1328,6 +1395,7 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
   const overlay=document.getElementById('viz-overlay');
   const errEl=document.getElementById('viz-error');
 
+  const origLabel=vizFile?'🏠&nbsp; Transform My Space &rarr;':'✨&nbsp; Generate My Vision';
   btn.disabled=true; btn.innerHTML='⏳&nbsp; Generating…';
   placeholder.style.display='none';
   img.classList.remove('loaded');
@@ -1339,29 +1407,59 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
   const styleWord=vizStyle.split(' ')[0];
   const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+serviceLabel[vizService];
 
-  const VIZ_PROMPTS={
-    bathroom:'professional interior design photo of a {style} bathroom remodel, {colors} color palette, Seattle luxury home, custom tile work, walk-in shower, modern fixtures, natural lighting, architectural photography, ultra detailed, no people',
-    kitchen:'professional interior design photo of a {style} kitchen renovation, {colors} color palette, Seattle luxury home, custom cabinetry, quartz countertops, pendant lighting, architectural photography, ultra detailed, no people',
-    fence:'professional landscape photo of a beautiful {style} cedar privacy fence and backyard, {colors} color tones, Seattle residential neighborhood, Pacific Northwest garden, golden hour lighting, architectural photography, ultra detailed, no people'
-  };
-  const vizPrompt=VIZ_PROMPTS[vizService].replace('{style}',vizStyle).replace('{colors}',vizColor);
-  const seed=Math.floor(Math.random()*99999);
-  const imgUrl='https://image.pollinations.ai/prompt/'+encodeURIComponent(vizPrompt)+'?width=768&height=512&model=flux&nologo=true&seed='+seed;
-
-  img.onload=()=>{
-    loading.classList.remove('visible');
-    img.classList.add('loaded');
-    document.getElementById('viz-overlay-title').textContent=titleStr;
-    overlay.classList.add('visible');
-    btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
-  };
-  img.onerror=()=>{
-    loading.classList.remove('visible');
-    errEl.textContent='Generation failed — please try again.';
-    errEl.classList.add('visible'); placeholder.style.display='';
-    btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
-  };
-  img.src=imgUrl;
+  if(vizFile){
+    // ── IMG2IMG via Fal.ai ──
+    try{
+      const imageData=await resizeImage(vizFile);
+      const r=await fetch('/api/visualize',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({image:imageData,service:vizService,style:vizStyle,colors:vizColor})
+      });
+      const data=await r.json();
+      loading.classList.remove('visible');
+      if(data.url){
+        img.onload=()=>{
+          img.classList.add('loaded');
+          document.getElementById('viz-overlay-title').textContent=titleStr+' (Your Space)';
+          overlay.classList.add('visible');
+        };
+        img.src=data.url;
+      } else {
+        errEl.textContent=data.error||'Generation failed — please try again.';
+        errEl.classList.add('visible'); placeholder.style.display='';
+      }
+    }catch(e){
+      loading.classList.remove('visible');
+      errEl.textContent='Connection error — please try again.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+    }
+    btn.disabled=false; btn.innerHTML=origLabel;
+  } else {
+    // ── TEXT-TO-IMAGE via Pollinations ──
+    const VIZ_PROMPTS={
+      bathroom:'professional interior design photo of a {style} bathroom remodel, {colors} color palette, Seattle luxury home, custom tile work, walk-in shower, modern fixtures, natural lighting, architectural photography, ultra detailed, no people',
+      kitchen:'professional interior design photo of a {style} kitchen renovation, {colors} color palette, Seattle luxury home, custom cabinetry, quartz countertops, pendant lighting, architectural photography, ultra detailed, no people',
+      fence:'professional landscape photo of a beautiful {style} cedar privacy fence and backyard, {colors} color tones, Seattle residential neighborhood, Pacific Northwest garden, golden hour lighting, architectural photography, ultra detailed, no people'
+    };
+    const vizPrompt=VIZ_PROMPTS[vizService].replace('{style}',vizStyle).replace('{colors}',vizColor);
+    const seed=Math.floor(Math.random()*99999);
+    const imgUrl='https://image.pollinations.ai/prompt/'+encodeURIComponent(vizPrompt)+'?width=768&height=512&model=flux&nologo=true&seed='+seed;
+    img.onload=()=>{
+      loading.classList.remove('visible');
+      img.classList.add('loaded');
+      document.getElementById('viz-overlay-title').textContent=titleStr;
+      overlay.classList.add('visible');
+      btn.disabled=false; btn.innerHTML=origLabel;
+    };
+    img.onerror=()=>{
+      loading.classList.remove('visible');
+      errEl.textContent='Generation failed — please try again.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+      btn.disabled=false; btn.innerHTML=origLabel;
+    };
+    img.src=imgUrl;
+  }
 });
 
 

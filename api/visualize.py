@@ -7,9 +7,28 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-HF_API_KEY = os.environ.get("HF_API_KEY", "")
+FAL_KEY = os.environ.get("FAL_KEY", "")
 
-PROMPTS = {
+INSTRUCTIONS = {
+    "bathroom": (
+        "Transform this bathroom with a complete {style} renovation: new custom tile work, "
+        "{colors} color palette, walk-in shower, modern fixtures, heated floor, luxury Seattle home quality, "
+        "professional architectural photography, ultra realistic, no people"
+    ),
+    "kitchen": (
+        "Renovate this kitchen with {style} design: new custom cabinetry, "
+        "{colors} color palette, quartz countertops, pendant lighting, modern appliances, "
+        "luxury Seattle home quality, professional architectural photography, ultra realistic, no people"
+    ),
+    "fence": (
+        "Replace the fence and redesign this yard with {style} landscaping: "
+        "cedar privacy fence, {colors} color tones, Pacific Northwest native plants, "
+        "stone pathway, golden hour lighting, professional photography, ultra realistic, no people"
+    ),
+}
+
+# Fallback text-to-image prompts (used when no image uploaded, server-side path)
+TXT_PROMPTS = {
     "bathroom": (
         "professional interior design photo of a {style} bathroom remodel, {colors} color palette, "
         "Seattle luxury home, custom tile work, walk-in shower, modern fixtures, natural lighting, "
@@ -26,10 +45,6 @@ PROMPTS = {
         "golden hour lighting, architectural photography, ultra detailed, no people"
     ),
 }
-
-NEGATIVE = "blurry, low quality, watermark, text, cartoon, painting, sketch, distorted, people"
-
-HF_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
 
 
 def _cors(h, status=200):
@@ -54,11 +69,6 @@ class handler(BaseHTTPRequestHandler):
         if not HAS_REQUESTS:
             return _json(self, {"error": "requests library not available"}, 500)
 
-        if not HF_API_KEY:
-            return _json(self, {
-                "error": "HF_API_KEY not configured. Get a free token at huggingface.co → Settings → Access Tokens"
-            }, 503)
-
         length = int(self.headers.get("Content-Length", 0))
         try:
             body = json.loads(self.rfile.read(length) or b"{}")
@@ -68,49 +78,62 @@ class handler(BaseHTTPRequestHandler):
         service = body.get("service", "bathroom").strip()
         style   = body.get("style", "modern minimalist").strip()
         colors  = body.get("colors", "white and gray tones").strip()
+        image   = body.get("image", "").strip()  # base64 data URL from browser
 
-        if service not in PROMPTS:
+        if service not in INSTRUCTIONS:
             service = "bathroom"
 
-        prompt = PROMPTS[service].format(style=style, colors=colors)
+        if not image:
+            return _json(self, {"error": "No image provided. Use frontend text-to-image mode."}, 400)
+
+        # ── IMG2IMG via Fal.ai FLUX Kontext ──────────────────────────
+        if not FAL_KEY:
+            return _json(self, {
+                "error": "Photo redesign not configured yet. Try without a photo for AI-generated concepts."
+            }, 503)
+
+        instruction = INSTRUCTIONS[service].format(style=style, colors=colors)
 
         try:
             resp = _req.post(
-                f"https://api-inference.huggingface.co/models/{HF_MODEL}",
+                "https://fal.run/fal-ai/flux-pro/kontext",
                 headers={
-                    "Authorization": f"Bearer {HF_API_KEY}",
+                    "Authorization": f"Key {FAL_KEY}",
                     "Content-Type": "application/json",
                 },
                 json={
-                    "inputs": prompt,
-                    "parameters": {
-                        "negative_prompt": NEGATIVE,
-                        "width": 768,
-                        "height": 512,
-                        "num_inference_steps": 30,
-                        "guidance_scale": 7.5,
-                    }
+                    "image_url": image,
+                    "prompt": instruction,
+                    "guidance_scale": 3.5,
+                    "num_images": 1,
+                    "safety_tolerance": "2",
                 },
-                timeout=55,
+                timeout=58,
             )
         except Exception as e:
             return _json(self, {"error": f"Request failed: {str(e)}"}, 502)
 
-        if resp.status_code == 503:
-            return _json(self, {"error": "Model loading, please try again in 20 seconds"}, 503)
+        if resp.status_code == 401:
+            return _json(self, {"error": "FAL_KEY invalid — check Vercel env vars"}, 401)
 
-        if resp.status_code == 429:
-            return _json(self, {"error": "Rate limit reached. Please wait a minute and try again."}, 429)
+        if resp.status_code == 402:
+            return _json(self, {"error": "Fal.ai credit exhausted — top up at fal.ai/dashboard"}, 402)
 
-        if resp.status_code != 200:
-            return _json(self, {"error": f"HuggingFace error {resp.status_code}: {resp.text[:200]}"}, 502)
+        if resp.status_code == 422:
+            return _json(self, {"error": f"Invalid request: {resp.text[:200]}"}, 422)
 
-        # Response is raw image bytes — convert to base64 data URL
-        img_b64 = base64.b64encode(resp.content).decode()
-        content_type = resp.headers.get("Content-Type", "image/jpeg")
-        data_url = f"data:{content_type};base64,{img_b64}"
+        if resp.status_code not in (200, 201):
+            return _json(self, {"error": f"Fal.ai error {resp.status_code}: {resp.text[:200]}"}, 502)
 
-        return _json(self, {"url": data_url})
+        try:
+            data = resp.json()
+            images = data.get("images") or data.get("output") or []
+            if images:
+                url = images[0].get("url") or images[0]
+                return _json(self, {"url": url})
+            return _json(self, {"error": "No image in response"}, 502)
+        except Exception:
+            return _json(self, {"error": "Failed to parse Fal.ai response"}, 502)
 
     def log_message(self, *_):
         pass
