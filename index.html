@@ -547,6 +547,19 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   font-size:12px;
 }
 .footer-lic{color:rgba(255,255,255,.3)}
+.footer-legal-links{max-width:1160px;margin:12px auto 0;display:flex;gap:12px;align-items:center;font-size:11px;color:rgba(255,255,255,.25);flex-wrap:wrap}
+.footer-legal-links a{color:rgba(255,255,255,.4);text-decoration:none;transition:color .2s}
+.footer-legal-links a:hover{color:rgba(255,255,255,.8)}
+/* Cookie banner */
+#cookie-banner{position:fixed;bottom:0;left:0;right:0;background:#0d2137;color:#fff;padding:16px 24px;display:flex;align-items:center;justify-content:space-between;gap:16px;z-index:9999;box-shadow:0 -4px 24px rgba(0,0,0,.3);font-size:13px;flex-wrap:wrap}
+#cookie-banner p{margin:0;line-height:1.5;color:rgba(255,255,255,.8);max-width:700px}
+#cookie-banner a{color:#0ea875;text-decoration:none}
+#cookie-banner a:hover{text-decoration:underline}
+.cookie-btns{display:flex;gap:10px;flex-shrink:0}
+.cookie-accept{background:#0ea875;color:#fff;border:none;padding:10px 22px;border-radius:8px;font-weight:700;font-size:13px;cursor:pointer;transition:background .2s}
+.cookie-accept:hover{background:#0c9666}
+.cookie-decline{background:transparent;color:rgba(255,255,255,.5);border:1px solid rgba(255,255,255,.2);padding:10px 18px;border-radius:8px;font-size:13px;cursor:pointer;transition:all .2s}
+.cookie-decline:hover{color:#fff;border-color:rgba(255,255,255,.5)}
 
 /* ── CHAT WIDGET ──────────────────────────────────────────── */
 #chat-btn{
@@ -1148,7 +1161,14 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   </div>
   <div class="footer-bottom">
     <span>© 2026 Seattle Pro Remodeling. All rights reserved.</span>
-    <span class="footer-lic">WA License #XXXXXXXXX · Fully Insured</span>
+    <span class="footer-lic">WA Contractor Reg. #XXXXXXXXX · Fully Insured · Bonded</span>
+  </div>
+  <div class="footer-legal-links">
+    <a href="/privacy">Privacy Policy</a>
+    <span>·</span>
+    <a href="/terms">Terms of Service</a>
+    <span>·</span>
+    <span>Seattle, WA · Licensed by WA L&amp;I</span>
   </div>
 </footer>
 
@@ -1568,6 +1588,31 @@ function addMsg(role,text){
 }
 document.getElementById('chat-send').addEventListener('click',sendMsg);
 chatInput.addEventListener('keypress',e=>{ if(e.key==='Enter') sendMsg(); });
+
+// ─── COOKIE BANNER ─────────────────────────────────────
+(function(){
+  if(localStorage.getItem('cookie_consent')) return;
+  const banner=document.getElementById('cookie-banner');
+  if(banner) banner.style.display='flex';
+  document.getElementById('cookie-accept').addEventListener('click',function(){
+    localStorage.setItem('cookie_consent','accepted');
+    banner.style.display='none';
+  });
+  document.getElementById('cookie-decline').addEventListener('click',function(){
+    localStorage.setItem('cookie_consent','declined');
+    banner.style.display='none';
+  });
+})();
 </script>
+
+<!-- COOKIE BANNER -->
+<div id="cookie-banner" style="display:none">
+  <p>We use cookies to improve your experience and analyze site traffic. By clicking "Accept," you consent to our use of cookies as described in our <a href="/privacy">Privacy Policy</a>. You may decline non-essential cookies.</p>
+  <div class="cookie-btns">
+    <button class="cookie-decline" id="cookie-decline">Decline</button>
+    <button class="cookie-accept" id="cookie-accept">Accept All</button>
+  </div>
+</div>
+
 </body>
 </html>

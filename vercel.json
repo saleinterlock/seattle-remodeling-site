@@ -1,7 +1,9 @@
 {
   "rewrites": [
     { "source": "/owner",      "destination": "/owner.html" },
-    { "source": "/thank-you",  "destination": "/thank-you.html" }
+    { "source": "/thank-you",  "destination": "/thank-you.html" },
+    { "source": "/privacy",    "destination": "/privacy.html" },
+    { "source": "/terms",      "destination": "/terms.html" }
   ],
   "functions": {
     "api/chat.py":     { "maxDuration": 30 },
