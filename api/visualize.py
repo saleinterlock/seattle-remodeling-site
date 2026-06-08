@@ -84,7 +84,7 @@ class handler(BaseHTTPRequestHandler):
 
         try:
             resp = _req.post(
-                "https://api.segmind.com/v1/sdxl1.0-img2img",
+                "https://api.segmind.com/v1/sd1.5-img2img",
                 headers={"x-api-key": SEGMIND_KEY, "Content-Type": "application/json"},
                 json={
                     "image": image_b64,
