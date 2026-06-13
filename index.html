@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Seattle Pro Remodeling — Bathroom, Kitchen & Fence Experts</title>
-  <meta name="description" content="Seattle's premium remodeling contractor. Bathroom remodels, kitchen renovations, and fence installation. Licensed, insured, 5-star rated.">
+  <title>Seattle Pro Remodeling — Bathroom Remodeling Specialists</title>
+  <meta name="description" content="Seattle's bathroom remodeling specialists. Walk-in showers, full bath renovations, tub conversions. Fixed price, 9-day average, WA licensed & insured.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
@@ -619,6 +619,140 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 }
 #chat-send:hover{background:var(--sage)}
 
+/* ── BATHROOM PLANNER ─────────────────────────────────────── */
+.planner-wrap{display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:start;margin-top:48px}
+@media(max-width:900px){.planner-wrap{grid-template-columns:1fr}}
+.planner-panel{background:#fff;border-radius:16px;padding:24px;
+  box-shadow:0 4px 24px rgba(13,33,55,.07);border:1px solid #e8ecf0}
+.planner-section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--sage);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
+.planner-section-label:first-child{margin-top:0}
+.planner-section-label::before{content:'';width:16px;height:1px;background:var(--sage)}
+.dim-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:4px}
+.dim-input{display:flex;flex-direction:column;gap:5px}
+.dim-input label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--gray)}
+.dim-input input{width:100%;padding:10px 12px;border:1.5px solid #e5e7eb;border-radius:8px;
+  font-size:15px;font-weight:600;text-align:center;outline:none;transition:border-color .2s;
+  font-family:'Inter',sans-serif}
+.dim-input input:focus{border-color:var(--sage);box-shadow:0 0 0 3px rgba(14,168,117,.1)}
+.fixture-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.fixture-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  padding:10px 6px;border:1.5px solid #e5e7eb;border-radius:10px;
+  background:#fff;cursor:pointer;font-size:11px;font-weight:600;color:var(--dark);
+  transition:all .2s;text-align:center;line-height:1.2;
+}
+.fixture-btn:hover{border-color:var(--sage);background:#f0fdf7;color:var(--sage)}
+.fixture-btn .fix-icon{font-size:22px}
+.tile-swatches{display:flex;gap:8px;flex-wrap:wrap}
+.tile-swatch{
+  width:44px;height:44px;border-radius:8px;cursor:pointer;
+  border:2.5px solid transparent;transition:all .2s;
+  box-shadow:0 2px 8px rgba(0,0,0,.1);position:relative;
+}
+.tile-swatch:hover{transform:scale(1.1)}
+.tile-swatch.active{border-color:var(--navy);transform:scale(1.12)}
+.tile-swatch.active::after{
+  content:'✓';position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:13px;font-weight:700;text-shadow:0 1px 3px rgba(0,0,0,.6)
+}
+.tile-name{font-size:10px;color:var(--gray);text-align:center;margin-top:6px}
+.tile-row{display:flex;gap:14px;align-items:flex-start}
+.tile-col{display:flex;flex-direction:column;align-items:center}
+.planner-canvas-wrap{
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 24px rgba(13,33,55,.07);border:1px solid #e8ecf0;
+}
+.planner-canvas-header{
+  padding:16px 20px;background:var(--navy);display:flex;align-items:center;gap:12px;
+}
+.planner-canvas-header h4{color:#fff;font-family:'Playfair Display',serif;font-size:16px;font-weight:600;margin:0}
+.planner-canvas-header span{font-size:12px;color:rgba(255,255,255,.55);margin-left:auto}
+#planner-canvas{display:block;width:100%;cursor:crosshair;touch-action:none}
+.planner-cost-bar{
+  padding:20px 24px;background:var(--light);border-top:1px solid #e8ecf0;
+  display:flex;flex-wrap:wrap;align-items:center;gap:16px 32px;
+}
+.cost-item{text-align:center}
+.cost-item-label{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;
+  color:var(--gray);margin-bottom:2px}
+.cost-item-val{font-size:16px;font-weight:700;color:var(--dark)}
+.cost-total{margin-left:auto;text-align:right}
+.cost-total-label{font-size:11px;color:var(--gray)}
+.cost-total-range{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;
+  color:var(--navy);line-height:1}
+.planner-actions{display:flex;gap:10px;flex-wrap:wrap;margin-left:auto}
+.planner-btn{padding:10px 20px;border-radius:50px;font-size:13px;font-weight:700;
+  cursor:pointer;border:none;transition:all .2s;white-space:nowrap}
+.planner-btn-primary{background:var(--sage);color:#fff}
+.planner-btn-primary:hover{background:#0c9666;transform:translateY(-1px)}
+.planner-btn-secondary{background:transparent;color:var(--navy);
+  border:2px solid var(--navy)}
+.planner-btn-secondary:hover{background:var(--navy);color:#fff}
+.planner-hint{font-size:11px;color:var(--gray);padding:8px 24px;font-style:italic;
+  border-top:1px solid #f0f0f0}
+.planner-selected-info{padding:4px 24px 8px;font-size:12px;color:var(--sage);font-weight:600;min-height:22px}
+/* Quote modal */
+.planner-modal-bg{
+  position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:2000;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.planner-modal-bg.open{display:flex}
+.planner-modal{
+  background:#fff;border-radius:20px;padding:40px;max-width:440px;width:100%;
+  box-shadow:0 24px 80px rgba(0,0,0,.25);
+}
+.planner-modal h3{font-family:'Playfair Display',serif;font-size:24px;margin-bottom:8px}
+.planner-modal p{font-size:14px;color:var(--gray);margin-bottom:24px}
+.planner-modal input{
+  width:100%;padding:13px 16px;border:1.5px solid #e5e7eb;border-radius:10px;
+  font-size:15px;font-family:'Inter',sans-serif;margin-bottom:12px;outline:none;
+  transition:border-color .2s;
+}
+.planner-modal input:focus{border-color:var(--sage)}
+.planner-modal-btns{display:flex;gap:10px;margin-top:4px}
+.planner-modal-close{
+  position:absolute;top:16px;right:20px;background:none;border:none;
+  font-size:22px;cursor:pointer;color:var(--gray);
+}
+
+/* ── BEFORE/AFTER GALLERY ─────────────────────────────────── */
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:3px;margin-top:52px}
+@media(max-width:900px){.gallery-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.gallery-grid{grid-template-columns:1fr}}
+.ba-card{position:relative;overflow:hidden;border-radius:4px;cursor:pointer;background:#f1f5f9}
+.ba-card-inner{display:grid;grid-template-columns:1fr 1fr;height:260px;gap:2px}
+@media(max-width:520px){.ba-card-inner{height:200px}}
+.ba-img{position:relative;overflow:hidden}
+.ba-img img{width:100%;height:100%;object-fit:cover;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.ba-card:hover .ba-img img{transform:scale(1.05)}
+.ba-label{position:absolute;bottom:8px;left:8px;background:rgba(0,0,0,.6);color:#fff;
+  font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;
+  padding:4px 8px;border-radius:4px}
+.ba-badge{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  background:var(--wood);color:#fff;font-size:11px;font-weight:800;letter-spacing:1px;
+  padding:6px 12px;border-radius:20px;white-space:nowrap;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.ba-meta{padding:14px 0 4px;font-size:13px;color:var(--gray);font-weight:500}
+.ba-meta strong{color:var(--dark)}
+
+/* ── GUARANTEE BADGES ─────────────────────────────────────── */
+.guarantee-section{background:var(--navy);padding:72px 40px}
+@media(max-width:767px){.guarantee-section{padding:52px 20px}}
+.guarantee-grid{
+  max-width:1160px;margin:0 auto;
+  display:grid;grid-template-columns:repeat(4,1fr);gap:32px;
+  align-items:start;
+}
+@media(max-width:900px){.guarantee-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.guarantee-grid{grid-template-columns:1fr}}
+.guarantee-item{text-align:center;padding:32px 20px;border:1px solid rgba(255,255,255,.1);
+  border-radius:16px;background:rgba(255,255,255,.04);transition:border-color .3s}
+.guarantee-item:hover{border-color:rgba(255,255,255,.25)}
+.guarantee-icon{font-size:42px;margin-bottom:14px}
+.guarantee-title{font-family:'Playfair Display',serif;font-size:17px;font-weight:700;
+  color:#fff;margin-bottom:8px}
+.guarantee-text{font-size:13px;color:rgba(255,255,255,.6);line-height:1.6}
+
 /* ── MOBILE STICKY ────────────────────────────────────────── */
 .mobile-cta{
   position:fixed;bottom:0;left:0;right:0;z-index:90;display:none;
@@ -645,6 +779,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   <div class="nav-logo">Seattle<em>Pro</em></div>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
+    <li><a href="#planner">Room Planner</a></li>
     <li><a href="#calculator">Calculator</a></li>
     <li><a href="#visualizer">Visualizer</a></li>
     <li><a href="#reviews">Reviews</a></li>
@@ -657,30 +792,26 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 <section class="hero" id="home">
   <div class="hero-slides" id="heroSlides">
     <div class="hero-slide active">
-      <img src="images/hero-alex.jpg" alt="Seattle Pro Remodeling — Alex, Owner"
-        onerror="this.src='https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=1920&q=85'">
-    </div>
-    <div class="hero-slide">
-      <img src="images/hero-2.jpg" alt="Kitchen remodel Seattle"
-        onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=85'">
-    </div>
-    <div class="hero-slide">
-      <img src="images/hero-3.jpg" alt="Bathroom renovation"
+      <img src="images/hero-3.jpg" alt="Seattle bathroom remodel"
         onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=1920&q=85&fit=crop&crop=right'">
     </div>
     <div class="hero-slide">
-      <img src="images/hero-4.jpg" alt="Modern kitchen"
-        onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=1920&q=85&fit=crop&crop=left'">
+      <img src="images/hero-bath2.jpg" alt="Modern walk-in shower Seattle"
+        onerror="this.src='https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=1920&q=85'">
+    </div>
+    <div class="hero-slide">
+      <img src="images/hero-bath3.jpg" alt="Luxury bathroom renovation"
+        onerror="this.src='https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=1920&q=85'">
     </div>
   </div>
   <div class="hero-overlay"></div>
   <div class="hero-content">
-    <div class="hero-label" id="hl">⭐ Seattle's #1 Remodeling Team</div>
-    <h1 id="hh">Craft Your<br><em>Dream Space</em></h1>
-    <p class="hero-sub" id="hs">Premium bathroom remodels, kitchen renovations & fence installations. Trusted by 500+ Seattle homeowners since 2015.</p>
+    <div class="hero-label" id="hl">⭐ Seattle's Bathroom Remodeling Specialists</div>
+    <h1 id="hh">Your Dream Bathroom,<br><em>Done in 9 Days</em></h1>
+    <p class="hero-sub" id="hs">Fixed price. Daily photo updates. Our own crew — no subcontractors. Trusted by 350+ Seattle homeowners since 2015.</p>
     <div class="hero-btns" id="hb">
       <a href="#estimate" class="btn-primary">Get Free Estimate →</a>
-      <a href="tel:+12065550000" class="btn-ghost">📞 (206) 555-0000</a>
+      <a href="#planner" class="btn-ghost">🛁 Try Room Planner</a>
     </div>
   </div>
   <div class="hero-dots" id="heroDots"></div>
@@ -691,16 +822,17 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 <div class="trust-bar">
   <div class="trust-item"><div class="trust-dot"></div> WA State Licensed</div>
   <div class="trust-item"><div class="trust-dot"></div> Fully Insured</div>
-  <div class="trust-item"><div class="trust-dot"></div> 500+ Projects Completed</div>
+  <div class="trust-item"><div class="trust-dot"></div> 350+ Bathrooms Transformed</div>
   <div class="trust-item"><div class="trust-dot"></div> 5-Star Google Rated</div>
-  <div class="trust-item"><div class="trust-dot"></div> 10-Year Workmanship Warranty</div>
+  <div class="trust-item"><div class="trust-dot"></div> No Subcontractors — Our Crew Only</div>
+  <div class="trust-item"><div class="trust-dot"></div> 2-Year Workmanship Guarantee</div>
 </div>
 
 <!-- MEET THE OWNER -->
 <section class="meet-section">
   <div class="container meet-grid">
     <div class="meet-photo reveal left">
-      <img src="images/hero-alex.jpg" alt="Alex — owner Seattle Pro Remodeling" class="meet-img">
+      <img src="images/hero-alex.jpg" alt="David — owner Seattle Pro Remodeling" class="meet-img">
     </div>
     <div class="meet-text reveal right">
       <div class="eyebrow">Family-Owned Since 2015</div>
@@ -723,45 +855,45 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="services-intro">
       <div class="reveal">
         <div class="eyebrow">What We Do</div>
-        <h2 class="section-title">Three Services.<br>One Standard of Excellence.</h2>
+        <h2 class="section-title">One Specialty.<br>Perfected Over 350 Bathrooms.</h2>
       </div>
       <div class="reveal right">
-        <p class="section-body">Every project is handled by our in-house team — no subcontractors. The same crew from demolition to final walkthrough, ensuring quality at every step.</p>
-        <a href="#estimate" class="btn-primary" style="display:inline-block;margin-top:28px;text-decoration:none">View Our Work →</a>
+        <p class="section-body">We do one thing and we do it exceptionally well — bathroom remodeling. Our own crew handles every project from demolition to final tile, with zero subcontractors and zero surprises on the final bill.</p>
+        <a href="#planner" class="btn-primary" style="display:inline-block;margin-top:28px;text-decoration:none">Design Your Bathroom →</a>
       </div>
     </div>
     <div class="services-grid stagger">
       <div class="service-tile reveal scale">
-        <img src="images/service-bathroom.jpg" alt="Bathroom Remodel Seattle"
+        <img src="images/service-bathroom.jpg" alt="Full Bathroom Remodel Seattle"
           onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=800&q=80'">
         <div class="service-overlay"></div>
         <div class="service-content">
-          <div class="service-tag">Bathroom</div>
-          <h3>Bathroom Remodel</h3>
-          <p>From walk-in showers to full gut renovations. Custom tile, premium fixtures, and flawless finishes that transform your daily routine.</p>
-          <div class="service-price">Starting from $4,000 · 7–14 days</div>
+          <div class="service-tag">Full Remodel</div>
+          <h3>Full Bath Remodel</h3>
+          <p>Complete gut renovation — new tile, fixtures, vanity, plumbing, waterproofing, and lighting. The full transformation, zero shortcuts.</p>
+          <div class="service-price">$8,000 – $20,000 · 7–12 days</div>
         </div>
       </div>
       <div class="service-tile reveal scale">
-        <img src="images/service-kitchen.jpg" alt="Kitchen Remodel Seattle"
-          onerror="this.src='https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=800&q=80'">
+        <img src="images/service-shower.jpg" alt="Walk-In Shower Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80'">
         <div class="service-overlay"></div>
         <div class="service-content">
-          <div class="service-tag">Kitchen</div>
-          <h3>Kitchen Remodel</h3>
-          <p>Redesign the heart of your home. Custom cabinets, quartz countertops, and thoughtful layouts that blend beauty with function.</p>
-          <div class="service-price">Starting from $5,000 · 10–18 days</div>
+          <div class="service-tag">Walk-In Shower</div>
+          <h3>Walk-In Shower</h3>
+          <p>Custom frameless glass, large-format tile, built-in niches, and rain heads. The shower you've been putting off — built in under a week.</p>
+          <div class="service-price">$4,000 – $10,000 · 5–8 days</div>
         </div>
       </div>
       <div class="service-tile reveal scale">
-        <img src="images/service-fence.jpg" alt="Fence Installation Seattle"
-          onerror="this.src='https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80'">
+        <img src="images/service-tub.jpg" alt="Tub to Shower Conversion Seattle"
+          onerror="this.src='https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=800&q=80'">
         <div class="service-overlay"></div>
         <div class="service-content">
-          <div class="service-tag">Fence</div>
-          <h3>Fence Installation</h3>
-          <p>Cedar, composite, and vinyl fences built to withstand Seattle's weather. Clean lines, solid construction, lasting curb appeal.</p>
-          <div class="service-price">Starting from $15/lin ft · 3–6 days</div>
+          <div class="service-tag">Tub Conversion</div>
+          <h3>Tub-to-Shower Conversion</h3>
+          <p>Remove the tub you never use and gain a spacious walk-in shower. Most popular project in Seattle — done in 4–7 days.</p>
+          <div class="service-price">$3,500 – $8,000 · 4–7 days</div>
         </div>
       </div>
     </div>
@@ -794,24 +926,103 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   </div>
 </section>
 
+<!-- GUARANTEE BADGES -->
+<section class="guarantee-section">
+  <div class="guarantee-grid stagger">
+    <div class="guarantee-item reveal">
+      <div class="guarantee-icon">🔒</div>
+      <div class="guarantee-title">Fixed Price Promise</div>
+      <div class="guarantee-text">Your estimate is your final bill. We've never charged a client more than the signed contract — not once in 10 years.</div>
+    </div>
+    <div class="guarantee-item reveal">
+      <div class="guarantee-icon">📸</div>
+      <div class="guarantee-title">Daily Photo Updates</div>
+      <div class="guarantee-text">You get a photo update every evening. See exactly what's been done and what's next — even if you're at work.</div>
+    </div>
+    <div class="guarantee-item reveal">
+      <div class="guarantee-icon">🛡️</div>
+      <div class="guarantee-title">2-Year Workmanship Guarantee</div>
+      <div class="guarantee-text">If anything we installed fails within 2 years due to workmanship, we fix it free. No questions, no excuses.</div>
+    </div>
+    <div class="guarantee-item reveal">
+      <div class="guarantee-icon">👷</div>
+      <div class="guarantee-title">No Subcontractors</div>
+      <div class="guarantee-text">Every single day, you'll have our own trained, background-checked crew on site — not strangers hired off Craigslist.</div>
+    </div>
+  </div>
+</section>
+
+<!-- BEFORE/AFTER GALLERY -->
+<section class="section" id="gallery">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">Our Work</div>
+      <h2 class="section-title">Before &amp; After</h2>
+      <p class="section-body">Every project is handled by our own crew from demolition to final tile. No subcontractors — ever.</p>
+    </div>
+    <div class="gallery-grid stagger">
+      <div class="ba-card reveal scale">
+        <div class="ba-card-inner">
+          <div class="ba-img">
+            <img src="images/before-1.jpg" alt="Before bathroom remodel"
+              onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=60&sat=-80'">
+            <div class="ba-label">Before</div>
+          </div>
+          <div class="ba-img">
+            <img src="images/after-1.jpg" alt="After bathroom remodel"
+              onerror="this.src='https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=600&q=80'">
+            <div class="ba-label">After</div>
+          </div>
+        </div>
+        <div class="ba-meta"><strong>Full Bath Remodel</strong> · Ballard · 9 days · $14,200</div>
+      </div>
+      <div class="ba-card reveal scale">
+        <div class="ba-card-inner">
+          <div class="ba-img">
+            <img src="images/before-2.jpg" alt="Before walk-in shower"
+              onerror="this.src='https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=600&q=40&sat=-70'">
+            <div class="ba-label">Before</div>
+          </div>
+          <div class="ba-img">
+            <img src="images/after-2.jpg" alt="After walk-in shower"
+              onerror="this.src='https://images.unsplash.com/photo-1552321554-5fefe8c9ef14?w=600&q=80'">
+            <div class="ba-label">After</div>
+          </div>
+        </div>
+        <div class="ba-meta"><strong>Tub-to-Shower Conversion</strong> · Capitol Hill · 6 days · $8,800</div>
+      </div>
+      <div class="ba-card reveal scale">
+        <div class="ba-card-inner">
+          <div class="ba-img">
+            <img src="images/before-3.jpg" alt="Before master bathroom"
+              onerror="this.src='https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=600&q=50&sat=-60'">
+            <div class="ba-label">Before</div>
+          </div>
+          <div class="ba-img">
+            <img src="images/after-3.jpg" alt="After master bathroom"
+              onerror="this.src='https://images.unsplash.com/photo-1507652313519-d4e9174996dd?w=600&q=85'">
+            <div class="ba-label">After</div>
+          </div>
+        </div>
+        <div class="ba-meta"><strong>Master Bath Remodel</strong> · Bellevue · 12 days · $19,500</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- PRICE CALCULATOR -->
 <section class="section section-alt" id="calculator">
   <div class="container">
     <div class="reveal">
       <div class="eyebrow">Instant Estimate</div>
-      <h2 class="section-title">How Much Will<br>Your Project Cost?</h2>
-      <p class="section-body" style="margin-bottom:40px">Adjust the sliders to match your project. Prices reflect real Seattle 2026 contractor rates — free on-site estimate always included.</p>
-    </div>
-    <div class="calc-tabs reveal">
-      <button class="calc-tab active" data-service="bathroom">Bathroom</button>
-      <button class="calc-tab" data-service="kitchen">Kitchen</button>
-      <button class="calc-tab" data-service="fence">Fence</button>
+      <h2 class="section-title">How Much Will<br>Your Bathroom Cost?</h2>
+      <p class="section-body" style="margin-bottom:40px">Adjust the sliders to match your bathroom. Prices reflect real Seattle 2026 contractor rates — free on-site estimate always included.</p>
     </div>
     <div class="calc-body">
       <div>
         <!-- Bathroom -->
         <div id="calc-bathroom">
-          <div class="calc-label">Room Size</div>
+          <div class="calc-label">Bathroom Size</div>
           <input type="range" class="calc-slider" id="bath-size" min="30" max="200" value="80">
           <div class="calc-slider-val"><span id="bath-size-val">80</span> sq ft</div>
           <div class="calc-label">Material Quality</div>
@@ -823,42 +1034,11 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
           <div class="calc-label">Add-Ons</div>
           <div class="extras-grid" id="bath-extras">
             <label class="extra-check"><input type="checkbox" value="heated_floor"><div class="extra-cb">✓</div><span class="extra-name">Heated Floor</span></label>
-            <label class="extra-check"><input type="checkbox" value="custom_tile"><div class="extra-cb">✓</div><span class="extra-name">Custom Tile Work</span></label>
+            <label class="extra-check"><input type="checkbox" value="custom_tile"><div class="extra-cb">✓</div><span class="extra-name">Designer Tile Work</span></label>
             <label class="extra-check"><input type="checkbox" value="tub"><div class="extra-cb">✓</div><span class="extra-name">Freestanding Tub</span></label>
-          </div>
-        </div>
-        <!-- Kitchen -->
-        <div id="calc-kitchen" style="display:none">
-          <div class="calc-label">Kitchen Size</div>
-          <input type="range" class="calc-slider" id="kitch-size" min="80" max="400" value="150">
-          <div class="calc-slider-val"><span id="kitch-size-val">150</span> sq ft</div>
-          <div class="calc-label">Material Quality</div>
-          <div class="quality-btns">
-            <button class="quality-btn" data-q="basic">Basic</button>
-            <button class="quality-btn active" data-q="standard">Standard</button>
-            <button class="quality-btn" data-q="premium">Premium ✦</button>
-          </div>
-          <div class="calc-label">Add-Ons</div>
-          <div class="extras-grid" id="kitch-extras">
-            <label class="extra-check"><input type="checkbox" value="island"><div class="extra-cb">✓</div><span class="extra-name">Kitchen Island</span></label>
-            <label class="extra-check"><input type="checkbox" value="backsplash"><div class="extra-cb">✓</div><span class="extra-name">Custom Backsplash</span></label>
-            <label class="extra-check"><input type="checkbox" value="appliances"><div class="extra-cb">✓</div><span class="extra-name">New Appliances</span></label>
-          </div>
-        </div>
-        <!-- Fence -->
-        <div id="calc-fence" style="display:none">
-          <div class="calc-label">Fence Length</div>
-          <input type="range" class="calc-slider" id="fence-len" min="50" max="500" value="120">
-          <div class="calc-slider-val"><span id="fence-len-val">120</span> linear ft</div>
-          <div class="calc-label">Material</div>
-          <div class="fence-row">
-            <button class="material-btn active" data-mat="cedar">Cedar Wood</button>
-            <button class="material-btn" data-mat="composite">Composite</button>
-          </div>
-          <div class="calc-label">Add-Ons</div>
-          <div class="extras-grid" id="fence-extras">
-            <label class="extra-check"><input type="checkbox" value="gate"><div class="extra-cb">✓</div><span class="extra-name">Gate Installation</span></label>
-            <label class="extra-check"><input type="checkbox" value="stain"><div class="extra-cb">✓</div><span class="extra-name">Stain & Seal</span></label>
+            <label class="extra-check"><input type="checkbox" value="double_vanity"><div class="extra-cb">✓</div><span class="extra-name">Double Vanity</span></label>
+            <label class="extra-check"><input type="checkbox" value="frameless_glass"><div class="extra-cb">✓</div><span class="extra-name">Frameless Glass Shower</span></label>
+            <label class="extra-check"><input type="checkbox" value="exhaust_fan"><div class="extra-cb">✓</div><span class="extra-name">Exhaust Fan Upgrade</span></label>
           </div>
         </div>
       </div>
@@ -887,11 +1067,11 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="viz-panels">
       <div class="reveal left">
         <div class="viz-group">
-          <div class="viz-group-label">Project Type</div>
+          <div class="viz-group-label">Bathroom Type</div>
           <div class="viz-options" id="viz-service">
-            <button class="viz-opt active" data-val="bathroom">Bathroom</button>
-            <button class="viz-opt" data-val="kitchen">Kitchen</button>
-            <button class="viz-opt" data-val="fence">Yard & Fence</button>
+            <button class="viz-opt active" data-val="bathroom">Full Remodel</button>
+            <button class="viz-opt" data-val="shower">Walk-In Shower</button>
+            <button class="viz-opt" data-val="master">Master Bath</button>
           </div>
         </div>
         <div class="viz-group">
@@ -955,6 +1135,170 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   </div>
 </section>
 
+<!-- BATHROOM PLANNER -->
+<section class="section section-alt" id="planner">
+  <div class="container">
+    <div class="reveal">
+      <div class="eyebrow">Interactive Tool</div>
+      <h2 class="section-title">Design Your Bathroom<br><em>See the Cost Instantly</em></h2>
+      <p class="section-body" style="margin-bottom:0">Drag fixtures onto the floor plan, pick your tiles, and get a real-time cost estimate — using actual Seattle 2026 material prices.</p>
+    </div>
+    <div class="planner-wrap reveal">
+      <!-- LEFT PANEL -->
+      <div class="planner-panel">
+        <div class="planner-section-label">Room Dimensions</div>
+        <div class="dim-row">
+          <div class="dim-input">
+            <label>Width (ft)</label>
+            <input type="number" id="room-w" value="8" min="4" max="30" step="0.5">
+          </div>
+          <div class="dim-input">
+            <label>Length (ft)</label>
+            <input type="number" id="room-l" value="10" min="4" max="40" step="0.5">
+          </div>
+        </div>
+
+        <div class="planner-section-label">Add Fixtures</div>
+        <div class="fixture-btns">
+          <button class="fixture-btn" data-fix="toilet" title="Click to add toilet">
+            <span class="fix-icon">🚽</span>Toilet<br><small style="color:var(--gray)">$350–900</small>
+          </button>
+          <button class="fixture-btn" data-fix="shower" title="Click to add walk-in shower">
+            <span class="fix-icon">🚿</span>Walk-in Shower<br><small style="color:var(--gray)">$1,200–3,500</small>
+          </button>
+          <button class="fixture-btn" data-fix="bathtub" title="Click to add bathtub">
+            <span class="fix-icon">🛁</span>Bathtub<br><small style="color:var(--gray)">$600–2,000</small>
+          </button>
+          <button class="fixture-btn" data-fix="vanity" title="Click to add single vanity">
+            <span class="fix-icon">🪞</span>Single Vanity<br><small style="color:var(--gray)">$400–1,200</small>
+          </button>
+          <button class="fixture-btn" data-fix="double_vanity" title="Click to add double vanity">
+            <span class="fix-icon">🪞</span>Double Vanity<br><small style="color:var(--gray)">$800–2,500</small>
+          </button>
+          <button class="fixture-btn" data-fix="linen" title="Click to add linen cabinet">
+            <span class="fix-icon">🗄️</span>Linen Cabinet<br><small style="color:var(--gray)">$200–600</small>
+          </button>
+        </div>
+
+        <div class="planner-section-label">Floor Tile</div>
+        <div class="tile-row">
+          <div class="tile-col">
+            <div class="tile-swatch active" id="floor-basic" data-tile="floor" data-tier="basic"
+              style="background:repeating-conic-gradient(#e8e4de 0% 25%,#d4cfc8 0% 50%) 0 0/20px 20px"
+              title="Basic Ceramic — $8/sqft installed"></div>
+            <div class="tile-name">Basic<br>$8/sf</div>
+          </div>
+          <div class="tile-col">
+            <div class="tile-swatch" id="floor-standard" data-tile="floor" data-tier="standard"
+              style="background:repeating-conic-gradient(#9da3a8 0% 25%,#7a8085 0% 50%) 0 0/28px 28px"
+              title="Standard Porcelain — $13/sqft installed"></div>
+            <div class="tile-name">Standard<br>$13/sf</div>
+          </div>
+          <div class="tile-col">
+            <div class="tile-swatch" id="floor-premium" data-tile="floor" data-tier="premium"
+              style="background:linear-gradient(135deg,#c9b99a 25%,#b8a88a 25%,#b8a88a 50%,#c9b99a 50%,#c9b99a 75%,#b8a88a 75%)"
+              title="Premium Stone/Marble — $22/sqft installed"></div>
+            <div class="tile-name">Premium<br>$22/sf</div>
+          </div>
+          <div class="tile-col">
+            <div class="tile-swatch" id="floor-custom" data-tile="floor" data-tier="custom"
+              style="background:linear-gradient(135deg,#1a3a4a,#0ea875)"
+              title="Custom Design — $18/sqft installed"></div>
+            <div class="tile-name">Custom<br>$18/sf</div>
+          </div>
+        </div>
+
+        <div class="planner-section-label">Wall Tile</div>
+        <div class="tile-row">
+          <div class="tile-col">
+            <div class="tile-swatch active" id="wall-basic" data-tile="wall" data-tier="basic"
+              style="background:repeating-linear-gradient(#e0ddd8 0px,#e0ddd8 18px,#ccc 18px,#ccc 20px)"
+              title="Basic Ceramic — $8/sqft installed"></div>
+            <div class="tile-name">Basic<br>$8/sf</div>
+          </div>
+          <div class="tile-col">
+            <div class="tile-swatch" id="wall-standard" data-tile="wall" data-tier="standard"
+              style="background:repeating-linear-gradient(90deg,#b8bfc6 0px,#b8bfc6 58px,#9ba3aa 58px,#9ba3aa 60px)"
+              title="Subway Tile — $13/sqft installed"></div>
+            <div class="tile-name">Subway<br>$13/sf</div>
+          </div>
+          <div class="tile-col">
+            <div class="tile-swatch" id="wall-premium" data-tile="wall" data-tier="premium"
+              style="background:linear-gradient(160deg,#e8e0d5 0%,#d8ccbe 40%,#c8bcaa 100%)"
+              title="Marble-look — $22/sqft installed"></div>
+            <div class="tile-name">Marble<br>$22/sf</div>
+          </div>
+          <div class="tile-col">
+            <div class="tile-swatch" id="wall-custom" data-tile="wall" data-tier="custom"
+              style="background:linear-gradient(135deg,#2d5a6e,#4a8fa3)"
+              title="Custom Tile — $18/sqft installed"></div>
+            <div class="tile-name">Custom<br>$18/sf</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px">
+          <button class="planner-btn planner-btn-secondary" id="planner-clear" style="width:100%;font-size:12px">
+            Clear All Fixtures
+          </button>
+        </div>
+      </div>
+
+      <!-- CANVAS + COST -->
+      <div class="planner-canvas-wrap">
+        <div class="planner-canvas-header">
+          <h4>🛁 Floor Plan</h4>
+          <span>Click fixture buttons to add · Drag to reposition · Click to remove</span>
+        </div>
+        <canvas id="planner-canvas" width="660" height="440"></canvas>
+        <div class="planner-selected-info" id="planner-selected-info"></div>
+        <div class="planner-hint">Tip: On mobile, tap a fixture button then tap the floor plan to place it.</div>
+        <div class="planner-cost-bar">
+          <div class="cost-item">
+            <div class="cost-item-label">Tile</div>
+            <div class="cost-item-val" id="cost-tile">$0</div>
+          </div>
+          <div class="cost-item">
+            <div class="cost-item-label">Fixtures</div>
+            <div class="cost-item-val" id="cost-fixtures">$0</div>
+          </div>
+          <div class="cost-item">
+            <div class="cost-item-label">Labor</div>
+            <div class="cost-item-val" id="cost-labor">$0</div>
+          </div>
+          <div class="cost-total">
+            <div class="cost-total-label">Estimated Total</div>
+            <div class="cost-total-range" id="cost-total">—</div>
+          </div>
+          <div class="planner-actions">
+            <button class="planner-btn planner-btn-secondary" id="planner-visual-btn">✨ AI Visual</button>
+            <button class="planner-btn planner-btn-primary" id="planner-quote-btn">📧 Email Quote</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Quote Modal -->
+<div class="planner-modal-bg" id="planner-modal-bg">
+  <div class="planner-modal" style="position:relative">
+    <button class="planner-modal-close" id="planner-modal-close">×</button>
+    <h3>Send This Quote</h3>
+    <p id="planner-modal-summary">Your layout summary will appear here.</p>
+    <input type="text" id="planner-modal-name" placeholder="Your name">
+    <input type="email" id="planner-modal-email" placeholder="Your email address">
+    <input type="tel" id="planner-modal-phone" placeholder="Phone number (optional)">
+    <div class="planner-modal-btns">
+      <button class="planner-btn planner-btn-primary" id="planner-modal-send" style="flex:1">Send My Quote →</button>
+    </div>
+    <div id="planner-modal-success" style="display:none;text-align:center;padding:16px 0">
+      <div style="font-size:40px;margin-bottom:10px">🎉</div>
+      <strong>Quote sent!</strong><br>
+      <span style="font-size:13px;color:var(--gray)">David will call you within 2 hours to discuss your project.</span>
+    </div>
+  </div>
+</div>
+
 <!-- PROCESS -->
 <section class="process-section">
   <div class="container">
@@ -1011,19 +1355,19 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
       <div class="testimonial reveal">
         <div class="t-quote">"</div>
         <div class="t-stars">★★★★★</div>
-        <p class="t-text">Best contractor experience I've ever had. They finished our kitchen two days early and cleaned up every evening. The quartz countertops and walnut cabinets are absolutely stunning.</p>
+        <p class="t-text">We converted our old tub to a walk-in shower and the result is incredible. David's team finished in 6 days, sent photos every afternoon, and the price didn't change a dollar from the estimate.</p>
         <div class="t-author">
           <div class="t-avatar">JR</div>
-          <div><div class="t-name">James R.</div><div class="t-location">Capitol Hill · Kitchen Remodel</div></div>
+          <div><div class="t-name">James R.</div><div class="t-location">Capitol Hill · Tub-to-Shower Conversion</div></div>
         </div>
       </div>
       <div class="testimonial reveal">
         <div class="t-quote">"</div>
         <div class="t-stars">★★★★★</div>
-        <p class="t-text">Got four quotes for our cedar fence. Seattle Pro wasn't the cheapest, but two years later it looks brand new through all the Seattle rain. Clearly worth every penny.</p>
+        <p class="t-text">Got four quotes for our master bathroom. Seattle Pro wasn't the cheapest, but David showed us exactly where every dollar goes. Two years later, the heated floors and custom tile still look brand new.</p>
         <div class="t-author">
           <div class="t-avatar">LP</div>
-          <div><div class="t-name">Linda P.</div><div class="t-location">Bellevue · Cedar Fence</div></div>
+          <div><div class="t-name">Linda P.</div><div class="t-location">Bellevue · Master Bath Remodel</div></div>
         </div>
       </div>
     </div>
@@ -1060,13 +1404,14 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
               </div>
             </div>
             <div class="form-group">
-              <label>What Do You Need?</label>
+              <label>What Type of Bathroom Project?</label>
               <select id="f-service" required>
-                <option value="">— Select a service —</option>
-                <option value="bathroom">Bathroom Remodel</option>
-                <option value="kitchen">Kitchen Remodel</option>
-                <option value="fence">Fence Installation</option>
-                <option value="other">Multiple / Other</option>
+                <option value="">— Select a project type —</option>
+                <option value="full_remodel">Full Bathroom Remodel</option>
+                <option value="walkin_shower">Walk-In Shower</option>
+                <option value="tub_conversion">Tub-to-Shower Conversion</option>
+                <option value="vanity_tile">Vanity &amp; Tile Update</option>
+                <option value="other">Not Sure — Let's Talk</option>
               </select>
             </div>
             <div class="form-group">
@@ -1097,7 +1442,19 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="faq-list reveal">
       <div class="faq-item">
         <div class="faq-q">How long does a bathroom remodel take? <span class="faq-icon">+</span></div>
-        <div class="faq-a">Most bathroom remodels take 7–12 days. A simple cosmetic update (vanity, toilet, paint) can be done in 3–4 days. A full gut renovation with new tile, plumbing, and electrical typically takes 10–14 days. We'll give you an accurate timeline before work begins.</div>
+        <div class="faq-a">Most bathroom remodels take 7–12 days. A tub-to-shower conversion or walk-in shower build typically runs 5–8 days. A full gut renovation with new tile, plumbing, and electrical takes 10–14 days. We give you an exact schedule before work starts — and we stick to it.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I need to move out during the remodel? <span class="faq-icon">+</span></div>
+        <div class="faq-a">No. We contain the work area completely, clean up each evening, and restore access as fast as possible. If your home has only one bathroom, we'll prioritize getting it functional each night. Most clients stay home throughout the entire project.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What if you find mold or hidden water damage? <span class="faq-icon">+</span></div>
+        <div class="faq-a">It happens — Seattle homes, especially those built before 2000, often have hidden moisture behind old tile. We include a mold inspection in every estimate. If we find damage, we stop, show you exactly what we found, and give you a written price to fix it before continuing. No surprise additions at the end.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do you handle permits? <span class="faq-icon">+</span></div>
+        <div class="faq-a">Yes. All necessary permits are included in your project price. We know Seattle's permit requirements inside out and handle all paperwork with the city. You don't need to do anything — we manage it from start to final inspection.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q">Do you offer financing? <span class="faq-icon">+</span></div>
@@ -1111,10 +1468,6 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
         <div class="faq-q">Do you use subcontractors? <span class="faq-icon">+</span></div>
         <div class="faq-a">No. Every project is completed by our own trained, background-checked employees. This gives us full control over quality and timeline — and means you deal with us directly, not a random third party who doesn't know your project's history.</div>
       </div>
-      <div class="faq-item">
-        <div class="faq-q">What areas of Seattle do you serve? <span class="faq-icon">+</span></div>
-        <div class="faq-a">We serve all of Seattle and the greater metro area, including Bellevue, Kirkland, Redmond, Renton, Shoreline, Burien, Mercer Island, and more. Fill out the form or call us to confirm your address is in our service area.</div>
-      </div>
     </div>
   </div>
 </section>
@@ -1124,7 +1477,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   <div class="footer-grid">
     <div class="footer-brand">
       <h3>Seattle Pro Remodeling</h3>
-      <p>Transforming Seattle homes since 2015. Licensed, insured, and committed to craftsmanship that lasts for decades.</p>
+      <p>Seattle's bathroom remodeling specialists since 2015. 350+ bathrooms transformed. Licensed, insured, and committed to craftsmanship that lasts for decades.</p>
       <div class="footer-contact">
         <a href="tel:+12065550000">📞 (206) 555-0000</a>
         <a href="mailto:info@seattleproremodeling.com">✉️ info@seattleproremodeling.com</a>
@@ -1134,18 +1487,19 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="footer-col">
       <h4>Services</h4>
       <ul>
-        <li><a href="#services">Bathroom Remodel</a></li>
-        <li><a href="#services">Kitchen Remodel</a></li>
-        <li><a href="#services">Fence Installation</a></li>
+        <li><a href="#services">Full Bath Remodel</a></li>
+        <li><a href="#services">Walk-In Showers</a></li>
+        <li><a href="#services">Tub Conversions</a></li>
+        <li><a href="#services">Tile &amp; Vanity Work</a></li>
       </ul>
     </div>
     <div class="footer-col">
-      <h4>Company</h4>
+      <h4>Tools</h4>
       <ul>
-        <li><a href="#calculator">Price Calculator</a></li>
+        <li><a href="#planner">Room Planner</a></li>
+        <li><a href="#calculator">Cost Calculator</a></li>
         <li><a href="#visualizer">AI Visualizer</a></li>
         <li><a href="#reviews">Client Reviews</a></li>
-        <li><a href="#faq">FAQ</a></li>
         <li><a href="#estimate">Free Estimate</a></li>
       </ul>
     </div>
@@ -1184,7 +1538,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="chat-online-dot"></div>
   </div>
   <div id="chat-msgs">
-    <div class="msg agent">Hi! 👋 I'm David from Seattle Pro Remodeling.<br><br>What type of project are you thinking about — bathroom, kitchen, fence, or something else?</div>
+    <div class="msg agent">Hi! 👋 I'm David from Seattle Pro Remodeling.<br><br>We specialize in bathroom remodeling — walk-in showers, full gut renovations, tub conversions, and more.<br><br>What does your bathroom project look like?</div>
   </div>
   <div class="chat-input-row">
     <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
@@ -1273,63 +1627,30 @@ document.querySelectorAll('.stat-num[data-target]').forEach(el=>counterObs.obser
 // ─── PRICE CALCULATOR ─────────────────────────────────────
 const CALC_DATA={
   bathroom:{
-    baseMin:4000,baseMax:8000,perMin:70,perMax:130,defaultSqft:80,
-    quality:{basic:1.0,standard:1.4,premium:2.0},
-    extras:{heated_floor:[800,1500],custom_tile:[1500,3500],tub:[2500,5000]}
-  },
-  kitchen:{
-    baseMin:8000,baseMax:15000,perMin:55,perMax:110,defaultSqft:150,
-    quality:{basic:1.0,standard:1.5,premium:2.2},
-    extras:{island:[2500,5000],backsplash:[1200,2500],appliances:[4000,8000]}
-  },
-  fence:{
-    material:{cedar:{min:25,max:45},composite:{min:35,max:60}},
-    extras:{gate:[600,1200],stain:[300,700]}
+    baseMin:3500,baseMax:7000,perMin:85,perMax:145,defaultSqft:80,
+    quality:{basic:1.0,standard:1.47,premium:2.18},
+    extras:{
+      heated_floor:[900,1800],custom_tile:[1800,4000],tub:[2800,5500],
+      double_vanity:[1200,2800],frameless_glass:[1500,3200],exhaust_fan:[350,700]
+    }
   }
 };
-let calcService='bathroom',calcQuality='standard',calcMaterial='cedar';
+let calcQuality='standard';
 
 function calcUpdate(){
-  const d=CALC_DATA[calcService];
-  let lo=0,hi=0;
-  if(calcService==='fence'){
-    const len=+document.getElementById('fence-len').value||120;
-    const m=d.material[calcMaterial];
-    lo=len*m.min; hi=len*m.max;
-    document.querySelectorAll('#fence-extras .extra-check.checked input').forEach(inp=>{
-      const e=d.extras[inp.value]; if(e){lo+=e[0];hi+=e[1];}
-    });
-  } else {
-    const sId=calcService==='bathroom'?'bath-size':'kitch-size';
-    const sqft=+document.getElementById(sId).value||d.defaultSqft;
-    const mul=d.quality[calcQuality];
-    lo=(d.baseMin+sqft*d.perMin)*mul;
-    hi=(d.baseMax+sqft*d.perMax)*mul;
-    const eId=calcService==='bathroom'?'bath-extras':'kitch-extras';
-    document.querySelectorAll('#'+eId+' .extra-check.checked input').forEach(inp=>{
-      const e=d.extras[inp.value]; if(e){lo+=e[0];hi+=e[1];}
-    });
-  }
+  const d=CALC_DATA.bathroom;
+  const sqft=+document.getElementById('bath-size').value||d.defaultSqft;
+  const mul=d.quality[calcQuality];
+  let lo=(d.baseMin+sqft*d.perMin)*mul;
+  let hi=(d.baseMax+sqft*d.perMax)*mul;
+  document.querySelectorAll('#bath-extras .extra-check.checked input').forEach(inp=>{
+    const e=d.extras[inp.value]; if(e){lo+=e[0];hi+=e[1];}
+  });
   const fmt=n=>'$'+(Math.round(n/100)*100).toLocaleString();
   document.getElementById('calc-price-display').textContent=fmt(lo)+' – '+fmt(hi);
 }
 
-document.querySelectorAll('.calc-tab').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.calc-tab').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    calcService=btn.dataset.service;
-    ['bathroom','kitchen','fence'].forEach(s=>{
-      document.getElementById('calc-'+s).style.display=s===calcService?'':'none';
-    });
-    calcQuality='standard';calcMaterial='cedar';
-    document.querySelectorAll('.quality-btn').forEach(b=>b.classList.toggle('active',b.dataset.q==='standard'));
-    document.querySelectorAll('.material-btn').forEach(b=>b.classList.toggle('active',b.dataset.mat==='cedar'));
-    calcUpdate();
-  });
-});
-
-['bath-size','kitch-size','fence-len'].forEach(id=>{
+['bath-size'].forEach(id=>{
   const el=document.getElementById(id); if(!el) return;
   const valEl=document.getElementById(id+'-val');
   const initPct=((el.value-el.min)/(el.max-el.min))*100;
@@ -1349,13 +1670,6 @@ document.querySelectorAll('.quality-btn').forEach(btn=>{
   });
 });
 
-document.querySelectorAll('.material-btn').forEach(btn=>{
-  btn.addEventListener('click',()=>{
-    document.querySelectorAll('.material-btn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active'); calcMaterial=btn.dataset.mat; calcUpdate();
-  });
-});
-
 document.querySelectorAll('.extra-check').forEach(label=>{
   label.addEventListener('click',()=>{
     label.classList.toggle('checked');
@@ -1365,7 +1679,6 @@ document.querySelectorAll('.extra-check').forEach(label=>{
 });
 
 document.getElementById('calc-cta-btn').addEventListener('click',()=>{
-  document.getElementById('f-service').value=calcService;
   document.getElementById('estimate').scrollIntoView({behavior:'smooth'});
 });
 
@@ -1373,6 +1686,7 @@ calcUpdate();
 
 // ─── VISUALIZER ───────────────────────────────────────────
 let vizService='bathroom',vizStyle='modern minimalist',vizColor='white and gray tones',vizFile=null;
+const VIZ_LABELS={bathroom:'Full Remodel',shower:'Walk-In Shower',master:'Master Bath'};
 
 function resizeImage(file){
   return new Promise(resolve=>{
@@ -1450,9 +1764,8 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
   errEl.classList.remove('visible');
   loading.classList.add('visible');
 
-  const serviceLabel={bathroom:'Bathroom',kitchen:'Kitchen',fence:'Yard & Fence'};
   const styleWord=vizStyle.split(' ')[0];
-  const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+serviceLabel[vizService];
+  const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+(VIZ_LABELS[vizService]||'Bathroom');
 
   if(vizFile){
     // ── IMG2IMG via Fal.ai ──
@@ -1485,11 +1798,11 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
   } else {
     // ── TEXT-TO-IMAGE via Pollinations ──
     const VIZ_PROMPTS={
-      bathroom:'professional interior design photo of a {style} bathroom remodel, {colors} color palette, Seattle luxury home, custom tile work, walk-in shower, modern fixtures, natural lighting, architectural photography, ultra detailed, no people',
-      kitchen:'professional interior design photo of a {style} kitchen renovation, {colors} color palette, Seattle luxury home, custom cabinetry, quartz countertops, pendant lighting, architectural photography, ultra detailed, no people',
-      fence:'professional landscape photo of a beautiful {style} cedar privacy fence and backyard, {colors} color tones, Seattle residential neighborhood, Pacific Northwest garden, golden hour lighting, architectural photography, ultra detailed, no people'
+      bathroom:'professional interior design photo of a {style} full bathroom remodel, {colors} color palette, Seattle luxury home, custom large-format tile, double vanity, walk-in shower, natural lighting, architectural photography, ultra detailed, no people',
+      shower:'professional interior design photo of a {style} walk-in shower, {colors} color palette, Seattle luxury home, frameless glass enclosure, built-in niche, rain head, floor-to-ceiling tile, natural lighting, architectural photography, ultra detailed, no people',
+      master:'professional interior design photo of a {style} master bathroom, {colors} color palette, Seattle luxury home, freestanding tub, dual vanity, heated floor, spa-like atmosphere, natural lighting, architectural photography, ultra detailed, no people'
     };
-    const vizPrompt=VIZ_PROMPTS[vizService].replace('{style}',vizStyle).replace('{colors}',vizColor);
+    const vizPrompt=(VIZ_PROMPTS[vizService]||VIZ_PROMPTS.bathroom).replace('{style}',vizStyle).replace('{colors}',vizColor);
     const seed=Math.floor(Math.random()*99999);
     const imgUrl='https://image.pollinations.ai/prompt/'+encodeURIComponent(vizPrompt)+'?width=768&height=512&model=flux&nologo=true&seed='+seed;
     img.onload=()=>{
@@ -1511,7 +1824,6 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
 
 
 document.getElementById('viz-quote-btn').addEventListener('click',()=>{
-  document.getElementById('f-service').value=vizService;
   document.getElementById('estimate').scrollIntoView({behavior:'smooth'});
 });
 
@@ -1588,6 +1900,503 @@ function addMsg(role,text){
 }
 document.getElementById('chat-send').addEventListener('click',sendMsg);
 chatInput.addEventListener('keypress',e=>{ if(e.key==='Enter') sendMsg(); });
+
+// ─── BATHROOM PLANNER ─────────────────────────────────────
+// roundRect polyfill for older Safari
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r||0,w/2,h/2);
+    this.beginPath();
+    this.moveTo(x+r,y);
+    this.lineTo(x+w-r,y);this.quadraticCurveTo(x+w,y,x+w,y+r);
+    this.lineTo(x+w,y+h-r);this.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+    this.lineTo(x+r,y+h);this.quadraticCurveTo(x,y+h,x,y+h-r);
+    this.lineTo(x,y+r);this.quadraticCurveTo(x,y,x+r,y);
+    this.closePath();
+    return this;
+  };
+}
+(function(){
+  const canvas=document.getElementById('planner-canvas');
+  if(!canvas) return;
+  const ctx=canvas.getContext('2d');
+
+  // ── State ──
+  const state={
+    roomW:8, roomL:10,
+    floorTier:'basic', wallTier:'basic',
+    fixtures:[],
+    dragging:null, dragOffX:0, dragOffY:0,
+    selected:null,
+    pendingFix:null // fixture type waiting to be placed
+  };
+
+  // ── Fixture definitions ──
+  const FIX_DEFS={
+    toilet:     {label:'Toilet',     w:1.8, h:2.4, costLo:350,  costHi:900,  color:'#d4e9f7', border:'#6ba3c4'},
+    shower:     {label:'Shower',     w:3.0, h:3.0, costLo:1200, costHi:3500, color:'#d4f0e4', border:'#4aaa76'},
+    bathtub:    {label:'Bathtub',    w:2.5, h:5.0, costLo:600,  costHi:2000, color:'#fde8d4', border:'#d4855a'},
+    vanity:     {label:'Vanity',     w:2.0, h:1.5, costLo:400,  costHi:1200, color:'#f0e6fa', border:'#8f5ab3'},
+    double_vanity:{label:'Dbl Vanity',w:4.8,h:1.5,costLo:800,  costHi:2500, color:'#e8e6fa', border:'#6b5ab3'},
+    linen:      {label:'Cabinet',    w:1.5, h:1.5, costLo:200,  costHi:600,  color:'#faf0de', border:'#c4995a'}
+  };
+
+  // ── Tile rates ($/sqft installed) ──
+  const TILE_RATES={basic:8,standard:13,premium:22,custom:18};
+  const LABOR_BASE=65; // $/sqft
+
+  // ── Grid/scale helpers ──
+  let SCALE=50; // pixels per foot
+  let MARGIN=24; // canvas margin
+
+  function fitScale(){
+    const rect=canvas.parentElement.getBoundingClientRect();
+    const avail=Math.min(rect.width||660, 900) - MARGIN*2;
+    SCALE=Math.floor(Math.min(avail/state.roomW, (canvas.height-MARGIN*2)/state.roomL));
+    SCALE=Math.max(24, Math.min(SCALE, 64));
+    canvas.height=Math.round(state.roomL*SCALE)+MARGIN*2+20;
+  }
+
+  function roomPx(){
+    return {
+      x:MARGIN, y:MARGIN,
+      w:Math.round(state.roomW*SCALE),
+      h:Math.round(state.roomL*SCALE)
+    };
+  }
+
+  // ── Floor tile pattern ──
+  function makeTilePattern(tier){
+    const off=document.createElement('canvas');
+    const s=tier==='premium'?48:tier==='standard'?30:22;
+    off.width=s; off.height=s;
+    const c=off.getContext('2d');
+    const colors={
+      basic:['#ede9e3','#ddd8d0'],
+      standard:['#aab0b7','#8e959c'],
+      premium:['#d4c8b4','#bfb09a'],
+      custom:['#3a6070','#2a4d5e']
+    };
+    const [a,b]=colors[tier]||colors.basic;
+    c.fillStyle=a; c.fillRect(0,0,s,s);
+    c.fillStyle=b;
+    c.fillRect(0,0,s/2,s/2);
+    c.fillRect(s/2,s/2,s/2,s/2);
+    c.strokeStyle='rgba(255,255,255,0.35)';
+    c.lineWidth=1;
+    c.strokeRect(.5,.5,s-1,s-1);
+    return ctx.createPattern(off,'repeat');
+  }
+
+  function makeWallPattern(tier){
+    const off=document.createElement('canvas');
+    if(tier==='standard'||tier==='subway'){
+      off.width=60; off.height=30;
+      const c=off.getContext('2d');
+      c.fillStyle='#c5cdd5'; c.fillRect(0,0,60,30);
+      c.fillStyle='#b0b8c2'; c.fillRect(1,1,58,13); c.fillRect(31,16,28,13);
+      c.fillStyle='rgba(255,255,255,.4)'; c.fillRect(1,1,58,1); c.fillRect(31,16,28,1);
+    } else if(tier==='premium'){
+      off.width=60; off.height=60;
+      const c=off.getContext('2d');
+      c.fillStyle='#e4dcd0'; c.fillRect(0,0,60,60);
+      c.fillStyle='#d4ccc0'; c.fillRect(1,1,58,58);
+      c.strokeStyle='rgba(180,160,140,.6)'; c.lineWidth=.8;
+      c.strokeRect(1,1,58,58);
+    } else if(tier==='custom'){
+      off.width=30; off.height=30;
+      const c=off.getContext('2d');
+      c.fillStyle='#1a3a4a'; c.fillRect(0,0,30,30);
+      c.fillStyle='#0ea875'; c.fillRect(1,1,28,28);
+    } else {
+      off.width=24; off.height=24;
+      const c=off.getContext('2d');
+      c.fillStyle='#e8e4df'; c.fillRect(0,0,24,24);
+      c.strokeStyle='rgba(200,196,190,.8)'; c.lineWidth=.8;
+      c.strokeRect(.4,.4,23.2,23.2);
+    }
+    return ctx.createPattern(off,'repeat');
+  }
+
+  // ── Draw everything ──
+  function draw(){
+    const dpr=window.devicePixelRatio||1;
+    const cssW=canvas.parentElement.clientWidth||660;
+    if(canvas.style.width!==cssW+'px'){
+      canvas.style.width='100%';
+    }
+
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    const r=roomPx();
+
+    // Floor
+    ctx.save();
+    ctx.beginPath(); ctx.rect(r.x,r.y,r.w,r.h);
+    ctx.clip();
+    ctx.fillStyle=makeTilePattern(state.floorTier)||'#ede9e3';
+    ctx.fillRect(r.x,r.y,r.w,r.h);
+    ctx.restore();
+
+    // Wall border (3D-ish wall tile suggestion)
+    const WALL_DEPTH=18;
+    ['top','bottom','left','right'].forEach(side=>{
+      ctx.save();
+      let wx,wy,ww,wh;
+      if(side==='top'){wx=r.x;wy=r.y;ww=r.w;wh=WALL_DEPTH}
+      else if(side==='bottom'){wx=r.x;wy=r.y+r.h-WALL_DEPTH;ww=r.w;wh=WALL_DEPTH}
+      else if(side==='left'){wx=r.x;wy=r.y;ww=WALL_DEPTH;wh=r.h}
+      else{wx=r.x+r.w-WALL_DEPTH;wy=r.y;ww=WALL_DEPTH;wh=r.h}
+      ctx.beginPath(); ctx.rect(wx,wy,ww,wh); ctx.clip();
+      ctx.fillStyle=makeWallPattern(state.wallTier)||'#e0ddd8';
+      ctx.fillRect(wx,wy,ww,wh);
+      ctx.fillStyle='rgba(0,0,0,0.08)';
+      ctx.fillRect(wx,wy,ww,wh);
+      ctx.restore();
+    });
+
+    // Room outline
+    ctx.strokeStyle='#1a3a4a';
+    ctx.lineWidth=2.5;
+    ctx.strokeRect(r.x,r.y,r.w,r.h);
+
+    // Dimension labels
+    ctx.fillStyle='#1a3a4a';
+    ctx.font='bold 12px Inter,sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(state.roomW+" ft",r.x+r.w/2, r.y-6);
+    ctx.save();
+    ctx.translate(r.x-8, r.y+r.h/2);
+    ctx.rotate(-Math.PI/2);
+    ctx.fillText(state.roomL+" ft",0,0);
+    ctx.restore();
+
+    // Fixtures
+    state.fixtures.forEach((fix,i)=>{
+      const def=FIX_DEFS[fix.type];
+      const isSelected=state.selected===i;
+      const px=r.x+fix.x*SCALE;
+      const py=r.y+fix.y*SCALE;
+      const fw=def.w*SCALE;
+      const fh=def.h*SCALE;
+
+      // Shadow
+      ctx.shadowColor='rgba(0,0,0,0.15)'; ctx.shadowBlur=6; ctx.shadowOffsetX=2; ctx.shadowOffsetY=2;
+      ctx.fillStyle=def.color;
+      ctx.beginPath();
+      ctx.roundRect(px,py,fw,fh,4);
+      ctx.fill();
+      ctx.shadowColor='transparent'; ctx.shadowBlur=0;
+
+      // Border
+      ctx.strokeStyle=isSelected?'#0d2137':def.border;
+      ctx.lineWidth=isSelected?2.5:1.5;
+      ctx.stroke();
+
+      // Selection highlight
+      if(isSelected){
+        ctx.strokeStyle='rgba(14,168,117,.6)';
+        ctx.lineWidth=4;
+        ctx.setLineDash([5,3]);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // Label
+      ctx.fillStyle='#1a3a4a';
+      ctx.font=`bold ${Math.max(10,Math.min(13,fw/def.label.length))}px Inter,sans-serif`;
+      ctx.textAlign='center';
+      ctx.textBaseline='middle';
+      ctx.fillText(def.label,px+fw/2,py+fh/2);
+
+      // Cost hint
+      if(fw>40&&fh>32){
+        ctx.font='10px Inter,sans-serif';
+        ctx.fillStyle='rgba(0,0,0,0.45)';
+        ctx.fillText('$'+def.costLo.toLocaleString()+'+',px+fw/2,py+fh/2+14);
+      }
+    });
+
+    // Pending fixture ghost (follows mouse on desktop)
+    if(state.pendingFix&&state._mouseX!==undefined){
+      const def=FIX_DEFS[state.pendingFix];
+      const px=state._mouseX-def.w*SCALE/2;
+      const py=state._mouseY-def.h*SCALE/2;
+      ctx.globalAlpha=0.5;
+      ctx.fillStyle=def.color;
+      ctx.strokeStyle=def.border;
+      ctx.lineWidth=2;
+      ctx.beginPath();
+      ctx.roundRect(px,py,def.w*SCALE,def.h*SCALE,4);
+      ctx.fill();ctx.stroke();
+      ctx.globalAlpha=1;
+    }
+  }
+
+  // ── Cost calculation ──
+  function updateCost(){
+    const area=state.roomW*state.roomL;
+    const wallArea=2*(state.roomW+state.roomL)*8*0.7;
+    const floorRate=TILE_RATES[state.floorTier]||8;
+    const wallRate=TILE_RATES[state.wallTier]||8;
+    const tileCost=(area*floorRate)+(wallArea*wallRate);
+    let fixLo=0,fixHi=0;
+    state.fixtures.forEach(f=>{
+      const d=FIX_DEFS[f.type];
+      if(d){fixLo+=d.costLo;fixHi+=d.costHi;}
+    });
+    const laborCost=area*LABOR_BASE+state.fixtures.length*450;
+    const demoCost=area*4;
+    const baseLo=tileCost+fixLo+laborCost+demoCost;
+    const baseHi=(tileCost+fixHi+laborCost+demoCost)*1.15;
+    const fmt=n=>'$'+(Math.round(n/100)*100).toLocaleString();
+    document.getElementById('cost-tile').textContent=fmt(tileCost);
+    document.getElementById('cost-fixtures').textContent=fmt((fixLo+fixHi)/2);
+    document.getElementById('cost-labor').textContent=fmt(laborCost+demoCost);
+    document.getElementById('cost-total').textContent=fmt(baseLo)+' – '+fmt(baseHi);
+  }
+
+  // ── Hit test ──
+  function hitTest(mx,my){
+    const r=roomPx();
+    for(let i=state.fixtures.length-1;i>=0;i--){
+      const fix=state.fixtures[i];
+      const def=FIX_DEFS[fix.type];
+      const px=r.x+fix.x*SCALE;
+      const py=r.y+fix.y*SCALE;
+      if(mx>=px&&mx<=px+def.w*SCALE&&my>=py&&my<=py+def.h*SCALE) return i;
+    }
+    return -1;
+  }
+
+  function canvasPos(e){
+    const rect=canvas.getBoundingClientRect();
+    const scaleX=canvas.width/rect.width;
+    const scaleY=canvas.height/rect.height;
+    const touch=e.touches?e.touches[0]:e;
+    return{x:(touch.clientX-rect.left)*scaleX, y:(touch.clientY-rect.top)*scaleY};
+  }
+
+  // ── Place fixture ──
+  function placeFix(type, mx, my){
+    const def=FIX_DEFS[type]; if(!def) return;
+    const r=roomPx();
+    let fx=((mx-r.x)/SCALE - def.w/2);
+    let fy=((my-r.y)/SCALE - def.h/2);
+    fx=Math.max(0,Math.min(fx,state.roomW-def.w));
+    fy=Math.max(0,Math.min(fy,state.roomL-def.h));
+    state.fixtures.push({type,x:fx,y:fy});
+    state.pendingFix=null;
+    state.selected=state.fixtures.length-1;
+    updateInfo();
+    draw(); updateCost();
+    document.querySelectorAll('.fixture-btn').forEach(b=>b.classList.remove('active'));
+    canvas.style.cursor='default';
+  }
+
+  function updateInfo(){
+    const el=document.getElementById('planner-selected-info');
+    if(state.selected!==null&&state.selected>=0&&state.fixtures[state.selected]){
+      const f=state.fixtures[state.selected];
+      const d=FIX_DEFS[f.type];
+      el.textContent=d.label+' selected — click to deselect, drag to move, double-click to remove';
+    } else {el.textContent='';}
+  }
+
+  // ── Mouse events ──
+  canvas.addEventListener('mousemove',e=>{
+    const {x,y}=canvasPos(e);
+    state._mouseX=x; state._mouseY=y;
+    if(state.pendingFix){draw();return;}
+    if(state.dragging!==null){
+      const r=roomPx();
+      const def=FIX_DEFS[state.fixtures[state.dragging].type];
+      let nx=(x-state.dragOffX-r.x)/SCALE;
+      let ny=(y-state.dragOffY-r.y)/SCALE;
+      nx=Math.max(0,Math.min(nx,state.roomW-def.w));
+      ny=Math.max(0,Math.min(ny,state.roomL-def.h));
+      state.fixtures[state.dragging].x=nx;
+      state.fixtures[state.dragging].y=ny;
+      draw(); updateCost(); return;
+    }
+    const hit=hitTest(x,y);
+    canvas.style.cursor=hit>=0?'grab':'default';
+  });
+
+  canvas.addEventListener('mousedown',e=>{
+    if(e.button!==0) return;
+    const {x,y}=canvasPos(e);
+    if(state.pendingFix){placeFix(state.pendingFix,x,y);return;}
+    const hit=hitTest(x,y);
+    if(hit>=0){
+      state.dragging=hit;
+      state.selected=hit;
+      const r=roomPx();
+      const def=FIX_DEFS[state.fixtures[hit].type];
+      const px=r.x+state.fixtures[hit].x*SCALE;
+      const py=r.y+state.fixtures[hit].y*SCALE;
+      state.dragOffX=x-px;
+      state.dragOffY=y-py;
+      canvas.style.cursor='grabbing';
+      updateInfo(); draw();
+    } else {
+      state.selected=null; updateInfo(); draw();
+    }
+  });
+
+  canvas.addEventListener('mouseup',()=>{
+    state.dragging=null;
+    canvas.style.cursor='default';
+  });
+
+  canvas.addEventListener('dblclick',e=>{
+    const {x,y}=canvasPos(e);
+    const hit=hitTest(x,y);
+    if(hit>=0){
+      state.fixtures.splice(hit,1);
+      state.selected=null;
+      updateInfo(); draw(); updateCost();
+    }
+  });
+
+  // Touch support
+  canvas.addEventListener('touchstart',e=>{
+    e.preventDefault();
+    const {x,y}=canvasPos(e);
+    if(state.pendingFix){placeFix(state.pendingFix,x,y);return;}
+    const hit=hitTest(x,y);
+    if(hit>=0){
+      state.dragging=hit; state.selected=hit;
+      const r=roomPx();
+      state.dragOffX=x-(r.x+state.fixtures[hit].x*SCALE);
+      state.dragOffY=y-(r.y+state.fixtures[hit].y*SCALE);
+      updateInfo(); draw();
+    } else {state.selected=null;updateInfo();draw();}
+  },{passive:false});
+
+  canvas.addEventListener('touchmove',e=>{
+    e.preventDefault();
+    if(state.dragging===null) return;
+    const {x,y}=canvasPos(e);
+    const r=roomPx();
+    const def=FIX_DEFS[state.fixtures[state.dragging].type];
+    let nx=(x-state.dragOffX-r.x)/SCALE;
+    let ny=(y-state.dragOffY-r.y)/SCALE;
+    nx=Math.max(0,Math.min(nx,state.roomW-def.w));
+    ny=Math.max(0,Math.min(ny,state.roomL-def.h));
+    state.fixtures[state.dragging].x=nx;
+    state.fixtures[state.dragging].y=ny;
+    draw(); updateCost();
+  },{passive:false});
+
+  canvas.addEventListener('touchend',()=>{state.dragging=null;});
+
+  // ── Fixture buttons ──
+  document.querySelectorAll('.fixture-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const type=btn.dataset.fix;
+      document.querySelectorAll('.fixture-btn').forEach(b=>b.classList.remove('active'));
+      if(state.pendingFix===type){
+        state.pendingFix=null; canvas.style.cursor='default'; draw(); return;
+      }
+      state.pendingFix=type;
+      btn.classList.add('active');
+      canvas.style.cursor='crosshair';
+      document.getElementById('planner-selected-info').textContent='Click on the floor plan to place '+FIX_DEFS[type].label;
+      draw();
+    });
+  });
+
+  // ── Room dimension inputs ──
+  ['room-w','room-l'].forEach(id=>{
+    document.getElementById(id).addEventListener('input',e=>{
+      const val=parseFloat(e.target.value)||8;
+      if(id==='room-w') state.roomW=Math.max(4,Math.min(30,val));
+      else state.roomL=Math.max(4,Math.min(40,val));
+      // Re-clamp fixtures
+      state.fixtures.forEach(fix=>{
+        const def=FIX_DEFS[fix.type];
+        fix.x=Math.max(0,Math.min(fix.x,state.roomW-def.w));
+        fix.y=Math.max(0,Math.min(fix.y,state.roomL-def.h));
+      });
+      fitScale(); draw(); updateCost();
+    });
+  });
+
+  // ── Tile swatches ──
+  document.querySelectorAll('.tile-swatch').forEach(sw=>{
+    sw.addEventListener('click',()=>{
+      const tile=sw.dataset.tile; const tier=sw.dataset.tier;
+      document.querySelectorAll(`.tile-swatch[data-tile="${tile}"]`).forEach(s=>s.classList.remove('active'));
+      sw.classList.add('active');
+      if(tile==='floor') state.floorTier=tier;
+      else state.wallTier=tier;
+      draw(); updateCost();
+    });
+  });
+
+  // ── Clear all ──
+  document.getElementById('planner-clear').addEventListener('click',()=>{
+    state.fixtures=[]; state.selected=null;
+    updateInfo(); draw(); updateCost();
+  });
+
+  // ── Quote modal ──
+  document.getElementById('planner-quote-btn').addEventListener('click',()=>{
+    const total=document.getElementById('cost-total').textContent;
+    const fixList=state.fixtures.map(f=>FIX_DEFS[f.type].label).join(', ')||'None yet';
+    document.getElementById('planner-modal-summary').innerHTML=
+      `<strong>Room:</strong> ${state.roomW} × ${state.roomL} ft &nbsp;|&nbsp; `+
+      `<strong>Fixtures:</strong> ${fixList}<br>`+
+      `<strong>Floor tile:</strong> ${state.floorTier} &nbsp;|&nbsp; <strong>Wall tile:</strong> ${state.wallTier}<br>`+
+      `<strong>Estimated cost:</strong> ${total}`;
+    document.getElementById('planner-modal-success').style.display='none';
+    document.getElementById('planner-modal-bg').classList.add('open');
+  });
+
+  document.getElementById('planner-modal-close').addEventListener('click',()=>{
+    document.getElementById('planner-modal-bg').classList.remove('open');
+  });
+  document.getElementById('planner-modal-bg').addEventListener('click',e=>{
+    if(e.target===document.getElementById('planner-modal-bg'))
+      document.getElementById('planner-modal-bg').classList.remove('open');
+  });
+
+  document.getElementById('planner-modal-send').addEventListener('click',async()=>{
+    const name=document.getElementById('planner-modal-name').value.trim();
+    const email=document.getElementById('planner-modal-email').value.trim();
+    const phone=document.getElementById('planner-modal-phone').value.trim();
+    if(!name||!email){alert('Please enter your name and email.');return;}
+    const total=document.getElementById('cost-total').textContent;
+    const fixList=state.fixtures.map(f=>FIX_DEFS[f.type].label).join(', ')||'None selected';
+    const message=`Planner Quote Request\nRoom: ${state.roomW}×${state.roomL} ft\nFixtures: ${fixList}\nFloor: ${state.floorTier} | Wall: ${state.wallTier}\nEstimate: ${total}`;
+    const payload={name,phone:phone||'(not provided)',service:'bathroom',message,
+      source:'planner_quote',email,
+      planner_config:{room:[state.roomW,state.roomL],fixtures:state.fixtures.map(f=>f.type),
+        floor:state.floorTier,wall:state.wallTier,estimate:total}};
+    try{
+      await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    }catch{}
+    if(typeof fbq!=='undefined') fbq('track','Lead',{content_category:'planner'});
+    document.getElementById('planner-modal-success').style.display='block';
+    document.getElementById('planner-modal-send').style.display='none';
+  });
+
+  // ── AI Visual button ──
+  document.getElementById('planner-visual-btn').addEventListener('click',()=>{
+    const styleMap={basic:'modern minimalist',standard:'Scandinavian',premium:'luxury high-end',custom:'rustic farmhouse'};
+    const sty=styleMap[state.floorTier]||'modern minimalist';
+    document.querySelectorAll('#viz-style .viz-opt').forEach(b=>{
+      b.classList.toggle('active',b.dataset.val===sty);
+      if(b.dataset.val===sty) vizStyle=sty;
+    });
+    document.getElementById('visualizer').scrollIntoView({behavior:'smooth'});
+  });
+
+  // ── Initial render ──
+  fitScale();
+  draw();
+  updateCost();
+})();
 
 // ─── COOKIE BANNER ─────────────────────────────────────
 (function(){
