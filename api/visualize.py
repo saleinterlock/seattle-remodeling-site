@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-import os, json
+import os, json, time
 
 try:
     import requests as _req
@@ -7,34 +7,17 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-FAL_KEY       = os.environ.get("FAL_KEY", "")
+REPLICATE_KEY = os.environ.get("REPLICATE_API_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
-STYLE_PROMPTS = {
-    "bathroom": (
-        "professional interior design photo of a completely remodeled {style} bathroom, "
-        "{colors} color palette, large-format porcelain tile, floating vanity, frameless glass shower, "
-        "matte black hardware, Seattle luxury home, natural daylight, architectural photography, "
-        "ultra detailed, no people, no text, photorealistic"
-    ),
-    "shower": (
-        "professional interior design photo of a brand new {style} walk-in shower, "
-        "{colors} color palette, frameless glass enclosure, built-in tile niche, rain ceiling head, "
-        "floor-to-ceiling tile, matte black fixtures, Seattle luxury home, natural daylight, "
-        "architectural photography, ultra detailed, no people, no text, photorealistic"
-    ),
-    "master": (
-        "professional interior design photo of a luxurious {style} master bathroom spa, "
-        "{colors} color palette, freestanding soaking tub, dual vanity with backlit mirror, "
-        "heated tile floor, ambient lighting, Seattle luxury home, architectural photography, "
-        "ultra detailed, no people, no text, photorealistic"
-    ),
-}
+# instruct-pix2pix — takes a photo + instruction, transforms it
+PIX2PIX_VERSION = "30c1d0b916a6f8efce20493f5d61ee27491ab2a60437c13c588468b9810ec23d"
 
-NEGATIVE = (
-    "blurry, low quality, cartoon, watermark, text, logo, people, clutter, "
-    "distorted, ugly, before remodel, old bathroom, unfinished"
-)
+INSTRUCTIONS = {
+    "bathroom": "Transform this bathroom into a fully remodeled {style} bathroom with {colors} color palette. New large-format porcelain tile, floating vanity, frameless glass shower, matte black hardware. Photorealistic, architectural photography, no people.",
+    "shower":   "Transform this bathroom into a {style} walk-in shower with {colors} colors. Frameless glass enclosure, ceiling rain head, floor-to-ceiling tile, built-in niche. Photorealistic, architectural photography, no people.",
+    "master":   "Transform this bathroom into a luxurious {style} master spa with {colors} palette. Freestanding tub, dual vanity, backlit mirror, heated tile floor. Photorealistic, architectural photography, no people.",
+}
 
 
 def _cors(h, status=200):
@@ -52,7 +35,6 @@ def _json(h, data, status=200):
 
 
 def _analyze_room(image_b64, media_type="image/jpeg"):
-    """Use Claude Vision to extract room layout for prompt personalization."""
     if not ANTHROPIC_KEY:
         return ""
     try:
@@ -65,25 +47,12 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
             },
             json={
                 "model": "claude-haiku-4-5-20251001",
-                "max_tokens": 150,
+                "max_tokens": 120,
                 "messages": [{
                     "role": "user",
                     "content": [
-                        {
-                            "type": "image",
-                            "source": {
-                                "type": "base64",
-                                "media_type": media_type,
-                                "data": image_b64,
-                            },
-                        },
-                        {
-                            "type": "text",
-                            "text": (
-                                "Describe this bathroom's permanent layout in 1 short sentence for a renovation rendering: "
-                                "room size, window placement, and fixture positions. Be specific and brief."
-                            ),
-                        },
+                        {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": image_b64}},
+                        {"type": "text", "text": "Describe this bathroom layout in 1 sentence: room size, window placement, current fixture positions. Be brief and specific."},
                     ],
                 }],
             },
@@ -95,33 +64,65 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
         return ""
 
 
-def _fal_img2img(image_data_url, prompt):
-    """Fal.ai FLUX img2img — transforms user photo to remodeled version."""
+def _replicate_img2img(image_data_url, prompt):
+    headers = {
+        "Authorization": f"Token {REPLICATE_KEY}",
+        "Content-Type": "application/json",
+        "Prefer": "wait=55",
+    }
+
+    # Create prediction
     resp = _req.post(
-        "https://fal.run/fal-ai/flux/dev/image-to-image",
-        headers={
-            "Authorization": f"Key {FAL_KEY}",
-            "Content-Type": "application/json",
-        },
+        "https://api.replicate.com/v1/predictions",
+        headers=headers,
         json={
-            "image_url": image_data_url,
-            "prompt": prompt,
-            "negative_prompt": NEGATIVE,
-            "strength": 0.80,
-            "num_inference_steps": 28,
-            "guidance_scale": 3.5,
-            "num_images": 1,
-            "output_format": "jpeg",
-            "enable_safety_checker": False,
+            "version": PIX2PIX_VERSION,
+            "input": {
+                "image": image_data_url,
+                "prompt": prompt,
+                "negative_prompt": "blurry, low quality, cartoon, watermark, text, people, clutter, distorted",
+                "image_guidance_scale": 1.5,
+                "guidance_scale": 7.5,
+                "num_inference_steps": 25,
+                "num_outputs": 1,
+            },
         },
-        timeout=55,
+        timeout=15,
     )
     resp.raise_for_status()
-    data = resp.json()
-    images = data.get("images") or []
-    if images:
-        return images[0].get("url", "")
-    raise RuntimeError(f"No image in Fal.ai response: {json.dumps(data)[:200]}")
+    prediction = resp.json()
+
+    # If Prefer: wait worked, might already be done
+    if prediction.get("status") == "succeeded":
+        output = prediction.get("output") or []
+        if output:
+            return output[0]
+
+    pred_id = prediction.get("id")
+    if not pred_id:
+        raise RuntimeError(f"No prediction ID: {json.dumps(prediction)[:200]}")
+
+    # Poll for result
+    poll_url = f"https://api.replicate.com/v1/predictions/{pred_id}"
+    for _ in range(16):
+        time.sleep(3)
+        try:
+            poll = _req.get(poll_url, headers={"Authorization": f"Token {REPLICATE_KEY}"}, timeout=10)
+            poll.raise_for_status()
+            data = poll.json()
+        except Exception:
+            continue
+
+        status = data.get("status", "")
+        if status == "succeeded":
+            output = data.get("output") or []
+            if output:
+                return output[0]
+            raise RuntimeError("No output URL in succeeded prediction")
+        if status == "failed":
+            raise RuntimeError(f"Replicate prediction failed: {data.get('error', 'unknown')}")
+
+    raise RuntimeError("Generation timed out — please try again")
 
 
 class handler(BaseHTTPRequestHandler):
@@ -144,30 +145,27 @@ class handler(BaseHTTPRequestHandler):
             colors  = body.get("colors", "white and gray tones").strip()
             image   = body.get("image", "").strip()
 
-            if service not in STYLE_PROMPTS:
+            if service not in INSTRUCTIONS:
                 service = "bathroom"
 
             if not image:
                 return _json(self, {"error": "No image provided"}, 400)
 
-            if not FAL_KEY:
-                return _json(self, {"error": "Image transformation not configured (FAL_KEY missing)"}, 503)
+            if not REPLICATE_KEY:
+                return _json(self, {"error": "Image transformation not configured (REPLICATE_API_KEY missing)"}, 503)
 
-            # Analyze room layout with Claude (optional enrichment)
+            # Optional: enrich prompt with Claude room analysis
             room_desc = ""
             if ANTHROPIC_KEY and "," in image:
                 header_part, b64 = image.split(",", 1)
                 mtype = header_part.split(":")[1].split(";")[0] if ":" in header_part else "image/jpeg"
                 room_desc = _analyze_room(b64, mtype)
 
-            prompt = STYLE_PROMPTS[service].format(style=style, colors=colors)
-            if room_desc:
-                prompt = room_desc + ", fully remodeled as: " + prompt
+            base_instruction = INSTRUCTIONS[service].format(style=style, colors=colors)
+            prompt = (room_desc + ". " + base_instruction) if room_desc else base_instruction
 
-            url = _fal_img2img(image, prompt)
-            if url:
-                return _json(self, {"url": url})
-            return _json(self, {"error": "Generation failed — no image returned"}, 502)
+            url = _replicate_img2img(image, prompt)
+            return _json(self, {"url": url})
 
         except Exception as e:
             return _json(self, {"error": str(e)}, 502)
