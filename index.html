@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Seattle Pro Remodeling — Bathroom Remodeling Specialists</title>
+  <title>Rain Bath Remodeling — Bathroom Remodeling Specialists</title>
   <meta name="description" content="Seattle's bathroom remodeling specialists. Walk-in showers, full bath renovations, tub conversions. Fixed price, 9-day average, WA licensed & insured.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -70,9 +70,15 @@ body{font-family:'Inter',sans-serif;color:var(--dark);background:var(--light);ov
 }
 .nav-logo{
   font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#fff;
-  letter-spacing:.5px;
+  letter-spacing:.5px;display:flex;align-items:center;gap:10px;
 }
 .nav-logo em{color:var(--wood);font-style:normal}
+.nav-logo img{height:40px;width:auto;border-radius:8px;background:#fff;padding:2px 6px}
+.nav-logo .nav-logo-fallback{display:none}
+.nav-slogan{
+  font-family:'Playfair Display',serif;font-style:italic;color:var(--wood);
+  font-size:15px;letter-spacing:.3px;text-align:center;
+}
 .nav-links{display:flex;gap:32px;list-style:none}
 .nav-links a{color:rgba(255,255,255,.8);font-size:14px;font-weight:500;
   transition:color .2s;letter-spacing:.3px}
@@ -769,14 +775,18 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 
 <!-- LOADER -->
 <div id="loader">
-  <div class="loader-logo">Seattle Pro Remodeling</div>
+  <div class="loader-logo">Rain Bath Remodeling</div>
   <div class="loader-bar"><div class="loader-fill"></div></div>
 </div>
 
 <!-- LIGHTBOX -->
 <!-- NAVBAR -->
 <nav class="navbar" id="navbar">
-  <div class="nav-logo">Seattle<em>Pro</em></div>
+  <div class="nav-logo">
+    <img src="images/logo.png" alt="Rain Bath Remodeling"
+      onerror="this.style.display='none';this.nextElementSibling.style.display='inline'">
+    <span class="nav-logo-fallback">Rain<em>Bath</em></span>
+  </div>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
     <li><a href="#planner">Room Planner</a></li>
@@ -808,6 +818,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   <div class="hero-content">
     <div class="hero-label" id="hl">⭐ Seattle's Bathroom Remodeling Specialists</div>
     <h1 id="hh">Your Dream Bathroom,<br><em>Done in 9 Days</em></h1>
+    <p class="nav-slogan" style="text-align:left;margin:-4px 0 8px">We're simply the best!</p>
     <p class="hero-sub" id="hs">Fixed price. Daily photo updates. Our own crew — no subcontractors. Trusted by 350+ Seattle homeowners since 2015.</p>
     <div class="hero-btns" id="hb">
       <a href="#estimate" class="btn-primary">Get Free Estimate →</a>
@@ -832,7 +843,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 <section class="meet-section">
   <div class="container meet-grid">
     <div class="meet-photo reveal left">
-      <img src="images/hero-alex.jpg" alt="David — owner Seattle Pro Remodeling" class="meet-img">
+      <img src="images/hero-alex.jpg" alt="David — owner Rain Bath Remodeling" class="meet-img">
     </div>
     <div class="meet-text reveal right">
       <div class="eyebrow">Family-Owned Since 2015</div>
@@ -1125,7 +1136,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
           <img id="viz-img" class="viz-result-img" src="" alt="AI generated room visualization">
           <div class="viz-result-overlay" id="viz-overlay">
             <div class="viz-result-title" id="viz-overlay-title">Modern Bathroom</div>
-            <div class="viz-result-sub">AI-generated concept · Seattle Pro Remodeling</div>
+            <div class="viz-result-sub">AI-generated concept · Rain Bath Remodeling</div>
             <button class="viz-quote-btn" id="viz-quote-btn">I Love This — Get a Quote →</button>
           </div>
           <div class="viz-error" id="viz-error"></div>
@@ -1364,7 +1375,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
       <div class="testimonial reveal">
         <div class="t-quote">"</div>
         <div class="t-stars">★★★★★</div>
-        <p class="t-text">Got four quotes for our master bathroom. Seattle Pro wasn't the cheapest, but David showed us exactly where every dollar goes. Two years later, the heated floors and custom tile still look brand new.</p>
+        <p class="t-text">Got four quotes for our master bathroom. Rain Bath wasn't the cheapest, but David showed us exactly where every dollar goes. Two years later, the heated floors and custom tile still look brand new.</p>
         <div class="t-author">
           <div class="t-avatar">LP</div>
           <div><div class="t-name">Linda P.</div><div class="t-location">Bellevue · Master Bath Remodel</div></div>
@@ -1400,7 +1411,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
               </div>
               <div class="form-group">
                 <label>Phone Number</label>
-                <input type="tel" id="f-phone" placeholder="(206) 555-0000" required>
+                <input type="tel" id="f-phone" placeholder="(425) 999-6880" required>
               </div>
             </div>
             <div class="form-group">
@@ -1476,12 +1487,13 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 <footer>
   <div class="footer-grid">
     <div class="footer-brand">
-      <h3>Seattle Pro Remodeling</h3>
+      <h3>Rain Bath Remodeling</h3>
+      <p style="font-style:italic;color:var(--wood);margin-bottom:8px">We're simply the best!</p>
       <p>Seattle's bathroom remodeling specialists since 2015. 350+ bathrooms transformed. Licensed, insured, and committed to craftsmanship that lasts for decades.</p>
       <div class="footer-contact">
-        <a href="tel:+12065550000">📞 (206) 555-0000</a>
-        <a href="mailto:info@seattleproremodeling.com">✉️ info@seattleproremodeling.com</a>
-        <a href="#">📍 Seattle, WA</a>
+        <a href="tel:+14259996880">📞 (425) 999-6880</a>
+        <a href="mailto:rainbathremodeling@gmai.com">✉️ rainbathremodeling@gmai.com</a>
+        <a href="#">📍 9624 Frontier Ave SE Unit E1, Snoqualmie, WA 98065</a>
       </div>
     </div>
     <div class="footer-col">
@@ -1514,15 +1526,15 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     </div>
   </div>
   <div class="footer-bottom">
-    <span>© 2026 Seattle Pro Remodeling. All rights reserved.</span>
-    <span class="footer-lic">WA Contractor Reg. #XXXXXXXXX · Fully Insured · Bonded</span>
+    <span>© 2026 Rain Bath Remodeling. All rights reserved.</span>
+    <span class="footer-lic">UBI #605776188 · Fully Insured · Bonded</span>
   </div>
   <div class="footer-legal-links">
     <a href="/privacy">Privacy Policy</a>
     <span>·</span>
     <a href="/terms">Terms of Service</a>
     <span>·</span>
-    <span>Seattle, WA · Licensed by WA L&amp;I</span>
+    <span>9624 Frontier Ave SE Unit E1, Snoqualmie, WA 98065 · Licensed by WA L&amp;I</span>
   </div>
 </footer>
 
@@ -1538,7 +1550,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="chat-online-dot"></div>
   </div>
   <div id="chat-msgs">
-    <div class="msg agent">Hi! 👋 I'm David from Seattle Pro Remodeling.<br><br>We specialize in bathroom remodeling — walk-in showers, full gut renovations, tub conversions, and more.<br><br>What does your bathroom project look like?</div>
+    <div class="msg agent">Hi! 👋 I'm David from Rain Bath Remodeling.<br><br>We specialize in bathroom remodeling — walk-in showers, full gut renovations, tub conversions, and more.<br><br>What does your bathroom project look like?</div>
   </div>
   <div class="chat-input-row">
     <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
@@ -1877,7 +1889,7 @@ async function sendMsg(){
       body:JSON.stringify({messages:chatHistory})});
     const d=await r.json();
     typing.remove();
-    const reply=d.reply||"Sorry, I'm having trouble. Call us at (206) 555-0000!";
+    const reply=d.reply||"Sorry, I'm having trouble. Call us at (425) 999-6880!";
     addMsg('agent',reply);
     chatHistory.push({role:'assistant',content:reply});
     if(d.lead_captured&&!leadDone){
@@ -1886,7 +1898,7 @@ async function sendMsg(){
     }
   }catch{
     typing.remove();
-    addMsg('agent','I\'m having connectivity issues. Please call us at (206) 555-0000!');
+    addMsg('agent','I\'m having connectivity issues. Please call us at (425) 999-6880!');
   }
   chatMsgs.scrollTop=chatMsgs.scrollHeight;
 }

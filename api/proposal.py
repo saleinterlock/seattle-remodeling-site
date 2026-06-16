@@ -5,7 +5,7 @@ import anthropic
 
 ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 OWNER_PASSWORD    = os.environ.get("OWNER_PASSWORD", "PRO2026seattle")
-COMPANY_NAME      = os.environ.get("COMPANY_NAME", "Seattle Pro Remodeling")
+COMPANY_NAME      = os.environ.get("COMPANY_NAME", "Rain Bath Remodeling")
 
 BUDGET_LABELS = {"under_5k": "Under $5,000", "5k_10k": "$5,000–$10,000",
                  "10k_20k": "$10,000–$20,000", "20k_40k": "$20,000–$40,000", "40k_plus": "$40,000+"}

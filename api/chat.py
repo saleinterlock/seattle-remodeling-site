@@ -6,8 +6,8 @@ import anthropic
 ANTHROPIC_API_KEY  = os.environ.get("ANTHROPIC_API_KEY", "")
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_OWNER_ID  = os.environ.get("TELEGRAM_OWNER_ID", "")
-COMPANY_NAME       = os.environ.get("COMPANY_NAME", "Seattle Pro Remodeling")
-COMPANY_PHONE      = os.environ.get("COMPANY_PHONE", "(206) 555-0000")
+COMPANY_NAME       = os.environ.get("COMPANY_NAME", "Rain Bath Remodeling")
+COMPANY_PHONE      = os.environ.get("COMPANY_PHONE", "(425) 999-6880")
 SERVICE_AREA_ZIPS  = os.environ.get("SERVICE_AREA_ZIPS", "98101,98103,98105,98107,98109,98115,98117")
 
 SYSTEM_PROMPT = f"""You are Alex, a friendly project coordinator at {COMPANY_NAME} in Seattle.
