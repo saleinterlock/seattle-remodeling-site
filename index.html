@@ -1172,22 +1172,22 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
         <div class="planner-section-label">Add Fixtures</div>
         <div class="fixture-btns">
           <button class="fixture-btn" data-fix="toilet" title="Click to add toilet">
-            <span class="fix-icon">🚽</span>Toilet<br><small style="color:var(--gray)">$350–900</small>
+            <span class="fix-icon">🚽</span>Toilet
           </button>
           <button class="fixture-btn" data-fix="shower" title="Click to add walk-in shower">
-            <span class="fix-icon">🚿</span>Walk-in Shower<br><small style="color:var(--gray)">$1,200–3,500</small>
+            <span class="fix-icon">🚿</span>Walk-in Shower
           </button>
           <button class="fixture-btn" data-fix="bathtub" title="Click to add bathtub">
-            <span class="fix-icon">🛁</span>Bathtub<br><small style="color:var(--gray)">$600–2,000</small>
+            <span class="fix-icon">🛁</span>Bathtub
           </button>
           <button class="fixture-btn" data-fix="vanity" title="Click to add single vanity">
-            <span class="fix-icon">🪞</span>Single Vanity<br><small style="color:var(--gray)">$400–1,200</small>
+            <span class="fix-icon">🪞</span>Single Vanity
           </button>
           <button class="fixture-btn" data-fix="double_vanity" title="Click to add double vanity">
-            <span class="fix-icon">🪞</span>Double Vanity<br><small style="color:var(--gray)">$800–2,500</small>
+            <span class="fix-icon">🪞</span>Double Vanity
           </button>
           <button class="fixture-btn" data-fix="linen" title="Click to add linen cabinet">
-            <span class="fix-icon">🗄️</span>Linen Cabinet<br><small style="color:var(--gray)">$200–600</small>
+            <span class="fix-icon">🗄️</span>Linen Cabinet
           </button>
         </div>
 
@@ -2119,13 +2119,6 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
       ctx.textAlign='center';
       ctx.textBaseline='middle';
       ctx.fillText(def.label,px+fw/2,py+fh/2);
-
-      // Cost hint
-      if(fw>40&&fh>32){
-        ctx.font='10px Inter,sans-serif';
-        ctx.fillStyle='rgba(0,0,0,0.45)';
-        ctx.fillText('$'+def.costLo.toLocaleString()+'+',px+fw/2,py+fh/2+14);
-      }
     });
 
     // Pending fixture ghost (follows mouse on desktop)
