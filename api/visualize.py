@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-import os, json, time
+import os, json, base64, time  # base64 used for decode+encode, time for warmup sleep
 
 try:
     import requests as _req
@@ -7,16 +7,16 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-REPLICATE_KEY = os.environ.get("REPLICATE_API_KEY", "")
+HF_KEY        = os.environ.get("HF_API_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
-# instruct-pix2pix — takes a photo + instruction, transforms it
-PIX2PIX_VERSION = "30c1d0b916a6f8efce20493f5d61ee27491ab2a60437c13c588468b9810ec23d"
+# instruct-pix2pix: takes a photo + text instruction, transforms the room
+HF_MODEL = "https://api-inference.huggingface.co/models/timothybrooks/instruct-pix2pix"
 
 INSTRUCTIONS = {
-    "bathroom": "Transform this bathroom into a fully remodeled {style} bathroom with {colors} color palette. New large-format porcelain tile, floating vanity, frameless glass shower, matte black hardware. Photorealistic, architectural photography, no people.",
-    "shower":   "Transform this bathroom into a {style} walk-in shower with {colors} colors. Frameless glass enclosure, ceiling rain head, floor-to-ceiling tile, built-in niche. Photorealistic, architectural photography, no people.",
-    "master":   "Transform this bathroom into a luxurious {style} master spa with {colors} palette. Freestanding tub, dual vanity, backlit mirror, heated tile floor. Photorealistic, architectural photography, no people.",
+    "bathroom": "Remodel this bathroom with {style} design and {colors} color palette. Add large-format porcelain tile, floating vanity, frameless glass shower, matte black hardware. Make it look like a luxury Seattle renovation. Photorealistic.",
+    "shower":   "Convert this bathroom into a {style} walk-in shower with {colors} colors. Add frameless glass enclosure, ceiling rain head, floor-to-ceiling tile, built-in niche. Make it photorealistic and luxurious.",
+    "master":   "Transform this into a {style} master bathroom spa with {colors} palette. Add freestanding soaking tub, dual vanity with backlit mirror, heated tile floor. Photorealistic luxury renovation.",
 }
 
 
@@ -47,16 +47,16 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
             },
             json={
                 "model": "claude-haiku-4-5-20251001",
-                "max_tokens": 120,
+                "max_tokens": 100,
                 "messages": [{
                     "role": "user",
                     "content": [
                         {"type": "image", "source": {"type": "base64", "media_type": media_type, "data": image_b64}},
-                        {"type": "text", "text": "Describe this bathroom layout in 1 sentence: room size, window placement, current fixture positions. Be brief and specific."},
+                        {"type": "text", "text": "Describe this bathroom in 1 sentence: room size, window, current fixtures. Brief."},
                     ],
                 }],
             },
-            timeout=10,
+            timeout=8,
         )
         resp.raise_for_status()
         return resp.json()["content"][0]["text"].strip()
@@ -64,65 +64,59 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
         return ""
 
 
-def _replicate_img2img(image_data_url, prompt):
+def _hf_img2img(image_data_url, prompt):
+    """HuggingFace instruct-pix2pix — free tier."""
+    # Extract base64 bytes from data URL
+    if "," in image_data_url:
+        b64 = image_data_url.split(",", 1)[1]
+    else:
+        b64 = image_data_url
     headers = {
-        "Authorization": f"Token {REPLICATE_KEY}",
+        "Authorization": f"Bearer {HF_KEY}",
         "Content-Type": "application/json",
-        "Prefer": "wait=55",
+        "X-Use-Cache": "false",
     }
 
-    # Create prediction
-    resp = _req.post(
-        "https://api.replicate.com/v1/predictions",
-        headers=headers,
-        json={
-            "version": PIX2PIX_VERSION,
-            "input": {
-                "image": image_data_url,
-                "prompt": prompt,
-                "negative_prompt": "blurry, low quality, cartoon, watermark, text, people, clutter, distorted",
-                "image_guidance_scale": 1.5,
-                "guidance_scale": 7.5,
-                "num_inference_steps": 25,
-                "num_outputs": 1,
-            },
-        },
-        timeout=15,
-    )
-    resp.raise_for_status()
-    prediction = resp.json()
+    # HF pix2pix API: image as base64 in parameters, prompt as inputs
+    payload = {
+        "inputs": prompt,
+        "parameters": {
+            "image": b64,
+            "num_inference_steps": 20,
+            "image_guidance_scale": 1.5,
+            "guidance_scale": 7.0,
+        }
+    }
 
-    # If Prefer: wait worked, might already be done
-    if prediction.get("status") == "succeeded":
-        output = prediction.get("output") or []
-        if output:
-            return output[0]
+    # Model may be loading — retry once after warmup
+    for attempt in range(2):
+        resp = _req.post(HF_MODEL, headers=headers, json=payload, timeout=50)
 
-    pred_id = prediction.get("id")
-    if not pred_id:
-        raise RuntimeError(f"No prediction ID: {json.dumps(prediction)[:200]}")
+        if resp.status_code == 503:
+            # Model loading
+            try:
+                wait = resp.json().get("estimated_time", 20)
+            except Exception:
+                wait = 20
+            if attempt == 0:
+                time.sleep(min(wait, 25))
+                continue
+            raise RuntimeError("HuggingFace model is warming up — please try again in 30 seconds")
 
-    # Poll for result
-    poll_url = f"https://api.replicate.com/v1/predictions/{pred_id}"
-    for _ in range(16):
-        time.sleep(3)
+        if resp.status_code == 200:
+            # Returns image bytes directly
+            img_b64 = base64.b64encode(resp.content).decode()
+            ct = resp.headers.get("Content-Type", "image/jpeg")
+            return f"data:{ct};base64,{img_b64}"
+
+        # Any other error
         try:
-            poll = _req.get(poll_url, headers={"Authorization": f"Token {REPLICATE_KEY}"}, timeout=10)
-            poll.raise_for_status()
-            data = poll.json()
+            err = resp.json()
         except Exception:
-            continue
+            err = resp.text[:200]
+        raise RuntimeError(f"HuggingFace error {resp.status_code}: {err}")
 
-        status = data.get("status", "")
-        if status == "succeeded":
-            output = data.get("output") or []
-            if output:
-                return output[0]
-            raise RuntimeError("No output URL in succeeded prediction")
-        if status == "failed":
-            raise RuntimeError(f"Replicate prediction failed: {data.get('error', 'unknown')}")
-
-    raise RuntimeError("Generation timed out — please try again")
+    raise RuntimeError("HuggingFace unavailable — please try again")
 
 
 class handler(BaseHTTPRequestHandler):
@@ -151,21 +145,21 @@ class handler(BaseHTTPRequestHandler):
             if not image:
                 return _json(self, {"error": "No image provided"}, 400)
 
-            if not REPLICATE_KEY:
-                return _json(self, {"error": "Image transformation not configured (REPLICATE_API_KEY missing)"}, 503)
+            if not HF_KEY:
+                return _json(self, {"error": "HF_API_KEY not configured"}, 503)
 
-            # Optional: enrich prompt with Claude room analysis
+            # Optional Claude room analysis
             room_desc = ""
             if ANTHROPIC_KEY and "," in image:
-                header_part, b64 = image.split(",", 1)
-                mtype = header_part.split(":")[1].split(";")[0] if ":" in header_part else "image/jpeg"
+                hdr, b64 = image.split(",", 1)
+                mtype = hdr.split(":")[1].split(";")[0] if ":" in hdr else "image/jpeg"
                 room_desc = _analyze_room(b64, mtype)
 
-            base_instruction = INSTRUCTIONS[service].format(style=style, colors=colors)
-            prompt = (room_desc + ". " + base_instruction) if room_desc else base_instruction
+            base_prompt = INSTRUCTIONS[service].format(style=style, colors=colors)
+            prompt = (room_desc + ". " + base_prompt) if room_desc else base_prompt
 
-            url = _replicate_img2img(image, prompt)
-            return _json(self, {"url": url})
+            data_url = _hf_img2img(image, prompt)
+            return _json(self, {"url": data_url})
 
         except Exception as e:
             return _json(self, {"error": str(e)}, 502)
