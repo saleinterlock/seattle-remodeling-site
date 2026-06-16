@@ -92,6 +92,43 @@ body{font-family:'Inter',sans-serif;color:var(--dark);background:var(--light);ov
 @media(min-width:768px){.nav-cta{display:block}}
 @media(max-width:767px){.nav-links{display:none}}
 
+/* ── HAMBURGER ──────────────────────────────────────────────── */
+.nav-hamburger{
+  display:none;flex-direction:column;justify-content:center;gap:5px;
+  width:40px;height:40px;padding:6px;background:none;border:none;cursor:pointer;
+  position:relative;z-index:1100;
+}
+.nav-hamburger span{
+  display:block;width:24px;height:2px;background:#fff;border-radius:2px;
+  transition:transform .3s,opacity .3s;transform-origin:center;
+}
+.nav-hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-hamburger.open span:nth-child(2){opacity:0}
+.nav-hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(max-width:767px){.nav-hamburger{display:flex}}
+
+/* ── MOBILE DRAWER ──────────────────────────────────────────── */
+.mobile-drawer{
+  position:fixed;top:0;left:0;right:0;bottom:0;z-index:1050;
+  background:rgba(13,33,55,.97);backdrop-filter:blur(12px);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .3s;
+}
+.mobile-drawer.open{opacity:1;pointer-events:all}
+.mobile-drawer ul{list-style:none;text-align:center;display:flex;flex-direction:column;gap:32px}
+.mobile-drawer ul a{
+  font-family:'Playfair Display',serif;font-size:28px;font-weight:700;
+  color:#fff;text-decoration:none;letter-spacing:.5px;
+  transition:color .2s;
+}
+.mobile-drawer ul a:hover{color:var(--wood)}
+.mobile-drawer-cta{
+  margin-top:40px;padding:16px 40px;background:var(--sage);color:#fff;
+  border-radius:50px;font-size:16px;font-weight:700;text-decoration:none;
+  display:inline-block;transition:background .2s;
+}
+.mobile-drawer-cta:hover{background:#4f6352}
+
 /* ── HERO ─────────────────────────────────────────────────── */
 .hero{position:relative;height:100vh;overflow:hidden}
 .hero-slides{position:absolute;inset:0}
@@ -386,7 +423,8 @@ body{font-family:'Inter',sans-serif;color:var(--dark);background:var(--light);ov
 #viz-remove-btn{position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:20px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer;transition:background .2s}
 #viz-remove-btn:hover{background:rgba(239,68,68,.85)}
 .viz-hint{font-size:12px;color:var(--gray);margin-top:7px;font-style:italic}
-.meet-section{padding:80px 0;background:#fff}
+.meet-section{padding:80px 40px;background:#fff}
+@media(max-width:767px){.meet-section{padding:60px 20px}}
 .meet-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center}
 @media(max-width:900px){.meet-grid{grid-template-columns:1fr}}
 .meet-img{width:100%;border-radius:20px;box-shadow:0 24px 64px rgba(13,33,55,.18);display:block;object-fit:cover;object-position:right center;aspect-ratio:4/5}
@@ -796,7 +834,23 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <li><a href="#faq">FAQ</a></li>
   </ul>
   <a href="#estimate" class="nav-cta">Free Estimate</a>
+  <button class="nav-hamburger" id="nav-hamburger" aria-label="Open menu">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
+
+<!-- MOBILE DRAWER -->
+<div class="mobile-drawer" id="mobile-drawer">
+  <ul>
+    <li><a href="#services" class="drawer-link">Services</a></li>
+    <li><a href="#planner" class="drawer-link">Room Planner</a></li>
+    <li><a href="#calculator" class="drawer-link">Calculator</a></li>
+    <li><a href="#visualizer" class="drawer-link">AI Visualizer</a></li>
+    <li><a href="#reviews" class="drawer-link">Reviews</a></li>
+    <li><a href="#faq" class="drawer-link">FAQ</a></li>
+  </ul>
+  <a href="#estimate" class="mobile-drawer-cta drawer-link">Get Free Estimate →</a>
+</div>
 
 <!-- HERO -->
 <section class="hero" id="home">
@@ -1843,6 +1897,30 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
 document.getElementById('viz-quote-btn').addEventListener('click',()=>{
   document.getElementById('estimate').scrollIntoView({behavior:'smooth'});
 });
+
+// ─── MOBILE HAMBURGER ─────────────────────────────────────
+(function(){
+  const btn=document.getElementById('nav-hamburger');
+  const drawer=document.getElementById('mobile-drawer');
+  function closeDrawer(){
+    btn.classList.remove('open');
+    drawer.classList.remove('open');
+    document.body.style.overflow='';
+  }
+  btn.addEventListener('click',()=>{
+    const opening=!drawer.classList.contains('open');
+    if(opening){
+      btn.classList.add('open');
+      drawer.classList.add('open');
+      document.body.style.overflow='hidden';
+    } else {
+      closeDrawer();
+    }
+  });
+  document.querySelectorAll('.drawer-link').forEach(a=>{
+    a.addEventListener('click',()=>closeDrawer());
+  });
+})();
 
 // ─── FAQ ──────────────────────────────────────────────────
 document.querySelectorAll('.faq-item').forEach(item=>{
