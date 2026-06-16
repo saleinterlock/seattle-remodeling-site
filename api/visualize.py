@@ -11,7 +11,7 @@ HF_KEY        = os.environ.get("HF_API_KEY", "")
 ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 # instruct-pix2pix: takes a photo + text instruction, transforms the room
-HF_MODEL = "https://api-inference.huggingface.co/models/timothybrooks/instruct-pix2pix"
+HF_MODEL = "https://router.huggingface.co/hf-inference/models/timothybrooks/instruct-pix2pix"
 
 INSTRUCTIONS = {
     "bathroom": "Remodel this bathroom with {style} design and {colors} color palette. Add large-format porcelain tile, floating vanity, frameless glass shower, matte black hardware. Make it look like a luxury Seattle renovation. Photorealistic.",
