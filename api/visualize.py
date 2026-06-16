@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-import os, json, base64
+import os, json, time
 
 try:
     import requests as _req
@@ -7,27 +7,33 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-SEGMIND_KEY = os.environ.get("SEGMIND_KEY", "")
+KIE_API_KEY = os.environ.get("KIE_API_KEY", "")
 
-NEGATIVE = "blurry, low quality, watermark, text, cartoon, painting, sketch, distorted, ugly, people, person"
-
-INSTRUCTIONS = {
+PROMPTS = {
     "bathroom": (
-        "professional interior design photo of a {style} bathroom renovation, {colors} color palette, "
-        "new custom tiles, walk-in shower, modern fixtures, luxury Seattle home, natural lighting, "
-        "architectural photography, ultra detailed, no people"
+        "Ultra-realistic professional real-estate listing photograph of a {style} full bathroom remodel, "
+        "{colors} color palette, Seattle luxury Pacific Northwest home, large-format porcelain tile floor and walls, "
+        "double floating vanity with vessel sinks, frameless glass walk-in shower, natural window daylight, "
+        "24mm wide-angle lens f/8 ISO 200 tripod, architectural interior photography, ultra detailed, no people, no text, no watermark"
     ),
-    "kitchen": (
-        "professional interior design photo of a {style} kitchen renovation, {colors} color palette, "
-        "new custom cabinetry, quartz countertops, pendant lighting, modern appliances, "
-        "luxury Seattle home, architectural photography, ultra detailed, no people"
+    "shower": (
+        "Ultra-realistic professional interior design photograph of a {style} walk-in shower conversion, "
+        "{colors} color palette, Seattle luxury home, frameless glass enclosure, built-in tile niche, "
+        "rain head ceiling fixture, floor-to-ceiling large-format tile, pebble floor, matte black hardware, "
+        "natural daylight 24mm lens f/8 ISO 200, architectural photography, ultra detailed, no people, no text"
     ),
-    "fence": (
-        "professional landscape photo of a beautiful {style} cedar privacy fence and backyard, "
-        "{colors} color tones, Pacific Northwest garden, Seattle residential neighborhood, "
-        "golden hour lighting, architectural photography, ultra detailed, no people"
+    "master": (
+        "Ultra-realistic professional interior design photograph of a {style} master bathroom spa retreat, "
+        "{colors} color palette, Seattle luxury home, freestanding soaking tub, dual vanity with backlit mirror, "
+        "heated tile floor, ambient and natural lighting, 24mm wide-angle lens f/8 ISO 200, "
+        "architectural photography, ultra detailed, no people, no text, no watermark"
     ),
 }
+
+NEGATIVE = (
+    "blurry, low resolution, cartoon, illustration, oversaturated, text, watermark, logo, "
+    "people, distorted geometry, clutter, CGI, plastic look, fake lighting, low quality"
+)
 
 
 def _cors(h, status=200):
@@ -61,71 +67,70 @@ class handler(BaseHTTPRequestHandler):
         service = body.get("service", "bathroom").strip()
         style   = body.get("style", "modern minimalist").strip()
         colors  = body.get("colors", "white and gray tones").strip()
-        image   = body.get("image", "").strip()  # base64 data URL
 
-        if service not in INSTRUCTIONS:
+        if service not in PROMPTS:
             service = "bathroom"
 
-        if not image:
-            return _json(self, {"error": "No image provided."}, 400)
+        if not KIE_API_KEY:
+            return _json(self, {"error": "Image generation not configured."}, 503)
 
-        if not SEGMIND_KEY:
-            return _json(self, {
-                "error": "Photo redesign not configured. Try without a photo for AI-generated concepts."
-            }, 503)
+        prompt = PROMPTS[service].format(style=style, colors=colors)
 
-        # Strip data URL prefix → raw base64
-        if "," in image:
-            image_b64 = image.split(",", 1)[1]
-        else:
-            image_b64 = image
-
-        prompt = INSTRUCTIONS[service].format(style=style, colors=colors)
-
+        # Step 1 — create task
         try:
             resp = _req.post(
-                "https://api.segmind.com/v1/sd1.5-img2img",
-                headers={"x-api-key": SEGMIND_KEY, "Content-Type": "application/json"},
+                "https://api.kie.ai/api/v1/jobs/createTask",
+                headers={"Authorization": f"Bearer {KIE_API_KEY}", "Content-Type": "application/json"},
                 json={
-                    "image": image_b64,
-                    "prompt": prompt,
-                    "negative_prompt": NEGATIVE,
-                    "samples": 1,
-                    "scheduler": "UniPC",
-                    "num_inference_steps": 25,
-                    "guidance_scale": 7.5,
-                    "strength": 0.75,
-                    "img_width": 768,
-                    "img_height": 512,
-                    "base64": True,
+                    "model": "nano-banana-2",
+                    "input": {
+                        "prompt": prompt,
+                        "negative_prompt": NEGATIVE,
+                        "aspect_ratio": "4:3",
+                        "resolution": "1K",
+                        "output_format": "jpg"
+                    }
                 },
-                timeout=58,
+                timeout=15,
             )
+            resp.raise_for_status()
+            task_id = resp.json().get("data", {}).get("taskId")
         except Exception as e:
-            return _json(self, {"error": f"Request failed: {str(e)}"}, 502)
+            return _json(self, {"error": f"Could not start generation: {str(e)}"}, 502)
 
-        if resp.status_code == 401:
-            return _json(self, {"error": "SEGMIND_KEY invalid"}, 401)
+        if not task_id:
+            return _json(self, {"error": "No taskId returned from image API"}, 502)
 
-        if resp.status_code == 429:
-            return _json(self, {"error": "Daily limit reached (100/day). Try again tomorrow."}, 429)
+        # Step 2 — poll for result (max ~51s)
+        poll_headers = {"Authorization": f"Bearer {KIE_API_KEY}"}
+        for _ in range(17):
+            time.sleep(3)
+            try:
+                poll = _req.get(
+                    "https://api.kie.ai/api/v1/jobs/recordInfo",
+                    headers=poll_headers,
+                    params={"taskId": task_id},
+                    timeout=10,
+                )
+                poll.raise_for_status()
+                data = poll.json().get("data", {})
+            except Exception:
+                continue
 
-        if resp.status_code not in (200, 201):
-            return _json(self, {"error": f"Segmind error {resp.status_code}: {resp.text[:200]}"}, 502)
+            state = data.get("state", "")
+            if state in ("success", "completed"):
+                try:
+                    urls = json.loads(data.get("resultJson", "{}")).get("resultUrls", [])
+                    if urls:
+                        return _json(self, {"url": urls[0]})
+                except Exception:
+                    pass
+                return _json(self, {"error": "Image ready but URL not found"}, 502)
 
-        try:
-            data = resp.json()
-            img_b64 = data.get("image", "")
-            if img_b64:
-                return _json(self, {"url": f"data:image/jpeg;base64,{img_b64}"})
-        except Exception:
-            # Response might be raw image bytes
-            if resp.content and resp.headers.get("Content-Type", "").startswith("image/"):
-                img_b64 = base64.b64encode(resp.content).decode()
-                ct = resp.headers.get("Content-Type", "image/jpeg")
-                return _json(self, {"url": f"data:{ct};base64,{img_b64}"})
+            if state in ("failed", "error"):
+                return _json(self, {"error": "Image generation failed — please try again"}, 502)
 
-        return _json(self, {"error": "No image in response"}, 502)
+        return _json(self, {"error": "Generation timed out — please try again"}, 504)
 
     def log_message(self, *_):
         pass
