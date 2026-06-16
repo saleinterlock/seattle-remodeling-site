@@ -622,19 +622,19 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 }
 #chat-window{
   position:fixed;bottom:108px;right:28px;z-index:999;
-  width:min(375px,calc(100vw - 40px));height:520px;
+  width:min(360px,calc(100vw - 40px));height:min(460px,calc(100vh - 160px));
   background:#fff;border-radius:18px;
   box-shadow:0 20px 80px rgba(0,0,0,.2);
   display:none;flex-direction:column;overflow:hidden;
 }
 #chat-window.open{display:flex}
 .chat-header{
-  background:var(--navy);color:#fff;padding:18px 20px;
-  display:flex;align-items:center;gap:12px;
+  background:var(--navy);color:#fff;padding:14px 18px;
+  display:flex;align-items:center;gap:12px;flex-shrink:0;
 }
 .chat-av{
-  width:38px;height:38px;border-radius:50%;background:var(--sage);
-  display:flex;align-items:center;justify-content:center;font-size:17px;
+  width:36px;height:36px;border-radius:50%;background:var(--sage);
+  display:flex;align-items:center;justify-content:center;font-size:16px;
 }
 .chat-agent strong{display:block;font-size:14px;font-weight:600}
 .chat-agent span{font-size:11px;opacity:.7}
@@ -642,6 +642,11 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
   width:9px;height:9px;background:#4ade80;border-radius:50%;margin-left:auto;
   box-shadow:0 0 6px #4ade80;
 }
+.chat-close{
+  background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;
+  font-size:22px;line-height:1;padding:0 0 0 10px;transition:color .2s;
+}
+.chat-close:hover{color:#fff}
 #chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px}
 .msg{
   max-width:80%;padding:10px 14px;border-radius:14px;font-size:14px;line-height:1.5;
@@ -1602,6 +1607,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="chat-av">👷</div>
     <div class="chat-agent"><strong>David</strong><span>Project Coordinator</span></div>
     <div class="chat-online-dot"></div>
+    <button class="chat-close" id="chat-close" aria-label="Close chat">×</button>
   </div>
   <div id="chat-msgs">
     <div class="msg agent">Hi! 👋 I'm David from Rain Bath Remodeling.<br><br>We specialize in bathroom remodeling — walk-in showers, full gut renovations, tub conversions, and more.<br><br>What does your bathroom project look like?</div>
@@ -1960,6 +1966,9 @@ chatBtn.addEventListener('click',()=>{
   const o=chatWin.classList.toggle('open');
   chatBtn.querySelector('.badge').style.display='none';
   if(o) chatInput.focus();
+});
+document.getElementById('chat-close').addEventListener('click',()=>{
+  chatWin.classList.remove('open');
 });
 
 async function sendMsg(){
