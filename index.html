@@ -1682,10 +1682,9 @@ document.querySelectorAll('.quality-btn').forEach(btn=>{
   });
 });
 
-document.querySelectorAll('.extra-check').forEach(label=>{
-  label.addEventListener('click',()=>{
-    label.classList.toggle('checked');
-    label.querySelector('input').checked=label.classList.contains('checked');
+document.querySelectorAll('.extra-check input').forEach(input=>{
+  input.addEventListener('change',()=>{
+    input.closest('.extra-check').classList.toggle('checked',input.checked);
     calcUpdate();
   });
 });
