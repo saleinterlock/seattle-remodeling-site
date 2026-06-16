@@ -1777,43 +1777,64 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
   errEl.classList.remove('visible');
   loading.classList.add('visible');
 
-  if(vizFile){
-    loadingMsg.textContent='AI is analyzing your room + rendering — ~30–45 seconds';
-  } else {
-    loadingMsg.textContent='AI is rendering — usually 20–40 seconds';
-  }
-
   const styleWord=vizStyle.split(' ')[0];
   const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+(VIZ_LABELS[vizService]||'Bathroom');
 
-  try{
-    const body={service:vizService,style:vizStyle,colors:vizColor};
-    if(vizFile) body.image=await resizeImage(vizFile);
+  const VIZ_PROMPTS={
+    bathroom:'professional interior design photo of a {style} full bathroom remodel, {colors} color palette, Seattle luxury home, large-format tile, double vanity, frameless glass shower, natural lighting, architectural photography, ultra detailed, no people',
+    shower:'professional interior design photo of a {style} walk-in shower, {colors} color palette, Seattle luxury home, frameless glass enclosure, rain head, floor-to-ceiling tile, natural lighting, architectural photography, ultra detailed, no people',
+    master:'professional interior design photo of a {style} master bathroom, {colors} color palette, Seattle luxury home, freestanding tub, dual vanity, heated floor, spa atmosphere, natural lighting, architectural photography, ultra detailed, no people'
+  };
 
-    const r=await fetch('/api/visualize',{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify(body)
-    });
-    const data=await r.json();
-    loading.classList.remove('visible');
-    if(data.url){
-      img.onload=()=>{
-        img.classList.add('loaded');
-        document.getElementById('viz-overlay-title').textContent=
-          vizFile ? titleStr+' — Your Space Redesigned' : titleStr;
-        overlay.classList.add('visible');
-      };
-      img.src=data.url;
-    } else {
-      errEl.textContent=data.error||'Generation failed — please try again.';
+  if(vizFile){
+    // ── IMG2IMG via Fal.ai (server-side) ──
+    loadingMsg.textContent='AI is transforming your space — ~30–50 seconds';
+    try{
+      const imageData=await resizeImage(vizFile);
+      const r=await fetch('/api/visualize',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({service:vizService,style:vizStyle,colors:vizColor,image:imageData})
+      });
+      const data=await r.json();
+      loading.classList.remove('visible');
+      if(data.url){
+        img.onload=()=>{img.classList.add('loaded');document.getElementById('viz-overlay-title').textContent=titleStr+' — Your Space';overlay.classList.add('visible');};
+        img.src=data.url;
+      } else {
+        errEl.textContent=data.error||'Generation failed — please try again.';
+        errEl.classList.add('visible'); placeholder.style.display='';
+      }
+    }catch(e){
+      loading.classList.remove('visible');
+      errEl.textContent='Connection error — please try again.';
       errEl.classList.add('visible'); placeholder.style.display='';
     }
-  }catch(e){
-    loading.classList.remove('visible');
-    errEl.textContent='Connection error — please try again.';
-    errEl.classList.add('visible'); placeholder.style.display='';
+  } else {
+    // ── TEXT-TO-IMAGE via Pollinations (free, client-side) ──
+    loadingMsg.textContent='AI is rendering — usually 10–20 seconds';
+    const prompt=(VIZ_PROMPTS[vizService]||VIZ_PROMPTS.bathroom).replace('{style}',vizStyle).replace('{colors}',vizColor);
+    const seed=Math.floor(Math.random()*99999);
+    const imgUrl='https://image.pollinations.ai/prompt/'+encodeURIComponent(prompt)+'?width=1024&height=768&model=flux-pro&nologo=true&seed='+seed;
+    img.onload=()=>{
+      loading.classList.remove('visible');
+      img.classList.add('loaded');
+      document.getElementById('viz-overlay-title').textContent=titleStr;
+      overlay.classList.add('visible');
+      btn.disabled=false;
+      btn.innerHTML='✨&nbsp; Generate My Vision';
+    };
+    img.onerror=()=>{
+      loading.classList.remove('visible');
+      errEl.textContent='Generation failed — please try again.';
+      errEl.classList.add('visible'); placeholder.style.display='';
+      btn.disabled=false;
+      btn.innerHTML='✨&nbsp; Generate My Vision';
+    };
+    img.src=imgUrl;
+    return;
   }
+
   btn.disabled=false;
   btn.innerHTML=vizFile?'🏠&nbsp; Generate My Redesign &rarr;':'✨&nbsp; Generate My Vision';
 });

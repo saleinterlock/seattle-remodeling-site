@@ -1,5 +1,5 @@
 from http.server import BaseHTTPRequestHandler
-import os, json, time
+import os, json
 
 try:
     import requests as _req
@@ -7,36 +7,33 @@ try:
 except ImportError:
     HAS_REQUESTS = False
 
-KIE_API_KEY     = os.environ.get("KIE_API_KEY", "")
-ANTHROPIC_KEY   = os.environ.get("ANTHROPIC_API_KEY", "")
+FAL_KEY       = os.environ.get("FAL_KEY", "")
+ANTHROPIC_KEY = os.environ.get("ANTHROPIC_API_KEY", "")
 
 STYLE_PROMPTS = {
     "bathroom": (
-        "Ultra-realistic professional real-estate listing photograph of a fully remodeled {style} bathroom, "
-        "{colors} color palette, {room_desc}"
-        "large-format porcelain tile floor and walls, floating double vanity, frameless glass walk-in shower, "
-        "matte black hardware, natural window daylight, 24mm wide-angle lens f/8 ISO 200 tripod, "
-        "architectural interior photography, ultra detailed, no people, no text"
+        "professional interior design photo of a completely remodeled {style} bathroom, "
+        "{colors} color palette, large-format porcelain tile, floating vanity, frameless glass shower, "
+        "matte black hardware, Seattle luxury home, natural daylight, architectural photography, "
+        "ultra detailed, no people, no text, photorealistic"
     ),
     "shower": (
-        "Ultra-realistic professional interior photo of a {style} walk-in shower conversion, "
-        "{colors} color palette, {room_desc}"
-        "frameless glass enclosure, built-in tile niche, ceiling rain head, floor-to-ceiling large-format tile, "
-        "pebble mosaic floor, matte black hardware, natural daylight, 24mm lens f/8 ISO 200, "
-        "architectural photography, ultra detailed, no people, no text"
+        "professional interior design photo of a brand new {style} walk-in shower, "
+        "{colors} color palette, frameless glass enclosure, built-in tile niche, rain ceiling head, "
+        "floor-to-ceiling tile, matte black fixtures, Seattle luxury home, natural daylight, "
+        "architectural photography, ultra detailed, no people, no text, photorealistic"
     ),
     "master": (
-        "Ultra-realistic professional interior photograph of a {style} master bathroom spa retreat, "
-        "{colors} color palette, {room_desc}"
-        "freestanding soaking tub, dual vanity with backlit mirror, heated tile floor, "
-        "ambient and natural lighting, 24mm wide-angle lens f/8 ISO 200, "
-        "architectural photography, ultra detailed, no people, no text"
+        "professional interior design photo of a luxurious {style} master bathroom spa, "
+        "{colors} color palette, freestanding soaking tub, dual vanity with backlit mirror, "
+        "heated tile floor, ambient lighting, Seattle luxury home, architectural photography, "
+        "ultra detailed, no people, no text, photorealistic"
     ),
 }
 
 NEGATIVE = (
-    "blurry, low resolution, cartoon, illustration, oversaturated, text, watermark, logo, "
-    "people, distorted geometry, clutter, CGI, plastic look, fake lighting, low quality"
+    "blurry, low quality, cartoon, watermark, text, logo, people, clutter, "
+    "distorted, ugly, before remodel, old bathroom, unfinished"
 )
 
 
@@ -55,7 +52,7 @@ def _json(h, data, status=200):
 
 
 def _analyze_room(image_b64, media_type="image/jpeg"):
-    """Call Claude Vision to extract room layout details from the uploaded photo."""
+    """Use Claude Vision to extract room layout for prompt personalization."""
     if not ANTHROPIC_KEY:
         return ""
     try:
@@ -68,7 +65,7 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
             },
             json={
                 "model": "claude-haiku-4-5-20251001",
-                "max_tokens": 200,
+                "max_tokens": 150,
                 "messages": [{
                     "role": "user",
                     "content": [
@@ -83,16 +80,14 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
                         {
                             "type": "text",
                             "text": (
-                                "Describe this bathroom's permanent structural features for an interior design rendering prompt. "
-                                "Include: room size (small/medium/large), window placement and natural light amount, "
-                                "ceiling height (standard/high/vaulted), and current layout (where tub/shower/vanity/toilet are). "
-                                "2 sentences max. Be specific and visual. Start with the room size."
+                                "Describe this bathroom's permanent layout in 1 short sentence for a renovation rendering: "
+                                "room size, window placement, and fixture positions. Be specific and brief."
                             ),
                         },
                     ],
                 }],
             },
-            timeout=18,
+            timeout=10,
         )
         resp.raise_for_status()
         return resp.json()["content"][0]["text"].strip()
@@ -100,53 +95,33 @@ def _analyze_room(image_b64, media_type="image/jpeg"):
         return ""
 
 
-def _kie_generate(prompt):
-    """Create a Kie.ai task and poll until done. Returns image URL or raises."""
+def _fal_img2img(image_data_url, prompt):
+    """Fal.ai FLUX img2img — transforms user photo to remodeled version."""
     resp = _req.post(
-        "https://api.kie.ai/api/v1/jobs/createTask",
-        headers={"Authorization": f"Bearer {KIE_API_KEY}", "Content-Type": "application/json"},
-        json={
-            "model": "nano-banana-2",
-            "input": {
-                "prompt": prompt,
-                "negative_prompt": NEGATIVE,
-                "aspect_ratio": "4:3",
-                "resolution": "1K",
-                "output_format": "jpg",
-            },
+        "https://fal.run/fal-ai/flux/dev/image-to-image",
+        headers={
+            "Authorization": f"Key {FAL_KEY}",
+            "Content-Type": "application/json",
         },
-        timeout=15,
+        json={
+            "image_url": image_data_url,
+            "prompt": prompt,
+            "negative_prompt": NEGATIVE,
+            "strength": 0.80,
+            "num_inference_steps": 28,
+            "guidance_scale": 3.5,
+            "num_images": 1,
+            "output_format": "jpeg",
+            "enable_safety_checker": False,
+        },
+        timeout=55,
     )
     resp.raise_for_status()
-    task_id = resp.json().get("data", {}).get("taskId")
-    if not task_id:
-        raise RuntimeError("No taskId from Kie.ai")
-
-    poll_headers = {"Authorization": f"Bearer {KIE_API_KEY}"}
-    for _ in range(17):
-        time.sleep(3)
-        try:
-            poll = _req.get(
-                "https://api.kie.ai/api/v1/jobs/recordInfo",
-                headers=poll_headers,
-                params={"taskId": task_id},
-                timeout=10,
-            )
-            poll.raise_for_status()
-            data = poll.json().get("data", {})
-        except Exception:
-            continue
-
-        state = data.get("state", "")
-        if state in ("success", "completed"):
-            urls = json.loads(data.get("resultJson", "{}")).get("resultUrls", [])
-            if urls:
-                return urls[0]
-            raise RuntimeError("Image ready but URL missing")
-        if state in ("failed", "error"):
-            raise RuntimeError("Kie.ai generation failed")
-
-    raise RuntimeError("Generation timed out")
+    data = resp.json()
+    images = data.get("images") or []
+    if images:
+        return images[0].get("url", "")
+    raise RuntimeError(f"No image in Fal.ai response: {json.dumps(data)[:200]}")
 
 
 class handler(BaseHTTPRequestHandler):
@@ -154,49 +129,46 @@ class handler(BaseHTTPRequestHandler):
         _cors(self)
 
     def do_POST(self):
-        if not HAS_REQUESTS:
-            return _json(self, {"error": "requests library not available"}, 500)
-
-        length = int(self.headers.get("Content-Length", 0))
         try:
-            body = json.loads(self.rfile.read(length) or b"{}")
-        except Exception:
-            return _json(self, {"error": "Invalid JSON"}, 400)
+            if not HAS_REQUESTS:
+                return _json(self, {"error": "requests library not available"}, 500)
 
-        service = body.get("service", "bathroom").strip()
-        style   = body.get("style", "modern minimalist").strip()
-        colors  = body.get("colors", "white and gray tones").strip()
-        image   = body.get("image", "").strip()   # base64 data URL, optional
+            length = int(self.headers.get("Content-Length", 0))
+            try:
+                body = json.loads(self.rfile.read(length) or b"{}")
+            except Exception:
+                return _json(self, {"error": "Invalid JSON"}, 400)
 
-        if service not in STYLE_PROMPTS:
-            service = "bathroom"
+            service = body.get("service", "bathroom").strip()
+            style   = body.get("style", "modern minimalist").strip()
+            colors  = body.get("colors", "white and gray tones").strip()
+            image   = body.get("image", "").strip()
 
-        if not KIE_API_KEY:
-            return _json(self, {"error": "Image generation not configured."}, 503)
+            if service not in STYLE_PROMPTS:
+                service = "bathroom"
 
-        # If user uploaded a photo — analyze it with Claude Vision
-        room_desc = ""
-        if image and ANTHROPIC_KEY:
-            if "," in image:
-                header, image_b64 = image.split(",", 1)
-                media_type = header.split(":")[1].split(";")[0] if ":" in header else "image/jpeg"
-            else:
-                image_b64 = image
-                media_type = "image/jpeg"
+            if not image:
+                return _json(self, {"error": "No image provided"}, 400)
 
-            room_context = _analyze_room(image_b64, media_type)
-            if room_context:
-                room_desc = room_context + ", "
+            if not FAL_KEY:
+                return _json(self, {"error": "Image transformation not configured (FAL_KEY missing)"}, 503)
 
-        prompt = STYLE_PROMPTS[service].format(
-            style=style,
-            colors=colors,
-            room_desc=room_desc,
-        )
+            # Analyze room layout with Claude (optional enrichment)
+            room_desc = ""
+            if ANTHROPIC_KEY and "," in image:
+                header_part, b64 = image.split(",", 1)
+                mtype = header_part.split(":")[1].split(";")[0] if ":" in header_part else "image/jpeg"
+                room_desc = _analyze_room(b64, mtype)
 
-        try:
-            url = _kie_generate(prompt)
-            return _json(self, {"url": url})
+            prompt = STYLE_PROMPTS[service].format(style=style, colors=colors)
+            if room_desc:
+                prompt = room_desc + ", fully remodeled as: " + prompt
+
+            url = _fal_img2img(image, prompt)
+            if url:
+                return _json(self, {"url": url})
+            return _json(self, {"error": "Generation failed — no image returned"}, 502)
+
         except Exception as e:
             return _json(self, {"error": str(e)}, 502)
 
