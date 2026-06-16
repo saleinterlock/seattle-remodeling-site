@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 100" width="360" height="100">
+  <g fill="none" stroke="#0d2137" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- shower arm -->
+    <path d="M20 92 V40 Q20 24 36 24 H58" />
+    <!-- shower head -->
+    <ellipse cx="78" cy="22" rx="26" ry="9" transform="rotate(-18 78 22)" fill="#0d2137" stroke="none" />
+    <!-- spray lines -->
+    <path d="M46 36 L40 50" />
+    <path d="M58 40 L53 56" />
+    <path d="M70 43 L66 60" />
+    <path d="M82 44 L80 62" />
+    <path d="M94 43 L94 60" />
+  </g>
+  <!-- water drops with faces -->
+  <g stroke="#0d2137" stroke-width="3.5" fill="#0d2137">
+    <path d="M40 58 C40 58 33 67 33 73 C33 78 36.5 81 40 81 C43.5 81 47 78 47 73 C47 67 40 58 40 58 Z" fill="none"/>
+    <circle cx="37.3" cy="74" r="1.6" fill="#0d2137" stroke="none"/>
+    <circle cx="42.7" cy="74" r="1.6" fill="#0d2137" stroke="none"/>
+    <path d="M37 77.5 Q40 80 43 77.5" fill="none" stroke-width="2"/>
+
+    <path d="M66 64 C66 64 58 74 58 80.5 C58 86 61.8 89.5 66 89.5 C70.2 89.5 74 86 74 80.5 C74 74 66 64 66 64 Z" fill="none"/>
+    <circle cx="63.1" cy="81.5" r="1.8" fill="#0d2137" stroke="none"/>
+    <circle cx="68.9" cy="81.5" r="1.8" fill="#0d2137" stroke="none"/>
+    <path d="M62.5 85.2 Q66 88 69.5 85.2" fill="none" stroke-width="2.2"/>
+
+    <path d="M92 60 C92 60 85 69 85 75 C85 80 88.5 83 92 83 C95.5 83 99 80 99 75 C99 69 92 60 92 60 Z" fill="none"/>
+    <circle cx="89.3" cy="76" r="1.6" fill="#0d2137" stroke="none"/>
+    <circle cx="94.7" cy="76" r="1.6" fill="#0d2137" stroke="none"/>
+    <path d="M89 79.5 Q92 82 95 79.5" fill="none" stroke-width="2"/>
+  </g>
+  <!-- wordmark -->
+  <text x="118" y="52" font-family="Georgia, 'Playfair Display', serif" font-size="34" font-weight="700" fill="#0d2137">Rain Bath</text>
+  <text x="120" y="76" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="600" letter-spacing="3" fill="#0d2137">REMODELING</text>
+</svg>
