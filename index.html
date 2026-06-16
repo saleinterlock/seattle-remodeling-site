@@ -1073,7 +1073,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <div class="reveal">
       <div class="eyebrow">AI Design Studio</div>
       <h2 class="section-title">See Your Space<br><em>Transformed</em></h2>
-      <p class="section-body" style="margin-bottom:48px">Pick your project, style, and colors — AI generates a realistic concept of your finished space in seconds.</p>
+      <p class="section-body" style="margin-bottom:48px">Upload a photo of your bathroom, pick a style — AI analyzes your space and generates a realistic concept of the finished result.</p>
     </div>
     <div class="viz-panels">
       <div class="reveal left">
@@ -1084,6 +1084,22 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
             <button class="viz-opt" data-val="shower">Walk-In Shower</button>
             <button class="viz-opt" data-val="master">Master Bath</button>
           </div>
+        </div>
+        <div class="viz-group">
+          <div class="viz-group-label">Your Bathroom Photo <span class="viz-badge">optional — AI analyzes your space</span></div>
+          <label class="viz-upload-zone" id="viz-upload-zone">
+            <input type="file" id="viz-file" accept="image/*" style="display:none">
+            <div id="viz-upload-prompt">
+              <div style="font-size:30px">📷</div>
+              <div style="font-weight:600;font-size:14px;margin-top:6px;color:var(--dark)">Upload your bathroom photo</div>
+              <div style="font-size:12px;margin-top:4px;color:var(--gray)">Any phone photo works — AI will adapt the design to your room</div>
+            </div>
+            <div id="viz-upload-preview" style="display:none">
+              <img id="viz-preview-img" alt="Your bathroom" style="width:100%;max-height:160px;object-fit:cover;display:block;border-radius:10px">
+              <button id="viz-remove-btn" type="button" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,.55);color:#fff;border:none;border-radius:50%;width:28px;height:28px;font-size:14px;cursor:pointer;line-height:1">✕</button>
+            </div>
+          </label>
+          <p style="font-size:12px;color:var(--gray);margin-top:8px">No photo? AI generates a concept based on your style choices.</p>
         </div>
         <div class="viz-group">
           <div class="viz-group-label">Design Style</div>
@@ -1680,8 +1696,49 @@ document.getElementById('calc-cta-btn').addEventListener('click',()=>{
 calcUpdate();
 
 // ─── VISUALIZER ───────────────────────────────────────────
-let vizService='bathroom',vizStyle='modern minimalist',vizColor='white and gray tones';
+let vizService='bathroom',vizStyle='modern minimalist',vizColor='white and gray tones',vizFile=null;
 const VIZ_LABELS={bathroom:'Full Remodel',shower:'Walk-In Shower',master:'Master Bath'};
+
+function resizeImage(file){
+  return new Promise(resolve=>{
+    const canvas=document.createElement('canvas');
+    const ctx=canvas.getContext('2d');
+    const src=new Image();
+    src.onload=()=>{
+      const r=Math.min(1024/src.width,1024/src.height,1);
+      canvas.width=Math.round(src.width*r);
+      canvas.height=Math.round(src.height*r);
+      ctx.drawImage(src,0,0,canvas.width,canvas.height);
+      resolve(canvas.toDataURL('image/jpeg',0.88));
+    };
+    src.src=URL.createObjectURL(file);
+  });
+}
+
+document.getElementById('viz-file').addEventListener('change',function(){
+  const file=this.files[0];
+  if(!file) return;
+  vizFile=file;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    document.getElementById('viz-preview-img').src=e.target.result;
+    document.getElementById('viz-upload-prompt').style.display='none';
+    document.getElementById('viz-upload-preview').style.display='block';
+    document.getElementById('viz-upload-zone').classList.add('has-file');
+    document.getElementById('viz-btn').innerHTML='🏠&nbsp; Generate My Redesign &rarr;';
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('viz-remove-btn').addEventListener('click',function(e){
+  e.preventDefault(); e.stopPropagation();
+  vizFile=null;
+  document.getElementById('viz-file').value='';
+  document.getElementById('viz-upload-prompt').style.display='';
+  document.getElementById('viz-upload-preview').style.display='none';
+  document.getElementById('viz-upload-zone').classList.remove('has-file');
+  document.getElementById('viz-btn').innerHTML='✨&nbsp; Generate My Vision';
+});
 
 
 document.querySelectorAll('#viz-service .viz-opt').forEach(btn=>{
@@ -1706,33 +1763,45 @@ document.querySelectorAll('.color-swatch').forEach(sw=>{
 document.getElementById('viz-btn').addEventListener('click',async()=>{
   const btn=document.getElementById('viz-btn');
   const loading=document.getElementById('viz-loading');
+  const loadingMsg=loading.querySelector('p:last-child');
   const placeholder=document.getElementById('viz-placeholder');
   const img=document.getElementById('viz-img');
   const overlay=document.getElementById('viz-overlay');
   const errEl=document.getElementById('viz-error');
 
-  btn.disabled=true; btn.innerHTML='⏳&nbsp; Generating…';
+  btn.disabled=true;
+  btn.innerHTML=vizFile?'⏳&nbsp; Analyzing your space…':'⏳&nbsp; Generating…';
   placeholder.style.display='none';
   img.classList.remove('loaded');
   overlay.classList.remove('visible');
   errEl.classList.remove('visible');
   loading.classList.add('visible');
 
+  if(vizFile){
+    loadingMsg.textContent='AI is analyzing your room + rendering — ~30–45 seconds';
+  } else {
+    loadingMsg.textContent='AI is rendering — usually 20–40 seconds';
+  }
+
   const styleWord=vizStyle.split(' ')[0];
   const titleStr=styleWord.charAt(0).toUpperCase()+styleWord.slice(1)+' '+(VIZ_LABELS[vizService]||'Bathroom');
 
   try{
+    const body={service:vizService,style:vizStyle,colors:vizColor};
+    if(vizFile) body.image=await resizeImage(vizFile);
+
     const r=await fetch('/api/visualize',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({service:vizService,style:vizStyle,colors:vizColor})
+      body:JSON.stringify(body)
     });
     const data=await r.json();
     loading.classList.remove('visible');
     if(data.url){
       img.onload=()=>{
         img.classList.add('loaded');
-        document.getElementById('viz-overlay-title').textContent=titleStr;
+        document.getElementById('viz-overlay-title').textContent=
+          vizFile ? titleStr+' — Your Space Redesigned' : titleStr;
         overlay.classList.add('visible');
       };
       img.src=data.url;
@@ -1745,7 +1814,8 @@ document.getElementById('viz-btn').addEventListener('click',async()=>{
     errEl.textContent='Connection error — please try again.';
     errEl.classList.add('visible'); placeholder.style.display='';
   }
-  btn.disabled=false; btn.innerHTML='✨&nbsp; Generate My Vision';
+  btn.disabled=false;
+  btn.innerHTML=vizFile?'🏠&nbsp; Generate My Redesign &rarr;':'✨&nbsp; Generate My Vision';
 });
 
 
