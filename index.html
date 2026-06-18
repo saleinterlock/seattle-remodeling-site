@@ -2217,13 +2217,23 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
       ctx.lineWidth=isSelected?2.5:1.5;
       ctx.stroke();
 
-      // Selection highlight
+      // Selection highlight + rotate icon
       if(isSelected){
         ctx.strokeStyle='rgba(14,168,117,.6)';
         ctx.lineWidth=4;
         ctx.setLineDash([5,3]);
         ctx.stroke();
         ctx.setLineDash([]);
+        // ↻ rotate hint in top-right corner
+        ctx.fillStyle='rgba(14,168,117,.9)';
+        ctx.beginPath();
+        ctx.arc(px+fw-8,py+8,9,0,Math.PI*2);
+        ctx.fill();
+        ctx.fillStyle='#fff';
+        ctx.font='bold 11px Inter,sans-serif';
+        ctx.textAlign='center';
+        ctx.textBaseline='middle';
+        ctx.fillText('↻',px+fw-8,py+9);
       }
 
       // Label + dimensions
@@ -2377,6 +2387,19 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
     if(e.button!==0) return;
     const {x,y}=canvasPos(e);
     if(state.pendingFix){placeFix(state.pendingFix,x,y);return;}
+    // Check if clicked the ↻ rotate icon on selected fixture
+    if(state.selected!==null&&state.fixtures[state.selected]){
+      const f=state.fixtures[state.selected];
+      const def=FIX_DEFS[f.type];
+      const r=roomPx();
+      const fw=(f.flipped?def.h:def.w)*SCALE;
+      const px=r.x+f.x*SCALE;
+      const py=r.y+f.y*SCALE;
+      const dx=x-(px+fw-8), dy=y-(py+8);
+      if(dx*dx+dy*dy<=81){
+        f.flipped=!f.flipped; draw(); updateCost(); return;
+      }
+    }
     const hit=hitTest(x,y);
     if(hit>=0){
       state.dragging=hit;
@@ -2440,11 +2463,14 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
     if(state.dragging===null) return;
     const {x,y}=canvasPos(e);
     const r=roomPx();
-    const def=FIX_DEFS[state.fixtures[state.dragging].type];
+    const tfix=state.fixtures[state.dragging];
+    const def=FIX_DEFS[tfix.type];
+    const tdw=tfix.flipped?def.h:def.w;
+    const tdh=tfix.flipped?def.w:def.h;
     let nx=(x-state.dragOffX-r.x)/SCALE;
     let ny=(y-state.dragOffY-r.y)/SCALE;
-    nx=Math.max(0,Math.min(nx,state.roomW-def.w));
-    ny=Math.max(0,Math.min(ny,state.roomL-def.h));
+    nx=Math.max(0,Math.min(nx,state.roomW-tdw));
+    ny=Math.max(0,Math.min(ny,state.roomL-tdh));
     state.fixtures[state.dragging].x=nx;
     state.fixtures[state.dragging].y=ny;
     draw(); updateCost();
