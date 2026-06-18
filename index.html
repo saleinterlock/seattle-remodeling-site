@@ -1316,8 +1316,11 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
         </div>
 
         <div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;display:flex;gap:8px">
-          <button class="planner-btn planner-btn-secondary" id="planner-flip" style="flex:1;font-size:12px" title="Flip selected fixture 90°" disabled>
-            ↔ Flip
+          <button class="planner-btn planner-btn-secondary" id="planner-flip" style="flex:1;font-size:12px" title="Rotate selected fixture 90°" disabled>
+            ↻ Rotate
+          </button>
+          <button class="planner-btn planner-btn-secondary" id="planner-remove" style="flex:1;font-size:12px;border-color:#e05a5a;color:#e05a5a" title="Remove selected fixture" disabled>
+            ✕ Remove
           </button>
           <button class="planner-btn planner-btn-secondary" id="planner-clear" style="flex:1;font-size:12px">
             Clear All
@@ -2223,12 +2226,20 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
         ctx.setLineDash([]);
       }
 
-      // Label
+      // Label + dimensions
+      const dimW=(fix.flipped?def.h:def.w);
+      const dimH=(fix.flipped?def.w:def.h);
+      const dimStr=dimW+'×'+dimH+' ft';
       ctx.fillStyle='#1a3a4a';
-      ctx.font=`bold ${Math.max(10,Math.min(13,fw/def.label.length))}px Inter,sans-serif`;
+      ctx.font=`bold ${Math.max(9,Math.min(12,fw/Math.max(def.label.length,5)))}px Inter,sans-serif`;
       ctx.textAlign='center';
       ctx.textBaseline='middle';
-      ctx.fillText(def.label,px+fw/2,py+fh/2);
+      ctx.fillText(def.label,px+fw/2,py+fh/2-(fh>40?8:0));
+      if(fh>36){
+        ctx.font='9px Inter,sans-serif';
+        ctx.fillStyle='rgba(26,58,74,.55)';
+        ctx.fillText(dimStr,px+fw/2,py+fh/2+10);
+      }
     });
 
     // Pending fixture ghost (follows mouse on desktop)
@@ -2316,11 +2327,13 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
     if(state.selected!==null&&state.selected>=0&&state.fixtures[state.selected]){
       const f=state.fixtures[state.selected];
       const d=FIX_DEFS[f.type];
-      el.textContent=d.label+' selected — drag to move, double-click to remove';
+      el.textContent=d.label+' — drag to move · double-click or ↻ to rotate · ✕ to remove';
       flipBtn.disabled=false;
+      document.getElementById('planner-remove').disabled=false;
     } else {
       el.textContent='';
       flipBtn.disabled=true;
+      document.getElementById('planner-remove').disabled=true;
     }
   }
 
@@ -2328,6 +2341,13 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
     if(state.selected===null||!state.fixtures[state.selected]) return;
     state.fixtures[state.selected].flipped=!state.fixtures[state.selected].flipped;
     draw(); updateCost();
+  });
+
+  document.getElementById('planner-remove').addEventListener('click',()=>{
+    if(state.selected===null||!state.fixtures[state.selected]) return;
+    state.fixtures.splice(state.selected,1);
+    state.selected=null;
+    updateInfo(); draw(); updateCost();
   });
 
   // ── Mouse events ──
@@ -2380,6 +2400,17 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
   });
 
   canvas.addEventListener('dblclick',e=>{
+    const {x,y}=canvasPos(e);
+    const hit=hitTest(x,y);
+    if(hit>=0){
+      state.fixtures[hit].flipped=!state.fixtures[hit].flipped;
+      state.selected=hit;
+      updateInfo(); draw(); updateCost();
+    }
+  });
+
+  canvas.addEventListener('contextmenu',e=>{
+    e.preventDefault();
     const {x,y}=canvasPos(e);
     const hit=hitTest(x,y);
     if(hit>=0){
