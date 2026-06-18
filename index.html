@@ -1316,13 +1316,10 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
         </div>
 
         <div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;display:flex;gap:8px">
-          <button class="planner-btn planner-btn-secondary" id="planner-flip" style="flex:1;font-size:12px" title="Rotate selected fixture 90°" disabled>
-            ↻ Rotate
+          <button class="planner-btn planner-btn-secondary" id="planner-remove" style="flex:1;font-size:13px;border-color:#e05a5a;color:#e05a5a" title="Remove selected fixture" disabled>
+            ✕ Remove Selected
           </button>
-          <button class="planner-btn planner-btn-secondary" id="planner-remove" style="flex:1;font-size:12px;border-color:#e05a5a;color:#e05a5a" title="Remove selected fixture" disabled>
-            ✕ Remove
-          </button>
-          <button class="planner-btn planner-btn-secondary" id="planner-clear" style="flex:1;font-size:12px">
+          <button class="planner-btn planner-btn-secondary" id="planner-clear" style="flex:1;font-size:13px">
             Clear All
           </button>
         </div>
@@ -2333,25 +2330,16 @@ if(!CanvasRenderingContext2D.prototype.roundRect){
 
   function updateInfo(){
     const el=document.getElementById('planner-selected-info');
-    const flipBtn=document.getElementById('planner-flip');
     if(state.selected!==null&&state.selected>=0&&state.fixtures[state.selected]){
       const f=state.fixtures[state.selected];
       const d=FIX_DEFS[f.type];
-      el.textContent=d.label+' — drag to move · double-click or ↻ to rotate · ✕ to remove';
-      flipBtn.disabled=false;
+      el.textContent=d.label+' — drag to move · double-click or tap ↻ to rotate';
       document.getElementById('planner-remove').disabled=false;
     } else {
       el.textContent='';
-      flipBtn.disabled=true;
       document.getElementById('planner-remove').disabled=true;
     }
   }
-
-  document.getElementById('planner-flip').addEventListener('click',()=>{
-    if(state.selected===null||!state.fixtures[state.selected]) return;
-    state.fixtures[state.selected].flipped=!state.fixtures[state.selected].flipped;
-    draw(); updateCost();
-  });
 
   document.getElementById('planner-remove').addEventListener('click',()=>{
     if(state.selected===null||!state.fixtures[state.selected]) return;
