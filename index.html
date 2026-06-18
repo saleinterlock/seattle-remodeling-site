@@ -1622,12 +1622,14 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
     <button class="chat-close" id="chat-close" aria-label="Close chat">×</button>
   </div>
   <div id="chat-msgs">
-    <div class="msg agent">Hi! 👋 I'm David from Rain Bath Remodeling.<br><br>We specialize in bathroom remodeling — walk-in showers, full gut renovations, tub conversions, and more.<br><br>What does your bathroom project look like?</div>
+    <div class="msg agent">Hi! 👋 Leave your request — tell us what you'd like to do, and we'll call you back. Please include your phone number or email.</div>
   </div>
-  <div class="chat-input-row">
-    <input type="text" id="chat-input" placeholder="Type a message..." autocomplete="off">
-    <button id="chat-send">➤</button>
-  </div>
+  <form id="chat-form" style="padding:12px 16px;display:flex;flex-direction:column;gap:8px;border-top:1px solid #f0f4f8">
+    <textarea id="chat-desc" placeholder="What would you like to do? (shower conversion, full remodel...)" rows="2" style="padding:8px 10px;border:1px solid #dde3ec;border-radius:8px;font-size:13px;font-family:inherit;resize:none;outline:none"></textarea>
+    <input type="text" id="chat-name" placeholder="Your name" style="padding:8px 10px;border:1px solid #dde3ec;border-radius:8px;font-size:13px;font-family:inherit;outline:none">
+    <input type="text" id="chat-contact" placeholder="Phone or Email *" style="padding:8px 10px;border:1px solid #dde3ec;border-radius:8px;font-size:13px;font-family:inherit;outline:none">
+    <button type="submit" id="chat-submit" style="background:var(--navy);color:#fff;border:none;border-radius:8px;padding:10px;font-size:13px;font-weight:600;cursor:pointer">Send Request →</button>
+  </form>
 </div>
 
 <script>
@@ -1976,52 +1978,39 @@ document.getElementById('lead-form').addEventListener('submit',async function(e)
 // ─── CHAT ─────────────────────────────────────────────────
 const chatBtn=document.getElementById('chat-btn');
 const chatWin=document.getElementById('chat-window');
-const chatInput=document.getElementById('chat-input');
-const chatMsgs=document.getElementById('chat-msgs');
-let chatHistory=[],leadDone=false;
 
 chatBtn.addEventListener('click',()=>{
-  const o=chatWin.classList.toggle('open');
+  chatWin.classList.toggle('open');
   chatBtn.querySelector('.badge').style.display='none';
-  if(o) chatInput.focus();
 });
 document.getElementById('chat-close').addEventListener('click',()=>{
   chatWin.classList.remove('open');
 });
 
-async function sendMsg(){
-  const t=chatInput.value.trim(); if(!t) return;
-  addMsg('user',t); chatInput.value='';
-  chatHistory.push({role:'user',content:t});
-  const typing=addMsg('agent','...');
-  try{
-    const r=await fetch('/api/chat',{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({messages:chatHistory})});
-    const d=await r.json();
-    typing.remove();
-    const reply=d.reply||"Sorry, I'm having trouble. Call us at (425) 999-6880!";
-    addMsg('agent',reply);
-    chatHistory.push({role:'assistant',content:reply});
-    if(d.lead_captured&&!leadDone){
-      leadDone=true;
-      if(typeof fbq!=='undefined') fbq('track','Lead',{content_category:d.service_type||'chat'});
-    }
-  }catch{
-    typing.remove();
-    addMsg('agent','I\'m having connectivity issues. Please call us at (425) 999-6880!');
+document.getElementById('chat-form').addEventListener('submit',async(e)=>{
+  e.preventDefault();
+  const desc=document.getElementById('chat-desc').value.trim();
+  const name=document.getElementById('chat-name').value.trim();
+  const contact=document.getElementById('chat-contact').value.trim();
+  if(!contact){
+    document.getElementById('chat-contact').style.borderColor='#e05a5a';
+    document.getElementById('chat-contact').focus();
+    return;
   }
-  chatMsgs.scrollTop=chatMsgs.scrollHeight;
-}
-function addMsg(role,text){
-  const d=document.createElement('div');
-  d.className='msg '+role;
-  d.innerHTML=text.replace(/\n/g,'<br>');
-  chatMsgs.appendChild(d);
-  chatMsgs.scrollTop=chatMsgs.scrollHeight;
-  return d;
-}
-document.getElementById('chat-send').addEventListener('click',sendMsg);
-chatInput.addEventListener('keypress',e=>{ if(e.key==='Enter') sendMsg(); });
+  const btn=document.getElementById('chat-submit');
+  btn.disabled=true; btn.textContent='Sending...';
+  const isEmail=contact.includes('@');
+  try{
+    await fetch('/api/lead',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({name:name||'Chat visitor',phone:isEmail?'':contact,email:isEmail?contact:'',message:desc,source:'chat'})});
+    document.getElementById('chat-msgs').innerHTML='<div class="msg agent">✅ Got it! David will call you within 24 hours. Thank you!</div>';
+    document.getElementById('chat-form').style.display='none';
+    if(typeof fbq!=='undefined') fbq('track','Lead',{content_category:'chat_form'});
+  }catch{
+    btn.disabled=false; btn.textContent='Send Request →';
+    document.getElementById('chat-msgs').insertAdjacentHTML('beforeend','<div class="msg agent">Something went wrong. Please call (425) 999-6880</div>');
+  }
+});
 
 // ─── BATHROOM PLANNER ─────────────────────────────────────
 // roundRect polyfill for older Safari
