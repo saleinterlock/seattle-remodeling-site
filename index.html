@@ -672,7 +672,7 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
 .planner-wrap{display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:start;margin-top:48px}
 @media(max-width:900px){.planner-wrap{grid-template-columns:1fr}}
 .planner-panel{background:#fff;border-radius:16px;padding:24px;
-  box-shadow:0 4px 24px rgba(13,33,55,.07);border:1px solid #e8ecf0}
+  box-shadow:0 4px 24px rgba(13,33,55,.07);border:1px solid #e8ecf0;overflow:hidden;box-sizing:border-box}
 .planner-section-label{font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;
   color:var(--sage);margin:20px 0 10px;display:flex;align-items:center;gap:8px}
 .planner-section-label:first-child{margin-top:0}
@@ -1315,11 +1315,11 @@ footer{background:var(--dark);padding:80px 40px 36px;color:rgba(255,255,255,.65)
           </div>
         </div>
 
-        <div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;display:flex;gap:8px">
-          <button class="planner-btn planner-btn-secondary" id="planner-remove" style="flex:1;font-size:13px;border-color:#e05a5a;color:#e05a5a" title="Remove selected fixture" disabled>
-            ✕ Remove Selected
+        <div style="margin-top:20px;border-top:1px solid #f0f0f0;padding-top:16px;display:flex;gap:6px;width:100%;box-sizing:border-box">
+          <button class="planner-btn planner-btn-secondary" id="planner-remove" style="flex:1;min-width:0;font-size:11px;padding:8px 6px;border-color:#e05a5a;color:#e05a5a" title="Remove selected fixture" disabled>
+            ✕ Remove
           </button>
-          <button class="planner-btn planner-btn-secondary" id="planner-clear" style="flex:1;font-size:13px">
+          <button class="planner-btn planner-btn-secondary" id="planner-clear" style="flex:1;min-width:0;font-size:11px;padding:8px 6px">
             Clear All
           </button>
         </div>
