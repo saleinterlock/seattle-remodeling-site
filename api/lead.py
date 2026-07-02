@@ -1,9 +1,11 @@
 from http.server import BaseHTTPRequestHandler
-import os, json, http.client
-from datetime import datetime
+import os, json, http.client, urllib.parse
+from datetime import datetime, timezone
 
 TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
 TELEGRAM_OWNER_ID  = os.environ.get("TELEGRAM_OWNER_ID", "")
+SUPABASE_URL       = os.environ.get("SUPABASE_URL", "").rstrip("/")
+SUPABASE_SERVICE_KEY = os.environ.get("SUPABASE_SERVICE_KEY", "")
 
 SERVICE_LABELS = {
     "bathroom": "🚿 Bathroom Remodel", "full_remodel": "🚿 Full Bath Remodel",
@@ -26,6 +28,88 @@ def _send_telegram(text):
         return conn.getresponse().status == 200
     except Exception:
         return False
+
+
+def _push_to_supabase(name, phone, email, service, message, source):
+    """Append a new lead into the CRM's Supabase crm_state JSON blob."""
+    if not SUPABASE_URL or not SUPABASE_SERVICE_KEY:
+        return
+    try:
+        parsed = urllib.parse.urlparse(SUPABASE_URL)
+        host   = parsed.hostname
+        base   = parsed.path.rstrip("/")
+        hdrs   = {
+            "apikey": SUPABASE_SERVICE_KEY,
+            "Authorization": f"Bearer {SUPABASE_SERVICE_KEY}",
+            "Content-Type": "application/json",
+        }
+
+        # 1. Read current state
+        conn = http.client.HTTPSConnection(host, timeout=8)
+        conn.request("GET", f"{base}/rest/v1/crm_state?id=eq.1&select=state",
+                     headers=hdrs)
+        resp = conn.getresponse()
+        rows = json.loads(resp.read())
+
+        if not rows:
+            return  # state row not initialised yet
+        state = rows[0].get("state") or {}
+
+        # 2. Increment lead counter
+        counter = (state.get("leadCounter") or 0) + 1
+        state["leadCounter"] = counter
+
+        # 3. Build client record
+        today = datetime.now().strftime("%Y-%m-%d")
+        client = {
+            "id": f"cl-{int(datetime.now().timestamp() * 1000)}",
+            "leadNumber": counter,
+            "name": name,
+            "phone": phone or "",
+            "email": email or "",
+            "address": "",
+            "city": "",
+            "state": "WA",
+            "source": SOURCE_LABELS.get(source, source),
+            "rating": 3,
+            "status": "New Lead",
+            "stage": "new",
+            "project": SERVICE_LABELS.get(service, service),
+            "budget": 0,
+            "notes": message or "",
+            "createdAt": today,
+            "lastTouch": today,
+            "emailConsent": False,
+            "smsConsent": False,
+        }
+
+        if not isinstance(state.get("clients"), list):
+            state["clients"] = []
+        state["clients"].insert(0, client)
+
+        if not isinstance(state.get("activity"), list):
+            state["activity"] = []
+        state["activity"].insert(0, {
+            "date": today,
+            "text": f"New lead #{counter} {name} created from website form."
+        })
+
+        # 4. Save back
+        patch_payload = json.dumps({
+            "state": state,
+            "updated_at": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+        }).encode()
+        conn2 = http.client.HTTPSConnection(host, timeout=8)
+        conn2.request(
+            "PATCH",
+            f"{base}/rest/v1/crm_state?id=eq.1",
+            body=patch_payload,
+            headers={**hdrs, "Prefer": "return=minimal"},
+        )
+        conn2.getresponse().read()
+    except Exception as exc:
+        # Non-fatal — Telegram notification still went through
+        print(f"Supabase push failed: {exc}")
 
 
 def _cors_headers(self, status=200):
@@ -88,8 +172,9 @@ class handler(BaseHTTPRequestHandler):
         lines += ["", "👉 Позвони в течение 2 часов!"]
 
         sent = _send_telegram("\n".join(lines))
+        _push_to_supabase(name, phone, email, service, message, source)
         _cors_headers(self)
         self.wfile.write(json.dumps({"ok": True, "telegram_sent": sent}).encode())
 
-    def log_message(self, *args):
+    def log_message(self, *_):
         pass
