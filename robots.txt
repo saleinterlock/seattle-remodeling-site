@@ -33,3 +33,6 @@ User-agent: cohere-ai
 Allow: /
 
 Sitemap: https://rainbathremodeling.com/sitemap.xml
+
+# Content usage preferences (Content Signals spec)
+Content-Signal: ai-train=no, search=yes, ai-input=yes

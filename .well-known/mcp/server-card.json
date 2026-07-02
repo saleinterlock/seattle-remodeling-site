@@ -1,0 +1,34 @@
+{
+  "serverInfo": {
+    "name": "Rain Bath Remodeling",
+    "version": "1.0.0",
+    "description": "Bathroom remodeling contractor in Seattle, WA. Walk-in showers, tub-to-shower conversions, full bath renovations. Licensed & insured, 149+ projects.",
+    "contact": {
+      "phone": "+1-425-999-6880",
+      "email": "rainbathremodeling@gmail.com",
+      "url": "https://rainbathremodeling.com"
+    }
+  },
+  "transport": {
+    "type": "http",
+    "endpoint": "https://rainbathremodeling.com/api"
+  },
+  "capabilities": {
+    "tools": [
+      {
+        "name": "submit_lead",
+        "description": "Submit a bathroom remodeling inquiry to Rain Bath Remodeling. David will respond within 24 hours.",
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "message": { "type": "string", "description": "What the customer wants to do (e.g. convert tub to shower, full remodel)" },
+            "name": { "type": "string", "description": "Customer name" },
+            "contact": { "type": "string", "description": "Phone number or email" }
+          },
+          "required": ["message", "contact"]
+        },
+        "endpoint": "POST https://rainbathremodeling.com/api/lead"
+      }
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "linkset": [
+    {
+      "anchor": "https://rainbathremodeling.com/api/lead",
+      "service-doc": [
+        {
+          "href": "https://rainbathremodeling.com/.well-known/agent-skills/index.json",
+          "type": "application/json"
+        }
+      ],
+      "describedby": [
+        {
+          "href": "https://rainbathremodeling.com/.well-known/mcp/server-card.json",
+          "type": "application/json"
+        }
+      ]
+    }
+  ]
+}

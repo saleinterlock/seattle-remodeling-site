@@ -1,0 +1,23 @@
+{
+  "$schema": "https://agentskills.io/schema/v0.2.0/index.json",
+  "domain": "rainbathremodeling.com",
+  "updated": "2026-07-02",
+  "skills": [
+    {
+      "name": "submit-lead",
+      "type": "action",
+      "description": "Submit a bathroom remodeling quote request to Rain Bath Remodeling (Seattle, WA). Returns confirmation that David will contact within 24 hours.",
+      "url": "https://rainbathremodeling.com/api/lead",
+      "method": "POST",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "message": { "type": "string" },
+          "name": { "type": "string" },
+          "contact": { "type": "string" }
+        },
+        "required": ["message", "contact"]
+      }
+    }
+  ]
+}
